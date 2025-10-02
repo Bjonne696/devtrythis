@@ -34,6 +34,8 @@ export default function BookingRequestModal({ cabinId, onClose }) {
   const [approvedBookings, setApprovedBookings] = useState([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
   const [bookingsError, setBookingsError] = useState(null);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [loadingPendingCount, setLoadingPendingCount] = useState(true); // Start with true to prevent race
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -70,6 +72,34 @@ export default function BookingRequestModal({ cabinId, onClose }) {
     fetchApprovedBookings();
   }, [cabinId]);
 
+  // Hjelpefunksjon for å hente pending count
+  const fetchPendingCount = async () => {
+    if (!session) {
+      // Ikke sett loading til false - la den forbli true til session er tilgjengelig
+      return;
+    }
+
+    setLoadingPendingCount(true); // Start loading
+    const { count, error } = await supabase
+      .from("booking_requests")
+      .select("*", { count: 'exact', head: true })
+      .eq("cabin_id", cabinId)
+      .eq("user_id", session.user.id)
+      .eq("status", "pending");
+
+    if (error) {
+      console.error("Error fetching pending count:", error);
+    } else {
+      setPendingCount(count || 0);
+    }
+    setLoadingPendingCount(false);
+  };
+
+  // Hent antall pending requests når session er klar
+  useEffect(() => {
+    fetchPendingCount();
+  }, [cabinId, session]);
+
   const checkDateOverlap = (start, end) => {
     return approvedBookings.some(booking => {
       return start <= booking.end && end >= booking.start;
@@ -84,6 +114,12 @@ export default function BookingRequestModal({ cabinId, onClose }) {
 
     const { startDate, endDate } = dateRange[0];
     const { user } = session;
+
+    // Sjekk om bruker har nådd limit på 2 pending requests
+    if (pendingCount >= 2) {
+      setError("Du har allerede 2 aktive forespørsler for denne hytta. Vennligst vent på svar før du sender flere.");
+      return;
+    }
 
     if (checkDateOverlap(startDate, endDate)) {
       setError("Valgte datoer overlapper med en eksisterende booking. Vennligst velg andre datoer.");
@@ -129,6 +165,11 @@ export default function BookingRequestModal({ cabinId, onClose }) {
       // Sjekk om feilen er duplikat constraint (fra database unique index)
       if (insertError.code === '23505' || insertError.message?.includes('unique_pending_booking_per_user')) {
         setError("Du har allerede sendt en forespørsel for disse datoene. Vennligst vent på svar fra utleier.");
+      }
+      // Sjekk om feilen er pending limit (fra database trigger)
+      else if (insertError.code === 'P0001' || insertError.message?.includes('maks ha 2 aktive forespørsler')) {
+        setError("Du har allerede 2 aktive forespørsler for denne hytta. Vennligst vent på svar før du sender flere.");
+        setPendingCount(2); // Oppdater count for å reflektere faktisk state
       } else {
         setError("Kunne ikke sende forespørselen. Vennligst prøv igjen eller kontakt support hvis problemet fortsetter.");
       }
@@ -144,6 +185,8 @@ export default function BookingRequestModal({ cabinId, onClose }) {
       }
       
       setSuccess(true);
+      // Refetch pending count for å sikre UI er synkronisert med database
+      await fetchPendingCount();
     }
 
     setSending(false);
@@ -158,6 +201,12 @@ export default function BookingRequestModal({ cabinId, onClose }) {
           Fyll ut datoene du ønsker å leie hytta og skriv en kort melding til utleier.
           Utleier vil få beskjed og kan godkjenne eller avslå forespørselen din.
         </HelpText>
+
+        {!loadingPendingCount && session && pendingCount > 0 && (
+          <HelpText icon="⏳">
+            Du har {pendingCount} aktiv{pendingCount > 1 ? 'e' : ''} forespørsel{pendingCount > 1 ? 'er' : ''} for denne hytta (maks 2).
+          </HelpText>
+        )}
 
         {!session ? (
           <Warning>Du må være logget inn for å sende en forespørsel.</Warning>
@@ -205,8 +254,11 @@ export default function BookingRequestModal({ cabinId, onClose }) {
 
         <ButtonRow>
           <button onClick={onClose}>Lukk</button>
-          <button onClick={handleSubmit} disabled={!session || sending || loadingBookings || bookingsError}>
-            {sending ? "Sender..." : "Send forespørsel"}
+          <button 
+            onClick={handleSubmit} 
+            disabled={!session || sending || loadingBookings || loadingPendingCount || bookingsError || pendingCount >= 2}
+          >
+            {sending ? "Sender..." : pendingCount >= 2 ? "Maks antall forespørsler nådd" : "Send forespørsel"}
           </button>
         </ButtonRow>
       </ModalBox>
