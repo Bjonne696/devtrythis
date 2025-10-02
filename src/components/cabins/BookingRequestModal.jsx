@@ -83,16 +83,36 @@ export default function BookingRequestModal({ cabinId, onClose }) {
     }
 
     const { startDate, endDate } = dateRange[0];
+    const { user } = session;
 
     if (checkDateOverlap(startDate, endDate)) {
       setError("Valgte datoer overlapper med en eksisterende booking. Vennligst velg andre datoer.");
       return;
     }
 
+    // Sjekk om brukeren allerede har en pending forespørsel med samme datoer
+    const { data: existingPending, error: pendingError } = await supabase
+      .from("booking_requests")
+      .select("id")
+      .eq("cabin_id", cabinId)
+      .eq("user_id", user.id)
+      .eq("status", "pending")
+      .eq("start_date", startDate.toISOString().split("T")[0])
+      .eq("end_date", endDate.toISOString().split("T")[0]);
+
+    if (pendingError) {
+      console.error("Error checking pending requests:", pendingError);
+      setError("Kunne ikke sjekke eksisterende forespørsler. Prøv igjen.");
+      return;
+    }
+
+    if (existingPending && existingPending.length > 0) {
+      setError("Du har allerede sendt en forespørsel for disse datoene. Vennligst vent på svar fra utleier.");
+      return;
+    }
+
     setSending(true);
     setError(null);
-
-    const { user } = session;
 
     const { data: bookingData, error: insertError } = await supabase.from("booking_requests").insert({
       cabin_id: cabinId,
