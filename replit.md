@@ -50,6 +50,40 @@ ON booking_requests (cabin_id, user_id, start_date, end_date)
 WHERE status = 'pending';
 ```
 
+3. **Limit pending requests to 2 per user per cabin** (prevents spam):
+```sql
+CREATE OR REPLACE FUNCTION public.check_pending_limit()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+  pending_count INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO pending_count
+  FROM booking_requests
+  WHERE cabin_id = NEW.cabin_id
+    AND user_id = NEW.user_id
+    AND status = 'pending'
+    AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000'::uuid)
+  FOR UPDATE;
+  
+  IF pending_count >= 2 THEN
+    RAISE EXCEPTION 'Du kan maks ha 2 aktive forespørsler for samme hytte'
+      USING ERRCODE = 'P0001';
+  END IF;
+  
+  RETURN NEW;
+END;
+$function$;
+
+DROP TRIGGER IF EXISTS check_pending_limit_trigger ON booking_requests;
+CREATE TRIGGER check_pending_limit_trigger
+  BEFORE INSERT OR UPDATE ON booking_requests
+  FOR EACH ROW
+  WHEN (NEW.status = 'pending')
+  EXECUTE FUNCTION check_pending_limit();
+```
+
 ## Running the Application
 
 The application is configured to run automatically with the workflow. It will start on port 5000 and be accessible through the Replit webview.
@@ -92,7 +126,8 @@ The booking system implements comprehensive multi-layer validation:
 **2. Database Validation (Security layer)**
 - **Overlap prevention**: PostgreSQL trigger (`prevent_booking_overlap`) runs `check_booking_overlap()` function on INSERT/UPDATE to prevent conflicting approved bookings
 - **Duplicate prevention**: Unique index (`unique_pending_booking_per_user`) prevents multiple pending requests from same user with identical dates for same cabin
-- Frontend gracefully handles constraint violations with appropriate user messages (error code 23505)
+- **Spam prevention**: PostgreSQL trigger (`check_pending_limit_trigger`) limits users to maximum 2 pending requests per cabin, preventing spam
+- Frontend gracefully handles constraint violations with appropriate user messages (error codes 23505, P0001)
 
 All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests.cabin_id). Booking statuses: 'pending', 'approved', 'rejected' - only 'approved' bookings block dates from other users.
 
