@@ -41,11 +41,18 @@ User authentication is handled through Supabase Auth, providing secure sign-up, 
 The application uses Supabase as the primary backend service, providing PostgreSQL database functionality through a REST API. Key data entities include:
 - User profiles with personal information and avatar storage
 - Cabin listings with detailed property information, images, and pricing
-- Booking requests and reservations
+- Booking requests and reservations (with two-layer overlap validation)
 - Review and rating system
 - Admin data for platform management
 
 File storage is handled through Supabase Storage for user avatars and cabin images, with utility functions for generating public URLs.
+
+### Booking System & Validation
+The booking system implements a two-layer validation approach:
+1. **Frontend validation**: Fetches approved bookings and disables occupied dates in the date picker, with client-side overlap checking before submission
+2. **Database validation**: A PostgreSQL trigger (`prevent_booking_overlap`) runs the `check_booking_overlap()` function on INSERT/UPDATE to prevent conflicting bookings at the database level
+
+All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests.cabin_id). Booking statuses: 'pending', 'approved', 'rejected' - only 'approved' bookings block dates.
 
 ## UI/UX Components
 The design system includes reusable components for forms, modals, buttons, and data displays. Interactive features include date range pickers for booking, star rating components, interactive maps using Leaflet, and responsive grid layouts for cabin listings.

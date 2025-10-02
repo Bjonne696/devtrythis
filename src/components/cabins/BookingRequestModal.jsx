@@ -105,7 +105,7 @@ export default function BookingRequestModal({ cabinId, onClose }) {
 
     if (insertError) {
       console.error("Booking insert error:", insertError);
-      setError(`Kunne ikke sende forespørselen: ${insertError.message || insertError.details || "Ukjent feil"}`);
+      setError("Kunne ikke sende forespørselen. Vennligst prøv igjen eller kontakt support hvis problemet fortsetter.");
     } else {
       // Send e-post-notifikasjon til hytte-eier
       try {
