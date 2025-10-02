@@ -9,15 +9,13 @@ import {
   ListItem,
   ContactInfo 
 } from '../styles/pages/personvernPageStyles';
-import LogoHeader from '../components/nav/LogoHeader';
-import Header from '../components/nav/Header';
+import Navigation from '../components/nav/Navigation';
 import Footer from '../components/nav/Footer';
 
 export default function PersonvernPage() {
   return (
     <>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <PageContainer>
         <ContentSection>
           <Title>Personvernerklæring</Title>

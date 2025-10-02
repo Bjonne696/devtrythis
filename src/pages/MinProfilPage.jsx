@@ -1,6 +1,5 @@
 import React from "react";
-import LogoHeader from "../components/nav/LogoHeader";
-import Header from "../components/nav/Header";
+import Navigation from "../components/nav/Navigation";
 import Footer from "../components/nav/Footer";
 import ProfileData from "../components/profile/ProfileData";
 import { MainWrapper, Heading } from "../styles/pages/minProfilPageStyles";
@@ -8,8 +7,7 @@ import { MainWrapper, Heading } from "../styles/pages/minProfilPageStyles";
 export default function MinProfilPage() {
   return (
     <div>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainWrapper>
         <Heading>Min profil</Heading>
         <ProfileData />

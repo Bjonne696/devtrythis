@@ -9,7 +9,197 @@ import {
   breakpoints
 } from '../common/index.js';
 
-// Header styles
+// Combined Navigation Bar
+export const NavBar = styled.nav`
+  background-color: ${colors.background};
+  padding: ${spacing.sm} ${spacing.lg};
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid ${colors.primary};
+
+  ${media.md} {
+    padding: ${spacing.sm};
+  }
+`;
+
+export const NavContainer = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${spacing.md};
+  position: relative;
+`;
+
+export const LogoSection = styled.div`
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+`;
+
+export const LogoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+`;
+
+export const CompactLogo = styled.img`
+  height: 50px;
+  width: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  ${media.md} {
+    height: 40px;
+  }
+`;
+
+export const NavSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+
+  ${media.md} {
+    display: none;
+  }
+`;
+
+export const NavList = styled.ul`
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  gap: ${spacing.xs};
+
+  ${media.md} {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+`;
+
+export const NavItem = styled.li`
+  list-style: none;
+
+  ${media.md} {
+    margin: ${spacing.xs} 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+`;
+
+export const NavLink = styled(Link)`
+  color: ${colors.text};
+  text-decoration: none;
+  font-weight: ${typography.fontWeights.medium};
+  font-size: ${typography.fontSizes.sm};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.base};
+  transition: all 0.3s ease;
+  display: block;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+
+  ${props => props.$active && css`
+    background-color: ${colors.primary};
+    color: ${colors.white};
+  `}
+
+  &:hover {
+    background-color: ${colors.primary};
+    color: ${colors.white};
+  }
+
+  ${media.md} {
+    color: ${colors.white};
+    font-size: ${typography.fontSizes.base};
+    padding: ${spacing.sm} ${spacing.md};
+  }
+`;
+
+export const AuthSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  flex-shrink: 0;
+`;
+
+export const AuthButton = styled.button`
+  background-color: ${props => props.$isLogout ? colors.error : colors.accent};
+  color: ${colors.white};
+  border: none;
+  padding: ${spacing.xs} ${spacing.md};
+  border-radius: ${borderRadius.base};
+  font-weight: ${typography.fontWeights.medium};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: ${props => props.$isLogout ? '#c53030' : colors.accentHover || '#236b6d'};
+  }
+
+  ${media.md} {
+    display: none;
+  }
+`;
+
+export const HamburgerButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${colors.text};
+  font-size: ${typography.fontSizes.xl};
+  cursor: pointer;
+  padding: ${spacing.xs};
+  line-height: 1;
+
+  ${media.md} {
+    display: block;
+  }
+
+  &:hover {
+    color: ${colors.primary};
+  }
+`;
+
+export const MobileMenu = styled.div`
+  display: none;
+
+  ${media.md} {
+    display: ${props => props.$isOpen ? 'block' : 'none'};
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: ${colors.secondary};
+    padding: ${spacing.md};
+    margin-top: ${spacing.sm};
+    border-radius: ${borderRadius.base};
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+// Legacy exports (kept for backward compatibility if needed)
 export const HeaderContainer = styled.header`
   background-color: ${colors.primary};
   color: ${colors.white};
@@ -39,14 +229,6 @@ export const LogoImg = styled.img`
   ${media.md} {
     height: 60px;
   }
-`;
-
-export const LogoLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  
 `;
 
 export const LogoImage = styled.img`
@@ -114,23 +296,6 @@ export const RightSection = styled.div`
   align-items: center;
 `;
 
-export const AuthButton = styled.button`
-  background-color: ${props => props.$isLogout ? colors.error : colors.accent};
-  color: ${colors.white};
-  border: none;
-  padding: ${spacing.sm} ${spacing.lg};
-  border-radius: ${borderRadius.base};
-  font-weight: ${typography.fontWeights.medium};
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: ${props => props.$isLogout ? '#c53030' : colors.accentHover || '#236b6d'};
-  }
-`;
-
 export const LogoWrapper = styled.header`
   background-color: ${colors.background};
   color: ${colors.white};
@@ -176,19 +341,6 @@ export const NavWrapper = styled.nav`
   }
 `;
 
-export const NavContainer = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${media.md} {
-    justify-content: flex-end;
-  }
-`;
-
 export const Nav = styled.nav`
   ${media.md} {
     position: absolute;
@@ -198,21 +350,6 @@ export const Nav = styled.nav`
     background-color: ${colors.secondary};
     display: ${props => props.$isOpen ? 'block' : 'none'};
     padding: ${spacing.md};
-  }
-`;
-
-export const NavList = styled.ul`
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-
-  ${media.md} {
-    flex-direction: column;
-    align-items: stretch;
   }
 `;
 

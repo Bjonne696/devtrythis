@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import LogoHeader from '../components/nav/LogoHeader';
-import Header from "../components/nav/Header";
+import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
 import { useNavigate } from "react-router-dom";
 import supabase from "../lib/supabaseClient";
@@ -111,8 +110,7 @@ export default function PopularPage() {
 
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <h1>Populære hytter</h1>
 

@@ -1,6 +1,5 @@
 import React from "react";
-import LogoHeader from "../components/nav/LogoHeader";
-import Header from "../components/nav/Header";
+import Navigation from "../components/nav/Navigation";
 import Footer from "../components/nav/Footer";
 import AdminData from "../components/admin/AdminData";
 import { MainWrapper, Heading } from "../styles/admin/adminPageStyles";
@@ -8,8 +7,7 @@ import { MainWrapper, Heading } from "../styles/admin/adminPageStyles";
 export default function AdminPage() {
   return (
     <div>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainWrapper>
         <Heading>Adminpanel</Heading>
         <AdminData />

@@ -1,8 +1,7 @@
 import React from 'react';
 import { PageWrapper, MainContent } from '../styles/layout/pageStyles.js';
-import Header from '../components/nav/Header.jsx';
+import Navigation from '../components/nav/Navigation.jsx';
 import Footer from '../components/nav/Footer.jsx';
-import LogoHeader from '../components/nav/LogoHeader.jsx';
 import {
   OmOssContainer,
   OmOssTitle,
@@ -16,8 +15,7 @@ import {
 export default function OmOssPage() {
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <OmOssContainer>
           <OmOssTitle>

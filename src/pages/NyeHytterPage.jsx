@@ -1,6 +1,5 @@
 import React from "react";
-import LogoHeader from '../components/nav/LogoHeader';
-import Header from "../components/nav/Header";
+import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
 import NewCabinsGrid from "../components/cabins/NewCabinsGrid";
 import { NyeHytterPageWrapper as PageWrapper, NyeHytterMainContent as MainContent } from "../styles/pages/nyeHytterPageStyles";
@@ -8,8 +7,7 @@ import { NyeHytterPageWrapper as PageWrapper, NyeHytterMainContent as MainConten
 export default function NyeHytterPage() {
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <h1>Nye hytter</h1>
         <NewCabinsGrid />

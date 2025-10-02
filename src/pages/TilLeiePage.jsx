@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LogoHeader from '../components/nav/LogoHeader';
-import Header from "../components/nav/Header";
+import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
 import styled from "styled-components";
 import supabase from "../lib/supabaseClient";
@@ -241,8 +240,7 @@ export default function TilLeiePage() {
 
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <h1>Til leie</h1>
 

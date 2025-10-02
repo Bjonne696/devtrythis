@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PageWrapper, MainContent } from "../styles/layout/pageStyles.js";
-import Header from '../components/nav/Header.jsx';
+import Navigation from '../components/nav/Navigation.jsx';
 import Footer from '../components/nav/Footer.jsx';
-import LogoHeader from '../components/nav/LogoHeader.jsx';
 import {
   FormWrapper,
   FormTitle,
@@ -106,8 +105,7 @@ export default function KontaktPage() {
 
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <FormWrapper>
           <FormTitle>Kontakt Oss</FormTitle>

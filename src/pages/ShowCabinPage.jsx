@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import supabase from "../lib/supabaseClient";
 import { getPublicUrl } from "../lib/storage";
 import "leaflet/dist/leaflet.css";
-import LogoHeader from "../components/nav/LogoHeader";
-import Header from "../components/nav/Header";
+import Navigation from "../components/nav/Navigation";
 import CabinImages from "../components/cabins/CabinImages";
 import CabinDetails from "../components/cabins/CabinDetails";
 import CabinOwner from "../components/cabins/CabinOwner";
@@ -80,8 +79,7 @@ export default function ShowCabinPage() {
 
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <h1>{cabin.title || "Uten tittel"}</h1>
         <CabinImages imageUrls={cabin.image_urls} />

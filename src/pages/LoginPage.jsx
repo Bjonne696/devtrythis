@@ -1,6 +1,5 @@
 import React from 'react';
-import LogoHeader from '../components/nav/LogoHeader';
-import Header from '../components/nav/Header';
+import Navigation from '../components/nav/Navigation';
 import Footer from '../components/nav/Footer';
 import SignIn from '../components/auth/SignIn';
 import { PageWrapper, MainContent } from "../styles/layout/pageStyles";
@@ -8,8 +7,7 @@ import { PageWrapper, MainContent } from "../styles/layout/pageStyles";
 export default function LoginPage() {
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <SignIn />
       </MainContent>

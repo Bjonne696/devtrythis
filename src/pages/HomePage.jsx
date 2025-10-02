@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LogoHeader from "../components/nav/LogoHeader";
-import Header from "../components/nav/Header";
+import Navigation from "../components/nav/Navigation";
 import Footer from "../components/nav/Footer";
 import CabinCarousel from "../components/cabins/CabinCarousel";
 import supabase from "../lib/supabaseClient";
@@ -101,8 +100,7 @@ export default function HomePage() {
 
   return (
     <PageWrapper>
-      <LogoHeader />
-      <Header />
+      <Navigation />
       <MainContent>
         <h1>Velkommen til Berge Hyttene</h1>
         <CabinCarousel />
