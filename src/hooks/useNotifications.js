@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 export function useNotifications(userId) {
   const [count, setCount] = useState(0);
@@ -29,7 +29,7 @@ export function useNotifications(userId) {
 
         const cabinIds = cabins.map(c => c.id);
 
-        const { data: bookings, error: bookingsError } = await supabase
+        const { count: pendingCount, error: bookingsError } = await supabase
           .from('booking_requests')
           .select('id', { count: 'exact', head: true })
           .in('cabin_id', cabinIds)
@@ -39,7 +39,7 @@ export function useNotifications(userId) {
           console.error('Error fetching notifications:', bookingsError);
           setCount(0);
         } else {
-          setCount(bookings || 0);
+          setCount(pendingCount || 0);
         }
       } catch (error) {
         console.error('Error in useNotifications:', error);
