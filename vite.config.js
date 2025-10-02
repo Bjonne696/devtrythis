@@ -8,7 +8,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5000,
     strictPort: true,
-    allowedHosts: ['all', '85432cff-5bb4-4d70-847f-821f1b2a7707.spock.prod.repl.run', '38891101-0b98-4d1c-a4dc-d56b3757b81e-00-2jy3vo3frlgct.spock.replit.dev', 'bergehyttene.replit.app'],
+    hmr: {
+      clientPort: 443,
+    },
     headers: {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
@@ -18,7 +20,6 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: 5000,
-    strictPort: true,
-    allowedHosts: ['bergehyttene.replit.app']
+    strictPort: true
   }
 })
