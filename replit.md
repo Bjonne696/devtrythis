@@ -134,6 +134,25 @@ All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests
 ## UI/UX Components
 The design system includes reusable components for forms, modals, buttons, and data displays. Interactive features include date range pickers for booking, star rating components, interactive maps using Leaflet, and responsive grid layouts for cabin listings.
 
+### User Profile System
+The user profile page (Min Profil) provides comprehensive user and booking management organized into distinct sections:
+
+**Profile Sections:**
+- **Mine annonser** (My Listings): Displays all cabins owned by the user
+- **Innkommende forespørsler** (Incoming Requests): Shows pending booking requests for the user's cabins (cabin owners only)
+- **Fremtidige leieforhold** (Upcoming Rentals): Displays approved future bookings where the user is the renter
+  - Filters bookings with start_date >= current date
+  - Shows cabin details (name, location, dates, price, image)
+  - Includes owner contact information with mailto link
+  - "Se hytteside" button navigates to cabin detail page
+  - Real-time updates via useUpcomingRentals custom hook
+- **Tidligere leid** (Previously Rented): Lists past rentals (end_date < current date)
+  - Sorted by most recent first
+  - Includes review functionality (add/delete reviews)
+  - Shows review status for each cabin
+
+The profile system uses custom hooks for data fetching (useUpcomingRentals) and integrates with Supabase real-time subscriptions for live updates.
+
 ### Navigation System
 The application features an optimized, single-bar navigation system (Navigation.jsx) that combines logo, navigation links, and authentication controls in one compact header:
 
