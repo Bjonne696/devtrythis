@@ -14,8 +14,8 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5173
-externalPort = 80
+localPort = 35145
+externalPort = 3000
 
 [workflows]
 runButton = "Project"
@@ -36,19 +36,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Server"
-
-[[workflows.workflow]]
-name = "Development Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
+args = "Server"
 
 [[workflows.workflow]]
 name = "Preview Build"
@@ -58,6 +46,18 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run preview"
+
+[[workflows.workflow]]
+name = "Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [agent]
 expertMode = true
