@@ -2,6 +2,25 @@
 
 Berge-Hyttene is a Norwegian cabin rental platform built with React and Vite. The application allows users to browse available cabins, make booking requests, and manage their properties. It's designed as a marketplace where cabin owners can list their properties and users can search and book accommodations. The platform includes user authentication, profile management, and a comprehensive booking system with review functionality.
 
+# Setup Instructions
+
+## Required Environment Variables
+
+This application requires Supabase credentials to function. Add the following environment variables in the Secrets tool (🔒 icon in the left sidebar):
+
+1. `VITE_SUPABASE_URL` - Your Supabase project URL
+2. `VITE_SUPABASE_ANON_KEY` - Your Supabase anonymous/public key
+
+To get these values:
+1. Go to your [Supabase Dashboard](https://supabase.com/dashboard)
+2. Select your project (or create a new one)
+3. Go to Settings > API
+4. Copy the Project URL and anon/public key
+
+## Running the Application
+
+The application is configured to run automatically with the workflow. It will start on port 5000 and be accessible through the Replit webview.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
