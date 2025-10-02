@@ -163,6 +163,65 @@ export const AuthButton = styled.button`
   }
 `;
 
+export const AvatarContainer = styled.div`
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  ${media.md} {
+    width: 36px;
+    height: 36px;
+  }
+`;
+
+export const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid ${colors.primary};
+`;
+
+export const AvatarPlaceholder = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: ${colors.primary};
+  color: ${colors.white};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: ${typography.fontWeights.bold};
+  font-size: ${typography.fontSizes.xs};
+  border: 2px solid ${colors.primary};
+`;
+
+export const NotificationBadge = styled.div`
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: ${colors.error};
+  color: ${colors.white};
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: ${typography.fontWeights.bold};
+  padding: 2px;
+  border: 2px solid ${colors.background};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+`;
+
 export const HamburgerButton = styled.button`
   display: none;
   background: none;

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
+import UserMenu from "./UserMenu";
 import {
   NavBar,
   NavContainer,
@@ -100,6 +101,7 @@ export default function Navigation() {
           <HamburgerButton onClick={toggleMenu}>
             {isMenuOpen ? '✕' : '☰'}
           </HamburgerButton>
+          {user && <UserMenu />}
           {user ? (
             <AuthButton $isLogout onClick={handleLogout}>
               Logg ut
@@ -112,6 +114,11 @@ export default function Navigation() {
         </AuthSection>
 
         <MobileMenu $isOpen={isMenuOpen}>
+          {user && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+              <UserMenu />
+            </div>
+          )}
           <NavList>
             <NavItem>
               <NavLink to="/" $active={location.pathname === "/"} onClick={closeMenu}>
