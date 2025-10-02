@@ -11,7 +11,7 @@ import {
 
 // Combined Navigation Bar
 export const NavBar = styled.nav`
-  background-color: ${colors.secondary};
+  background-color: ${colors.background};
   padding: ${spacing.sm} ${spacing.lg};
   position: sticky;
   top: 0;
