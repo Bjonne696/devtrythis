@@ -6,6 +6,7 @@ import MyCabins from "../cabins/MyCabins";
 import AvatarUploader from "./AvatarUploader";
 import OwnerRequests from "../bookings/OwnerRequests";
 import AddReviewForm from "../reviews/AddReviewForm";
+import { useUpcomingRentals } from "../../hooks/useUpcomingRentals";
 import {
   ProfileWrapper,
   TopSection,
@@ -32,13 +33,13 @@ export default function ProfileData() {
   const [editAbout, setEditAbout] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [approvedBookings, setApprovedBookings] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [incomingReviews, setIncomingReviews] = useState([]);
   const [userCabins, setUserCabins] = useState([]);
   const [pastBookings, setPastBookings] = useState([]);
 
   const navigate = useNavigate();
+  const { rentals: upcomingRentals, loading: loadingRentals } = useUpcomingRentals(user?.id);
 
   const fetchProfile = async () => {
     if (!user?.id) return;
@@ -62,16 +63,19 @@ export default function ProfileData() {
     }
   };
 
-  const fetchApprovedBookings = async () => {
+  const fetchPastBookings = async () => {
+    const today = new Date().toISOString().split('T')[0];
+    
     const { data, error } = await supabase
       .from("booking_requests")
       .select(`id, start_date, end_date, cabins (id, title, location, image_urls, owner_id)`)
       .eq("user_id", user.id)
-      .eq("status", "approved");
+      .eq("status", "approved")
+      .lt("end_date", today)
+      .order("end_date", { ascending: false });
 
     if (!error) {
-      setApprovedBookings(data);
-      setPastBookings(data);
+      setPastBookings(data || []);
     }
   };
 
@@ -128,7 +132,7 @@ export default function ProfileData() {
 
   useEffect(() => {
     if (user?.id) {
-      fetchApprovedBookings();
+      fetchPastBookings();
       fetchUserReviews();
       fetchIncomingReviews();
       fetchUserCabins();
@@ -241,6 +245,56 @@ export default function ProfileData() {
         <SectionHeading>Innkommende forespørsler</SectionHeading>
         <SectionContent>
           <OwnerRequests />
+        </SectionContent>
+      </ProfileSection>
+
+      <ProfileSection>
+        <SectionHeading>Fremtidige leieforhold</SectionHeading>
+        <SectionContent>
+          {loadingRentals ? (
+            <p>Laster...</p>
+          ) : upcomingRentals.length > 0 ? (
+            upcomingRentals.map((rental) => (
+              <StyledCard key={rental.id}>
+                <h4>{rental.cabins?.title || "Hytte uten navn"}</h4>
+                <p>
+                  {new Date(rental.start_date).toLocaleDateString()} –{" "}
+                  {new Date(rental.end_date).toLocaleDateString()}
+                </p>
+                <p>{rental.cabins?.location}</p>
+                {rental.cabins?.price_per_night && (
+                  <p>Pris per natt: {rental.cabins.price_per_night} kr</p>
+                )}
+
+                {rental.cabins?.image_urls?.[0] && (
+                  <CabinImage
+                    src={rental.cabins.image_urls[0]}
+                    alt="Hyttebilde"
+                  />
+                )}
+
+                {rental.cabins?.profiles && (
+                  <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#666" }}>
+                    Eier: {rental.cabins.profiles.name} {rental.cabins.profiles.last_name}
+                    {rental.cabins.profiles.email && (
+                      <> • <a href={`mailto:${rental.cabins.profiles.email}`} style={{ color: "#2b6cb0" }}>
+                        Kontakt eier
+                      </a></>
+                    )}
+                  </p>
+                )}
+
+                <ActionButton 
+                  onClick={() => navigate(`/hytte/${rental.cabins.id}`)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Se hytteside
+                </ActionButton>
+              </StyledCard>
+            ))
+          ) : (
+            <p>Ingen fremtidige leieforhold funnet.</p>
+          )}
         </SectionContent>
       </ProfileSection>
 
