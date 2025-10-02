@@ -140,17 +140,25 @@ The application features an optimized, single-bar navigation system (Navigation.
 **Desktop Layout:**
 - Left: Compact logo (50px height)
 - Center: Horizontal navigation links (Hjem, Til leie, Nye Hytter, Populære, Kontakt, Om oss)
-- Right: Login/Logout button
+- Right: User avatar with notification badge (when logged in) + Login/Logout button
 - Conditional links: "Min Profil" (logged-in users), "Admin" (admin role only)
 - Active route highlighting with background color
 - Total height: ~60px (50% reduction from previous two-bar layout)
 
 **Mobile Layout (< 768px):**
 - Logo on left, hamburger menu on right
-- Expandable mobile menu with all navigation links + auth button
+- Expandable mobile menu with user avatar + notification badge at top, followed by navigation links + auth button
 - Full-width touch targets for optimal mobile UX
 - Menu auto-closes after navigation
 - Auth controls accessible in mobile menu (Logg inn/Logg ut as last menu item)
+
+**User Avatar & Notifications:**
+- Displays user's profile picture (32px circular) or initials placeholder when logged in
+- Red notification badge appears on avatar when cabin owners have pending booking requests
+- Badge shows count (1-9) or "9+" for more than 9 pending requests
+- Real-time updates via Supabase subscription when booking requests change
+- Click on avatar navigates to user profile page
+- useNotifications hook monitors pending requests for all cabins owned by the logged-in user
 
 The Navigation component replaced the previous dual-header system (LogoHeader + Header), reducing vertical space usage and improving user experience across all device sizes.
 
