@@ -134,6 +134,26 @@ All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests
 ## UI/UX Components
 The design system includes reusable components for forms, modals, buttons, and data displays. Interactive features include date range pickers for booking, star rating components, interactive maps using Leaflet, and responsive grid layouts for cabin listings.
 
+### Navigation System
+The application features an optimized, single-bar navigation system (Navigation.jsx) that combines logo, navigation links, and authentication controls in one compact header:
+
+**Desktop Layout:**
+- Left: Compact logo (50px height)
+- Center: Horizontal navigation links (Hjem, Til leie, Nye Hytter, Populære, Kontakt, Om oss)
+- Right: Login/Logout button
+- Conditional links: "Min Profil" (logged-in users), "Admin" (admin role only)
+- Active route highlighting with background color
+- Total height: ~60px (50% reduction from previous two-bar layout)
+
+**Mobile Layout (< 768px):**
+- Logo on left, hamburger menu on right
+- Expandable mobile menu with all navigation links + auth button
+- Full-width touch targets for optimal mobile UX
+- Menu auto-closes after navigation
+- Auth controls accessible in mobile menu (Logg inn/Logg ut as last menu item)
+
+The Navigation component replaced the previous dual-header system (LogoHeader + Header), reducing vertical space usage and improving user experience across all device sizes.
+
 ## State Management
 The application uses React's built-in state management with hooks (useState, useEffect) for component-level state. Data fetching is handled through custom hooks and utility functions that interact with the Supabase client.
 
