@@ -25,6 +25,8 @@ The application is configured to run automatically with the workflow. It will st
 
 Preferred communication style: Simple, everyday language.
 
+**Important:** This is a development-only folder. Do NOT publish/deploy from this Repl. The user will copy code to a production folder when ready.
+
 # System Architecture
 
 ## Frontend Architecture
