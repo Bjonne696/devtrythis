@@ -125,7 +125,13 @@ export default function BookingRequestModal({ cabinId, onClose }) {
 
     if (insertError) {
       console.error("Booking insert error:", insertError);
-      setError("Kunne ikke sende forespørselen. Vennligst prøv igjen eller kontakt support hvis problemet fortsetter.");
+      
+      // Sjekk om feilen er duplikat constraint (fra database unique index)
+      if (insertError.code === '23505' || insertError.message?.includes('unique_pending_booking_per_user')) {
+        setError("Du har allerede sendt en forespørsel for disse datoene. Vennligst vent på svar fra utleier.");
+      } else {
+        setError("Kunne ikke sende forespørselen. Vennligst prøv igjen eller kontakt support hvis problemet fortsetter.");
+      }
     } else {
       // Send e-post-notifikasjon til hytte-eier
       try {

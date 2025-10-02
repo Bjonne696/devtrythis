@@ -17,6 +17,39 @@ To get these values:
 3. Go to Settings > API
 4. Copy the Project URL and anon/public key
 
+## Required Database Setup
+
+**IMPORTANT:** The following SQL commands must be run in Supabase SQL Editor for the booking system to work correctly:
+
+1. **Fix booking overlap trigger** (prevents UUID/integer type mismatch):
+```sql
+CREATE OR REPLACE FUNCTION public.check_booking_overlap()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $function$
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+    FROM booking_requests 
+    WHERE cabin_id = NEW.cabin_id 
+      AND status = 'approved'
+      AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000'::uuid)
+      AND (NEW.start_date, NEW.end_date) OVERLAPS (start_date, end_date)
+  ) THEN
+    RAISE EXCEPTION 'Booking overlapper med eksisterende booking';
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+```
+
+2. **Prevent duplicate pending requests** (prevents spam/race conditions):
+```sql
+CREATE UNIQUE INDEX unique_pending_booking_per_user 
+ON booking_requests (cabin_id, user_id, start_date, end_date) 
+WHERE status = 'pending';
+```
+
 ## Running the Application
 
 The application is configured to run automatically with the workflow. It will start on port 5000 and be accessible through the Replit webview.
@@ -48,11 +81,20 @@ The application uses Supabase as the primary backend service, providing PostgreS
 File storage is handled through Supabase Storage for user avatars and cabin images, with utility functions for generating public URLs.
 
 ### Booking System & Validation
-The booking system implements a two-layer validation approach:
-1. **Frontend validation**: Fetches approved bookings and disables occupied dates in the date picker, with client-side overlap checking before submission
-2. **Database validation**: A PostgreSQL trigger (`prevent_booking_overlap`) runs the `check_booking_overlap()` function on INSERT/UPDATE to prevent conflicting bookings at the database level
+The booking system implements comprehensive multi-layer validation:
 
-All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests.cabin_id). Booking statuses: 'pending', 'approved', 'rejected' - only 'approved' bookings block dates.
+**1. Frontend Validation (UX layer)**
+- Fetches approved bookings and disables occupied dates in the date picker
+- Client-side overlap checking before submission
+- Checks for duplicate pending requests from the same user before submission
+- Shows user-friendly error messages in Norwegian
+
+**2. Database Validation (Security layer)**
+- **Overlap prevention**: PostgreSQL trigger (`prevent_booking_overlap`) runs `check_booking_overlap()` function on INSERT/UPDATE to prevent conflicting approved bookings
+- **Duplicate prevention**: Unique index (`unique_pending_booking_per_user`) prevents multiple pending requests from same user with identical dates for same cabin
+- Frontend gracefully handles constraint violations with appropriate user messages (error code 23505)
+
+All database IDs use UUID type (cabins.id, booking_requests.id, booking_requests.cabin_id). Booking statuses: 'pending', 'approved', 'rejected' - only 'approved' bookings block dates from other users.
 
 ## UI/UX Components
 The design system includes reusable components for forms, modals, buttons, and data displays. Interactive features include date range pickers for booking, star rating components, interactive maps using Leaflet, and responsive grid layouts for cabin listings.
