@@ -1,0 +1,41 @@
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import MinProfilPage from './pages/MinProfilPage';
+import AdminPage from './pages/AdminPage.jsx';
+import KontaktPage from './pages/KontaktPage.jsx';
+import OmOssPage from './pages/OmOssPage.jsx';
+import TilLeiePage from './pages/TilLeiePage';
+import NyeHytterPage from './pages/NyeHytterPage';
+import PopularPage from './pages/PopularPage';
+import NyHyttePage from './pages/NyHyttePage';
+import ShowCabinPage from "./pages/ShowCabinPage";
+import PersonvernPage from './pages/PersonvernPage';
+import { AuthProvider } from './contexts/AuthContext.jsx';
+import CookieBanner from './components/ui/CookieBanner';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/min-profil" element={<MinProfilPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/kontakt" element={<KontaktPage />} />
+        <Route path="/om-oss" element={<OmOssPage />} />
+        <Route path="/til-leie" element={<TilLeiePage />} />
+        <Route path="/nye-hytter" element={<NyeHytterPage />} />
+        <Route path="/popular" element={<PopularPage />} />
+        <Route path="/ny-hytte" element={<NyHyttePage />} />
+        <Route path="/hytte/:id" element={<ShowCabinPage />} />
+        <Route path="/personvern" element={<PersonvernPage />} />
+      </Routes>
+      <CookieBanner />
+    </AuthProvider>
+  );
+}
+
+export default App;
