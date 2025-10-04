@@ -1,0 +1,96 @@
+Task:
+Implement a secure subscription-based payment system for cabin owners (hosts) who list cabins on the platform. The feature should require each host to have an active paid subscription before their cabin becomes visible to renters.
+
+🔧 Tech context
+
+Stack: React 19 (Vite), styled-components, React Router 7
+
+Backend: Supabase (Postgres with RLS), Supabase Edge Functions (Deno), @supabase/supabase-js v2
+
+Pages/components affected:
+
+NewCabinForm.jsx
+
+NyHyttePage.jsx
+
+MyProfileData.jsx (optional)
+
+PersonvernPage.jsx
+
+🧭 Business logic & goals
+
+Each host must pay a monthly subscription (default NOK 49/month) to publish or keep their cabin active.
+
+Use a Norwegian payment provider, preferably Vipps MobilePay Recurring.
+
+If a host cancels or payment fails, the cabin listing becomes paused/inactive.
+
+Cabin visibility and search results must depend on the billing status.
+
+The system should allow for future replacement of the payment provider (use a clean abstraction layer).
+
+💰 Payment flow
+
+When a host creates or edits a cabin in NewCabinForm.jsx or NyHyttePage.jsx, check if they have an active subscription.
+
+If not active, show a paywall:
+“Activate your listing for NOK 49/month via Vipps MobilePay.”
+
+When the user clicks “Activate listing,” generate a new subscription or “agreement” via Vipps and redirect to their payment flow.
+
+When Vipps confirms payment (via webhook or callback), mark the subscription and cabin as active.
+
+If the payment fails, the webhook should automatically set the cabin to paused/inactive.
+
+If the host cancels, keep the listing active until the current paid period ends, then pause it.
+
+🧩 Functional components
+
+Frontend:
+
+Add paywall banner with “Activate listing” button.
+
+Display subscription status in MyProfileData.jsx (“Active”, “Pending”, “Past due”, “Canceled”).
+
+Add a short “Payments & Privacy” section in PersonvernPage.jsx describing what payment data is stored (no card details, only subscription metadata).
+
+Backend:
+
+Create database tables for merchant settings, subscriptions, and payment events.
+
+Create secure Supabase Edge Functions for:
+
+create-agreement: initiates the Vipps flow and returns a redirect URL
+
+webhook-payments: handles payment success/failure notifications from Vipps
+
+(optional) cancel-subscription: allows the host to stop the recurring payment
+
+Realtime updates:
+Use Supabase Realtime or polling to update cabin and subscription status instantly after Vipps webhook events.
+
+🔐 Security & compliance
+
+All payment logic must run in Edge Functions using a service role key — never from the client.
+
+Webhooks must be signature-verified and idempotent (safe against duplicate events).
+
+Never store card or sensitive payment data; only store provider IDs, status, and timestamps.
+
+Respect GDPR and include a privacy paragraph explaining retention and export/deletion rights.
+
+Follow the principle of least privilege in RLS policies and API routes.
+
+Ensure no cabin can be published or visible unless its billing status is active.
+
+⚙️ Behavior rules & edge cases
+
+A host can have only one active subscription per cabin.
+
+If a host starts but does not finish the payment flow, mark the subscription as “pending” and show a “Resume activation” button.
+
+If a payment fails or a webhook indicates past_due, automatically pause the cabin listing.
+
+Prevent simultaneous creation of duplicate subscriptions for the same cabin.
+
+Support both mobile and desktop seamlessly; ensure responsive layout and simple UX.
