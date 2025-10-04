@@ -28,7 +28,7 @@ const facilitiesList = [
 ];
 
 export default function NewCabinForm() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -45,6 +45,9 @@ export default function NewCabinForm() {
   const [showPaywall, setShowPaywall] = useState(false);
   
   const { hasActiveSubscription, loading: subLoading, refetch: refetchSubscription } = useSubscription(user?.id);
+  
+  const isAdmin = profile?.role === 'admin';
+  const canPublish = isAdmin || hasActiveSubscription;
 
   const validateForm = () => {
     const newErrors = {};
@@ -181,7 +184,7 @@ export default function NewCabinForm() {
           facilities,
           image_urls: uploadedImageUrls,
           is_premium: isPremium,
-          is_active: hasActiveSubscription,
+          is_active: canPublish,
         },
       ])
       .select()
@@ -195,12 +198,15 @@ export default function NewCabinForm() {
 
     setLoading(false);
 
-    if (!hasActiveSubscription) {
+    if (!canPublish) {
       setTempCabinId(cabinData.id);
       setShowPaywall(true);
       alert("Hytta er opprettet! Aktiver abonnement for å gjøre den synlig for leietakere.");
     } else {
-      alert("Hytta er nå publisert og synlig!");
+      const successMessage = isAdmin 
+        ? "Hytta er nå publisert og synlig! (Admin-konto - ingen betaling kreves)"
+        : "Hytta er nå publisert og synlig!";
+      alert(successMessage);
       resetForm();
     }
   };
@@ -247,7 +253,20 @@ export default function NewCabinForm() {
     <FormWrapper>
       <h1>Opprett ny hytteannonse</h1>
       
-      {!hasActiveSubscription && !subLoading && (
+      {isAdmin && (
+        <div style={{ 
+          background: '#d4edda', 
+          border: '1px solid #28a745', 
+          borderRadius: '6px', 
+          padding: '1rem', 
+          marginBottom: '1.5rem',
+          color: '#155724'
+        }}>
+          <strong>✓ Admin-konto:</strong> Hytta vil bli automatisk publisert uten behov for abonnement.
+        </div>
+      )}
+      
+      {!canPublish && !subLoading && (
         <div style={{ 
           background: '#fff3cd', 
           border: '1px solid #ffc107', 
