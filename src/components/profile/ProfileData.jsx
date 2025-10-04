@@ -6,6 +6,7 @@ import MyCabins from "../cabins/MyCabins";
 import AvatarUploader from "./AvatarUploader";
 import OwnerRequests from "../bookings/OwnerRequests";
 import AddReviewForm from "../reviews/AddReviewForm";
+import SubscriptionStatus from "../subscription/SubscriptionStatus";
 import { useUpcomingRentals } from "../../hooks/useUpcomingRentals";
 import {
   ProfileWrapper,
@@ -233,6 +234,15 @@ export default function ProfileData() {
           )}
         </Box>
       </MiddleSection>
+
+      {isOwner && (
+        <ProfileSection>
+          <SectionHeading>Abonnement</SectionHeading>
+          <SectionContent>
+            <SubscriptionStatus userId={user?.id} />
+          </SectionContent>
+        </ProfileSection>
+      )}
 
       <ProfileSection>
         <SectionHeading>Mine annonser</SectionHeading>

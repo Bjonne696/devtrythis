@@ -1,6 +1,6 @@
 # Overview
 
-Berge-Hyttene is a Norwegian cabin rental platform built with React and Vite. The application allows users to browse available cabins, make booking requests, and manage their properties. It's designed as a marketplace where cabin owners can list their properties and users can search and book accommodations. The platform includes user authentication, profile management, and a comprehensive booking system with review functionality.
+Berge-Hyttene is a Norwegian cabin rental platform built with React and Vite. The application allows users to browse available cabins, make booking requests, and manage their properties. It's designed as a marketplace where cabin owners can list their properties and users can search and book accommodations. The platform includes user authentication, profile management, a comprehensive booking system with review functionality, and a subscription-based payment system for cabin owners using Vipps MobilePay Recurring.
 
 # Setup Instructions
 
@@ -110,9 +110,56 @@ The application uses Supabase as the primary backend service, providing PostgreS
 - Cabin listings with detailed property information, images, and pricing
 - Booking requests and reservations (with two-layer overlap validation)
 - Review and rating system
+- Subscriptions and payment events for cabin monetization
 - Admin data for platform management
 
 File storage is handled through Supabase Storage for user avatars and cabin images, with utility functions for generating public URLs.
+
+### Subscription & Payment System
+The platform implements a secure subscription-based payment system requiring cabin owners to have an active paid subscription before their listings become visible to renters.
+
+**Architecture:**
+- **Backend**: Supabase Edge Functions (Deno) handle payment logic securely
+- **Payment Provider**: Vipps MobilePay Recurring with abstraction layer for provider flexibility
+- **Security**: HMAC-SHA256 webhook signature verification (mandatory `VIPPS_WEBHOOK_SECRET`)
+
+**Database Tables:**
+- `subscriptions`: Tracks owner subscriptions (status, plan, billing periods)
+- `payment_events`: Idempotent webhook event logging
+- `merchant_settings`: Encrypted payment provider credentials
+- `cabins.is_active`: Boolean flag controlling cabin visibility
+- `cabins.subscription_id`: Links cabin to active subscription
+
+**Subscription Plans:**
+- **Standard (99 NOK/month)**: Basic cabin listing visibility
+- **Premium (149 NOK/month)**: Enhanced listing features
+
+**Payment Flow:**
+1. Host creates cabin (initially inactive)
+2. System shows subscription paywall
+3. Host selects plan and pays via Vipps
+4. Webhook activates subscription and cabin
+5. Cabin becomes visible to renters
+
+**Edge Functions:**
+- `create-agreement`: Initiates Vipps subscription
+- `webhook-payments`: Handles payment callbacks with signature verification
+- `cancel-subscription`: Cancels recurring payments (grace period until period end)
+
+**Security Features:**
+- All payment logic in Edge Functions (service role only)
+- Mandatory webhook signature verification (no bypass)
+- Idempotent webhook processing via provider event IDs
+- RLS policies protect subscription data
+- No sensitive payment data stored
+
+**Cabin Visibility:**
+- Public pages filter `is_active = true` (HomePage, TilLeiePage, PopularPage, NyeHytterPage)
+- Owners can view their own inactive cabins
+- Payment failure or cancellation deactivates cabin
+- Cancellation grace period: cabin active until current billing period ends
+
+See `SUBSCRIPTION_SYSTEM.md` and `supabase/SETUP.md` for complete implementation details.
 
 ### Booking System & Validation
 The booking system implements comprehensive multi-layer validation:
@@ -188,7 +235,9 @@ The application uses React's built-in state management with hooks (useState, use
 
 ## Backend Services
 - **Supabase**: Primary backend-as-a-service providing PostgreSQL database, authentication, real-time subscriptions, and file storage
+- **Supabase Edge Functions**: Serverless Deno functions for payment processing and webhook handling
 - **Supabase Storage**: Object storage for user avatars and cabin images
+- **Vipps MobilePay**: Norwegian payment provider for recurring subscriptions (with abstraction layer)
 
 ## Frontend Libraries
 - **React 19**: Core UI framework with latest features
