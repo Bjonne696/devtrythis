@@ -184,7 +184,6 @@ export default function NewCabinForm() {
           facilities,
           image_urls: uploadedImageUrls,
           is_premium: isPremium,
-          is_active: canPublish,
         },
       ])
       .select()

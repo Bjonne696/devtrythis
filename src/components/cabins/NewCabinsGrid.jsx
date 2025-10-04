@@ -27,7 +27,6 @@ export default function NewCabinsGrid() {
       const { data: cabins, error: cabinsError } = await supabase
         .from('cabins')
         .select('*')
-        .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(8);
 

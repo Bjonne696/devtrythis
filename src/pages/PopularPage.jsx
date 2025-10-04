@@ -43,8 +43,7 @@ export default function PopularPage() {
     const fetchPopularCabins = async () => {
       const { data: cabins, error: cabinsError } = await supabase
         .from('cabins')
-        .select('*')
-        .eq('is_active', true);
+        .select('*');
 
       if (cabinsError || !cabins) {
         console.error('Feil ved henting av hytter:', cabinsError?.message);

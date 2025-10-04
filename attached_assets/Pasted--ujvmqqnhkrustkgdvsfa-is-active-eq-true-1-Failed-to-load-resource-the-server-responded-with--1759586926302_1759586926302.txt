@@ -1,0 +1,32 @@
+
+﻿
+ujvmqqnhkrustkgdvsfa…is_active=eq.true:1 
+ Failed to load resource: the server responded with a status of 400 ()
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+ujvmqqnhkrustkgdvsfa…is_active=eq.true:1 
+ Failed to load resource: the server responded with a status of 400 ()
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true&order=created_at.desc&limit=8 400 (Bad Request)
+hook.js:608 Feil ved henting av nye hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true&order=created_at.desc&limit=8 400 (Bad Request)
+hook.js:608 Feil ved henting av nye hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
+fetch.ts:15 
+ GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/cabins?select=*&is_active=eq.true 400 (Bad Request)
+hook.js:608 Feil ved henting av hytter: column cabins.is_active does not exist
