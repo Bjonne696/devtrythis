@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../../lib/supabaseClient";
+import DiscountCodeManager from "./DiscountCodeManager";
 import {
   Table,
   Th,
@@ -58,6 +59,8 @@ export default function AdminData() {
 
   return (
     <AdminWrapper>
+      <DiscountCodeManager />
+
       <SubHeading>Alle brukere</SubHeading>
       <Table>
         <thead>

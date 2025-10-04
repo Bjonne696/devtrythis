@@ -109,10 +109,63 @@ const InfoBox = styled.div`
   font-size: 0.95rem;
 `;
 
+const DiscountBox = styled.div`
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+`;
+
+const DiscountInput = styled.input`
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4b3832;
+  text-transform: uppercase;
+  
+  &:focus {
+    outline: none;
+    border-color: white;
+  }
+`;
+
+const ValidateButton = styled.button`
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: white;
+    color: #667eea;
+  }
+`;
+
+const SuccessBox = styled.div`
+  background: rgba(40, 167, 69, 0.3);
+  border: 2px solid #28a745;
+  color: white;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-weight: 500;
+`;
+
 export default function SubscriptionPaywall({ cabinId, onSuccess }) {
   const [selectedPlan, setSelectedPlan] = useState('basic');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [discountCode, setDiscountCode] = useState('');
+  const [validatedDiscount, setValidatedDiscount] = useState(null);
 
   const plans = {
     basic: {
@@ -138,12 +191,37 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
     },
   };
 
+  const handleValidateDiscount = () => {
+    const mockCodes = [
+      {
+        code: 'SUMMER2025',
+        duration_months: 2,
+        valid_until: '2025-12-31',
+        is_active: true,
+      }
+    ];
+
+    const code = mockCodes.find(c => 
+      c.code === discountCode.toUpperCase() && 
+      c.is_active && 
+      new Date(c.valid_until) >= new Date()
+    );
+
+    if (code) {
+      setValidatedDiscount(code);
+      setError(null);
+    } else {
+      setError('Ugyldig eller utløpt rabattkode');
+      setValidatedDiscount(null);
+    }
+  };
+
   const handleActivate = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const result = await createSubscription(cabinId, selectedPlan);
+      const result = await createSubscription(cabinId, selectedPlan, validatedDiscount?.code);
       
       // For mock provider, the redirect URL is local
       if (result.redirectUrl.startsWith('/')) {
@@ -188,6 +266,32 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
         ))}
       </PlanSelector>
 
+      <DiscountBox>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
+          🎟️ Har du en rabattkode?
+        </label>
+        <DiscountInput
+          type="text"
+          value={discountCode}
+          onChange={(e) => setDiscountCode(e.target.value)}
+          placeholder="Skriv inn rabattkode"
+          maxLength={20}
+        />
+        <ValidateButton 
+          type="button" 
+          onClick={handleValidateDiscount}
+          disabled={!discountCode}
+        >
+          Valider kode
+        </ValidateButton>
+      </DiscountBox>
+
+      {validatedDiscount && (
+        <SuccessBox>
+          ✅ Rabattkode aktivert! Du får <strong>{validatedDiscount.duration_months} måned{validatedDiscount.duration_months > 1 ? 'er' : ''} gratis</strong> 🎉
+        </SuccessBox>
+      )}
+
       <InfoBox>
         💳 Betaling via Vipps MobilePay. Du kan kansellere når som helst. 
         Ingen bindingstid.
@@ -196,7 +300,10 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
       <ActivateButton onClick={handleActivate} disabled={loading}>
-        {loading ? 'Aktiverer...' : `Aktiver med Vipps (${plans[selectedPlan].price} NOK/mnd)`}
+        {loading ? 'Aktiverer...' : validatedDiscount 
+          ? `Aktiver med ${validatedDiscount.duration_months} måned${validatedDiscount.duration_months > 1 ? 'er' : ''} gratis` 
+          : `Aktiver med Vipps (${plans[selectedPlan].price} NOK/mnd)`
+        }
       </ActivateButton>
     </PaywallWrapper>
   );
