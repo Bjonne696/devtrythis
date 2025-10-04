@@ -54,7 +54,14 @@ Set the following secrets in Supabase Dashboard > Project Settings > Edge Functi
 ```bash
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+VIPPS_WEBHOOK_SECRET=your_vipps_webhook_secret
 ```
+
+**CRITICAL SECURITY**: The `VIPPS_WEBHOOK_SECRET` is **MANDATORY**. 
+- Webhook endpoint will reject ALL requests if secret is not configured
+- No development bypass exists - secret must be set even for testing
+- Generate a strong random secret (minimum 32 characters)
+- For local testing, use a test secret: `openssl rand -hex 32`
 
 ### 4. Configure Vipps (Optional - for production)
 

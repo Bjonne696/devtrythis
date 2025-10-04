@@ -1,27 +1,57 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createServiceClient } from '../_shared/supabase-client.ts';
+import { createHmac } from 'https://deno.land/std@0.168.0/node/crypto.ts';
 
 serve(async (req) => {
   try {
     const supabase = createServiceClient();
     
-    // Parse webhook payload
-    const payload = await req.json();
+    // Get webhook secret from environment
+    const webhookSecret = Deno.env.get('VIPPS_WEBHOOK_SECRET');
+    
+    // Get raw body for signature verification
+    const rawBody = await req.text();
+    const payload = JSON.parse(rawBody);
     const signature = req.headers.get('X-Vipps-Signature') || '';
 
-    // TODO: Verify webhook signature in production
-    // const provider = getPaymentProvider(config);
-    // if (!provider.verifyWebhookSignature(JSON.stringify(payload), signature)) {
-    //   throw new Error('Invalid webhook signature');
-    // }
+    // CRITICAL: Webhook secret is REQUIRED - no bypass allowed
+    if (!webhookSecret) {
+      console.error('VIPPS_WEBHOOK_SECRET not configured - webhook processing disabled');
+      return new Response(
+        JSON.stringify({ error: 'Webhook processing unavailable' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
-    const { agreementId, status, eventType } = payload;
+    // CRITICAL: Verify webhook signature to prevent forgery
+    const expectedSignature = createHmac('sha256', webhookSecret)
+      .update(rawBody)
+      .digest('hex');
+    
+    if (signature !== expectedSignature) {
+      console.error('Invalid webhook signature');
+      return new Response(
+        JSON.stringify({ error: 'Invalid signature' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { agreementId, status, eventType, eventId } = payload;
+
+    // CRITICAL: Reject webhooks without proper event ID
+    if (!eventId) {
+      console.error('Webhook missing eventId');
+      return new Response(
+        JSON.stringify({ error: 'Missing eventId' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Check for duplicate webhook (idempotency)
     const { data: existingEvent } = await supabase
       .from('payment_events')
       .select('id')
-      .eq('provider_event_id', payload.eventId || `${agreementId}_${Date.now()}`)
+      .eq('provider_event_id', eventId)
       .single();
 
     if (existingEvent) {
@@ -46,7 +76,7 @@ serve(async (req) => {
     await supabase.from('payment_events').insert({
       subscription_id: subscription.id,
       event_type: eventType || 'webhook_received',
-      provider_event_id: payload.eventId || `${agreementId}_${Date.now()}`,
+      provider_event_id: eventId,
       payload: payload,
     });
 
