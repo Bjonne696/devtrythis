@@ -1,0 +1,102 @@
+fetch.ts:15  GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/subscriptions?select=*&owner_id=eq.20de281d-3fc2-4054-ae76-cda8f2efd7d0&status=in.%28active%2Cpending%2Cpast_due%29&order=created_at.desc&limit=1 406 (Not Acceptable)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+fulfilled @ fetch.ts:2
+Promise.then
+step @ fetch.ts:2
+(anonymous) @ fetch.ts:2
+__awaiter6 @ fetch.ts:2
+(anonymous) @ fetch.ts:34
+then @ PostgrestBuilder.ts:101Understand this error
+fetch.ts:15  GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/subscriptions?select=*&owner_id=eq.20de281d-3fc2-4054-ae76-cda8f2efd7d0&status=in.%28active%2Cpending%2Cpast_due%29&order=created_at.desc&limit=1 406 (Not Acceptable)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+fulfilled @ fetch.ts:2
+Promise.then
+step @ fetch.ts:2
+(anonymous) @ fetch.ts:2
+__awaiter6 @ fetch.ts:2
+(anonymous) @ fetch.ts:34
+then @ PostgrestBuilder.ts:101Understand this error
+fetch.ts:15  GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/subscriptions?select=*&owner_id=eq.20de281d-3fc2-4054-ae76-cda8f2efd7d0&status=in.%28active%2Cpending%2Cpast_due%29&order=created_at.desc&limit=1 406 (Not Acceptable)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+fulfilled @ fetch.ts:2
+Promise.then
+step @ fetch.ts:2
+(anonymous) @ fetch.ts:2
+__awaiter6 @ fetch.ts:2
+(anonymous) @ fetch.ts:34
+then @ PostgrestBuilder.ts:101Understand this error
+fetch.ts:15  GET https://ujvmqqnhkrustkgdvsfa.supabase.co/rest/v1/subscriptions?select=*&owner_id=eq.20de281d-3fc2-4054-ae76-cda8f2efd7d0&status=in.%28active%2Cpending%2Cpast_due%29&order=created_at.desc&limit=1 406 (Not Acceptable)
+(anonymous) @ fetch.ts:15
+(anonymous) @ fetch.ts:46
+fulfilled @ fetch.ts:2
+Promise.then
+step @ fetch.ts:2
+(anonymous) @ fetch.ts:2
+__awaiter6 @ fetch.ts:2
+(anonymous) @ fetch.ts:34
+then @ PostgrestBuilder.ts:101Understand this error
+/ny-hytte:1 Access to fetch at 'https://ujvmqqnhkrustkgdvsfa.supabase.co/functions/v1/create-agreement' from origin 'https://c4716bd7-2ac9-4a1d-8963-429d89c3ab80-00-3u40kn526tux9.spock.replit.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.Understand this error
+useSubscription.js:91  POST https://ujvmqqnhkrustkgdvsfa.supabase.co/functions/v1/create-agreement net::ERR_FAILED
+createSubscription @ useSubscription.js:91
+await in createSubscription
+handleActivate @ SubscriptionPaywall.jsx:146
+executeDispatch @ react-dom-client.development.js:16368
+runWithFiberInDEV @ react-dom-client.development.js:1519
+processDispatchQueue @ react-dom-client.development.js:16418
+(anonymous) @ react-dom-client.development.js:17016
+batchedUpdates$1 @ react-dom-client.development.js:3262
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:16572
+dispatchEvent @ react-dom-client.development.js:20658
+dispatchDiscreteEvent @ react-dom-client.development.js:20626
+<button>
+exports.createElement @ react.development.js:1033
+(anonymous) @ StyledComponent.ts:198
+O2 @ StyledComponent.ts:199
+react-stack-bottom-frame @ react-dom-client.development.js:23863
+renderWithHooksAgain @ react-dom-client.development.js:5629
+renderWithHooks @ react-dom-client.development.js:5541
+updateForwardRef @ react-dom-client.development.js:8645
+beginWork @ react-dom-client.development.js:10861
+runWithFiberInDEV @ react-dom-client.development.js:1519
+performUnitOfWork @ react-dom-client.development.js:15132
+workLoopSync @ react-dom-client.development.js:14956
+renderRootSync @ react-dom-client.development.js:14936
+performWorkOnRoot @ react-dom-client.development.js:14419
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16216
+performWorkUntilDeadline @ scheduler.development.js:45
+<styled.button>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+SubscriptionPaywall @ SubscriptionPaywall.jsx:198
+react-stack-bottom-frame @ react-dom-client.development.js:23863
+renderWithHooksAgain @ react-dom-client.development.js:5629
+renderWithHooks @ react-dom-client.development.js:5541
+updateFunctionComponent @ react-dom-client.development.js:8897
+beginWork @ react-dom-client.development.js:10522
+runWithFiberInDEV @ react-dom-client.development.js:1519
+performUnitOfWork @ react-dom-client.development.js:15132
+workLoopSync @ react-dom-client.development.js:14956
+renderRootSync @ react-dom-client.development.js:14936
+performWorkOnRoot @ react-dom-client.development.js:14419
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16216
+performWorkUntilDeadline @ scheduler.development.js:45
+<SubscriptionPaywall>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+NewCabinForm @ NewCabinForm.jsx:243
+react-stack-bottom-frame @ react-dom-client.development.js:23863
+renderWithHooksAgain @ react-dom-client.development.js:5629
+renderWithHooks @ react-dom-client.development.js:5541
+updateFunctionComponent @ react-dom-client.development.js:8897
+beginWork @ react-dom-client.development.js:10522
+runWithFiberInDEV @ react-dom-client.development.js:1519
+performUnitOfWork @ react-dom-client.development.js:15132
+workLoopSync @ react-dom-client.development.js:14956
+renderRootSync @ react-dom-client.development.js:14936
+performWorkOnRoot @ react-dom-client.development.js:14419
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16216
+performWorkUntilDeadline @ scheduler.development.js:45Understand this error
+hook.js:608 Error creating subscription: TypeError: Failed to fetch
+    at createSubscription (useSubscription.js:91:28)
+    at async handleActivate (SubscriptionPaywall.jsx:146:22)

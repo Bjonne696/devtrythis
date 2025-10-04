@@ -52,9 +52,9 @@ export function useSubscription(userId, cabinId = null) {
         query = query.eq('cabin_id', cabinId);
       }
 
-      const { data, error: fetchError } = await query.order('created_at', { ascending: false }).limit(1).single();
+      const { data, error: fetchError } = await query.order('created_at', { ascending: false }).limit(1).maybeSingle();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows
+      if (fetchError) {
         throw fetchError;
       }
 
