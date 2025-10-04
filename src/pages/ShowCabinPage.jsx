@@ -11,13 +11,16 @@ import CabinMap from "../components/cabins/CabinMap";
 import Footer from "../components/nav/Footer";
 import { PageWrapper, MainContent, RatingSection, RatingStars } from "../styles/pages/showCabinPageStyles";
 import StarRating from "../components/ui/StarRating";
+import { useAuth } from "../contexts/AuthContext";
 
 
 export default function ShowCabinPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [cabin, setCabin] = useState(null);
   const [owner, setOwner] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
+  const [isNotActive, setIsNotActive] = useState(false);
 
   useEffect(() => {
     const fetchCabin = async () => {
@@ -33,6 +36,12 @@ export default function ShowCabinPage() {
       }
 
       if (data) {
+        // Check if cabin is inactive and user is not the owner
+        if (!data.is_active && data.owner_id !== user?.id) {
+          setIsNotActive(true);
+          return;
+        }
+        
         setCabin(data);
 
         // Fetch owner data
@@ -71,7 +80,20 @@ export default function ShowCabinPage() {
     };
 
     fetchCabin();
-  }, [id]);
+  }, [id, user]);
+
+  if (isNotActive) {
+    return (
+      <PageWrapper>
+        <Navigation />
+        <MainContent>
+          <h1>Hytte ikke tilgjengelig</h1>
+          <p>Denne hytta er for øyeblikket ikke aktiv eller publisert.</p>
+        </MainContent>
+        <Footer />
+      </PageWrapper>
+    );
+  }
 
   if (!cabin || !owner) return <p>Laster hytteinfo...</p>;
 
