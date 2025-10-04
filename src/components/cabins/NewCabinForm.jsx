@@ -6,8 +6,6 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Tooltip from "../ui/Tooltip";
 import HelpText from "../ui/HelpText";
-import SubscriptionPaywall from "../subscription/SubscriptionPaywall";
-import { useSubscription } from "../../hooks/useSubscription";
 import {
   FormWrapper,
   FormField,
@@ -41,10 +39,6 @@ export default function NewCabinForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [tempCabinId, setTempCabinId] = useState(null);
-  const [showPaywall, setShowPaywall] = useState(false);
-  
-  const { hasActiveSubscription, loading: subLoading, refetch: refetchSubscription } = useSubscription(user?.id);
 
   const validateForm = () => {
     const newErrors = {};
@@ -181,7 +175,6 @@ export default function NewCabinForm() {
           facilities,
           image_urls: uploadedImageUrls,
           is_premium: isPremium,
-          is_active: hasActiveSubscription,
         },
       ])
       .select()
@@ -193,36 +186,17 @@ export default function NewCabinForm() {
       return;
     }
 
+    alert("Hytta er nå publisert!");
     setLoading(false);
-
-    if (!hasActiveSubscription) {
-      setTempCabinId(cabinData.id);
-      setShowPaywall(true);
-      alert("Hytta er opprettet! Aktiver abonnement for å gjøre den synlig for leietakere.");
-    } else {
-      alert("Hytta er nå publisert og synlig!");
-      resetForm();
-    }
-  };
-
-  const resetForm = () => {
     setTitle("");
     setDescription("");
     setPrice("");
-    setLatitude(59.9139);
-    setLongitude(10.7522);
+    setLatitude(null);
+    setLongitude(null);
     setFiles([]);
     setFacilities([]);
     setIsPremium(false);
     setLocationInfo({ address: "", postalCode: "", city: "" });
-    setTempCabinId(null);
-    setShowPaywall(false);
-  };
-
-  const handlePaywallSuccess = async () => {
-    await refetchSubscription();
-    alert("Abonnement aktivert! Hytta er nå synlig for leietakere.");
-    resetForm();
   };
 
   const handleFacilityChange = (facility) => {
@@ -231,35 +205,9 @@ export default function NewCabinForm() {
     );
   };
 
-  if (showPaywall && tempCabinId) {
-    return (
-      <FormWrapper>
-        <h1>Aktiver din hyttelisting</h1>
-        <SubscriptionPaywall 
-          cabinId={tempCabinId} 
-          onSuccess={handlePaywallSuccess}
-        />
-      </FormWrapper>
-    );
-  }
-
   return (
     <FormWrapper>
       <h1>Opprett ny hytteannonse</h1>
-      
-      {!hasActiveSubscription && !subLoading && (
-        <div style={{ 
-          background: '#fff3cd', 
-          border: '1px solid #ffc107', 
-          borderRadius: '6px', 
-          padding: '1rem', 
-          marginBottom: '1.5rem',
-          color: '#856404'
-        }}>
-          <strong>ℹ️ Viktig:</strong> Du trenger et aktivt abonnement for at hytta skal bli synlig for leietakere. 
-          Etter at du har opprettet hytta, får du mulighet til å aktivere abonnement.
-        </div>
-      )}
       
       <HelpText>
         <strong>Velkommen til hytteoppretting!</strong><br />

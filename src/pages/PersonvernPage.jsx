@@ -33,17 +33,15 @@ export default function PersonvernPage() {
             <ListItem>Navn og kontaktinformasjon når du registrerer deg</ListItem>
             <ListItem>E-postadresse for kommunikasjon</ListItem>
             <ListItem>Booking- og leiehistorikk</ListItem>
-            <ListItem>Abonnementsdata for hytteeiere (status, plan, betalingshistorikk)</ListItem>
             <ListItem>Tekniske data som IP-adresse og nettleserinfo</ListItem>
           </List>
 
           <Subtitle>Hvordan bruker vi informasjonen?</Subtitle>
           <List>
             <ListItem>For å administrere bookinger og utleie</ListItem>
-            <ListItem>For å behandle abonnementer og betalinger for hytteeiere</ListItem>
-            <ListItem>For å kommunisere med deg om dine bookinger og abonnement</ListItem>
+            <ListItem>For å kommunisere med deg om dine bookinger</ListItem>
             <ListItem>For å forbedre våre tjenester</ListItem>
-            <ListItem>For å oppfylle juridiske forpliktelser (inkludert regnskapslov)</ListItem>
+            <ListItem>For å oppfylle juridiske forpliktelser</ListItem>
           </List>
 
           <Subtitle>Informasjonskapsler (Cookies)</Subtitle>
@@ -55,23 +53,6 @@ export default function PersonvernPage() {
             <ListItem>Å huske dine preferanser</ListItem>
             <ListItem>Å sikre at nettstedet fungerer korrekt</ListItem>
           </List>
-
-          <Subtitle>Betalinger og Abonnementer</Subtitle>
-          <TextBlock>
-            For hytteeiere som bruker vår abonnementstjeneste:
-          </TextBlock>
-          <List>
-            <ListItem>Betalinger behandles av Vipps MobilePay, en tredjeparts betalingsleverandør</ListItem>
-            <ListItem>Vi lagrer IKKE kortinformasjon eller sensitive betalingsdetaljer</ListItem>
-            <ListItem>Vi lagrer kun abonnementsstatus, betalingshistorikk (dato, beløp), og leverandør-ID</ListItem>
-            <ListItem>Betalingsdata brukes kun for å administrere abonnementet ditt og oppfylle juridiske krav</ListItem>
-            <ListItem>Vipps MobilePay har sitt eget personvernreglement som regulerer behandling av betalingsdata</ListItem>
-          </List>
-          <TextBlock>
-            <strong>Datalagring:</strong> Abonnementsdata lagres så lenge abonnementet er aktivt og i 
-            5 år etter kansellering for regnskapsmessige formål. Du kan når som helst be om en kopi 
-            av dine betalingsdata eller sletting etter lovpålagt lagringsperiode.
-          </TextBlock>
 
           <Subtitle>Dine rettigheter</Subtitle>
           <TextBlock>
