@@ -1,4 +1,6 @@
 import React from 'react';
+import Navigation from '../components/nav/Navigation';
+import Footer from '../components/nav/Footer';
 import {
   TermsContainer,
   PageTitle,
@@ -14,7 +16,9 @@ import {
 
 export default function TermsOfSale() {
   return (
-    <TermsContainer>
+    <>
+      <Navigation />
+      <TermsContainer>
       <PageTitle>Salgsbetingelser</PageTitle>
       <LastUpdated>Sist oppdatert: Oktober 2025</LastUpdated>
 
@@ -193,5 +197,7 @@ export default function TermsOfSale() {
         </ContactInfo>
       </ContactBox>
     </TermsContainer>
+    <Footer />
+    </>
   );
 }
