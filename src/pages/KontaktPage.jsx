@@ -12,7 +12,14 @@ import {
   Input,
   TextArea
 } from '../styles/cabins/newCabinFormStyles.js';
-import { SubmitButton } from '../styles/cabins/cabinStyles.js';
+import { 
+  SubmitButton,
+  IntroSection,
+  SuccessAlert,
+  ContactMethodsSection,
+  ContactGrid,
+  ContactEmailLink
+} from '../styles/pages/kontaktPageStyles.js';
 import { Error as ErrorMessage } from '../styles/auth/signInStyles.js';
 
 export default function KontaktPage() {
@@ -110,23 +117,16 @@ export default function KontaktPage() {
         <FormWrapper>
           <FormTitle>Kontakt Oss</FormTitle>
 
-          <div style={{ marginBottom: '2rem', textAlign: 'center', color: '#666' }}>
+          <IntroSection>
             <p>Vi vil gjerne høre fra deg! Send oss en melding så svarer vi så snart som mulig.</p>
             <p><strong>E-post:</strong> Anitaberge@yahoo.no</p>
-          </div>
+          </IntroSection>
 
           {success && (
-            <div style={{
-              backgroundColor: '#d4edda',
-              color: '#155724',
-              padding: '1rem',
-              borderRadius: '0.5rem',
-              marginBottom: '1.5rem',
-              border: '1px solid #c3e6cb'
-            }}>
+            <SuccessAlert>
               <strong>Takk for din henvendelse!</strong><br />
               Vi har mottatt meldingen din og vil svare så snart som mulig.
-            </div>
+            </SuccessAlert>
           )}
 
           {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -200,19 +200,19 @@ export default function KontaktPage() {
             </SubmitButton>
           </Form>
 
-          <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#f8f9fa', borderRadius: '0.5rem' }}>
-            <h3 style={{ color: '#4b3832', marginBottom: '1rem' }}>Andre måter å kontakte oss på:</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <ContactMethodsSection>
+            <h3>Andre måter å kontakte oss på:</h3>
+            <ContactGrid>
               <div>
                 <strong>E-post:</strong><br />
-                <a href="mailto:Anitaberge@yahoo.no" style={{ color: '#4b3832' }}>Anitaberge@yahoo.no</a>
+                <ContactEmailLink href="mailto:Anitaberge@yahoo.no">Anitaberge@yahoo.no</ContactEmailLink>
               </div>
               <div>
                 <strong>Responstid:</strong><br />
                 Vanligvis innen 24 timer
               </div>
-            </div>
-          </div>
+            </ContactGrid>
+          </ContactMethodsSection>
         </FormWrapper>
       </MainContent>
       <Footer />

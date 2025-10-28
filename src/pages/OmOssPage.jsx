@@ -8,6 +8,7 @@ import {
   Section,
   SectionTitle,
   Paragraph,
+  ItalicParagraph,
   ValuesList,
   ValueItem
 } from '../styles/pages/omOssPageStyles';
@@ -71,9 +72,9 @@ export default function OmOssPage() {
               nye, fantastiske steder hvor våre gjester kan oppleve det beste Norge har å tilby.
             </Paragraph>
 
-            <Paragraph style={{ fontStyle: 'italic', marginTop: '2rem', textAlign: 'center' }}>
+            <ItalicParagraph>
               Takk for at du velger Berge-Hyttene. Vi ser frem til å være en del av dine minner.
-            </Paragraph>
+            </ItalicParagraph>
           </Section>
         </OmOssContainer>
       </MainContent>

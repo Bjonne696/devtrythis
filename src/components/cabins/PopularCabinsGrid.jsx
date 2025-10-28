@@ -15,20 +15,6 @@ import {
   RatingStars
 } from '../../styles/cabins/cabinStyles';
 
-function StarRating({ score }) {
-  const fullStars = Math.floor(score);
-  const halfStar = score % 1 >= 0.25 && score % 1 < 0.75;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-  return (
-    <RatingStars>
-      {'★'.repeat(fullStars)}
-      {halfStar && '⯪'}
-      {'☆'.repeat(emptyStars)}
-      <span style={{ marginLeft: 6, color: '#444' }}>{score.toFixed(1)}</span>
-    </RatingStars>
-  );
-}
 
 export default function PopularCabinsGrid() {
   const [cabins, setCabins] = useState([]);

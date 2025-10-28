@@ -75,7 +75,7 @@ export default function CabinGrid() {
 
   if (isLoading) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem' }}>
+      <div>
         <p>Laster hytter...</p>
       </div>
     );
@@ -91,7 +91,6 @@ export default function CabinGrid() {
               e.preventDefault();
               handleCabinClick(cabin.id);
             }}
-            style={{ cursor: 'pointer' }}
           >
             {cabin.image_urls && cabin.image_urls.length > 0 && (
               <CabinImage src={cabin.image_urls[0]} alt={cabin.title} />

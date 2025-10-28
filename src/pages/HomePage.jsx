@@ -18,6 +18,7 @@ import {
 } from "../styles/layout/homePageStyles";
 import {
   GridWrapper,
+  CabinLink,
   CabinCard,
   CabinImage,
   CabinInfo,
@@ -130,10 +131,9 @@ export default function HomePage() {
             <>
               <GridWrapper>
                 {currentCabins.map((cabin) => (
-                  <Link
+                  <CabinLink
                     key={cabin.id}
                     to={`/hytte/${cabin.id}`}
-                    style={{ textDecoration: "none" }}
                   >
                     <CabinCard>
                       {cabin.image_urls?.[0] && (
@@ -151,7 +151,7 @@ export default function HomePage() {
                         <StarRating score={cabin.average_score} />
                       </CabinInfo>
                     </CabinCard>
-                  </Link>
+                  </CabinLink>
                 ))}
               </GridWrapper>
 

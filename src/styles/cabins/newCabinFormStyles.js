@@ -217,3 +217,44 @@ export const HelpText = styled.p`
   margin-top: 0.25rem;
   font-style: italic;
 `;
+
+export const AdminAlert = styled.div`
+  background: #d4edda;
+  border: 1px solid #28a745;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const WarningAlert = styled.div`
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const ErrorText = styled.p`
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0 0;
+`;
+
+export const FileInfo = styled.p`
+  color: #4b3832;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+`;
+
+export const MapWrapper = styled.div`
+  margin-top: 1rem;
+`;
+
+export const SubmitError = styled.p`
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  text-align: center;
+`;

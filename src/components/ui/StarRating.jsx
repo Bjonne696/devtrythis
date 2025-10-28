@@ -1,4 +1,4 @@
-import { RatingStars } from "../../styles/cabins/cabinStyles";
+import { RatingStars, RatingSpan } from "../../styles/cabins/cabinStyles";
 
 export default function StarRating({ score }) {
   if (score === 0) return null;
@@ -12,9 +12,9 @@ export default function StarRating({ score }) {
       {'★'.repeat(fullStars)}
       {halfStar && '⯪'}
       {'☆'.repeat(emptyStars)}
-      <span style={{ marginLeft: 8, color: '#444', fontSize: '1rem' }}>
+      <RatingSpan>
         {score.toFixed(1)} av 5
-      </span>
+      </RatingSpan>
     </RatingStars>
   );
 }

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 import { 
   ResponsiveGrid,
   CardBase,
@@ -34,6 +35,11 @@ export const GridWrapper = styled(ResponsiveGrid)`
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+`;
+
+export const CabinLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;
 
 export const CabinCard = styled(CardBase)`
@@ -116,6 +122,12 @@ export const RatingStars = styled.div`
   display: flex;
   align-items: center;
   margin-top: ${spacing.sm};
+`;
+
+export const RatingSpan = styled.span`
+  margin-left: 8px;
+  color: #444;
+  font-size: 1rem;
 `;
 
 // Carousel specific styles

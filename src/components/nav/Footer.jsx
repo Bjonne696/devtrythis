@@ -6,6 +6,7 @@ import {
   FooterContent,
   FooterColumn,
   FooterSpan,
+  FooterLink,
   SocialLinks,
   IconWrapper
 } from '../../styles/layout/navigationStyles';
@@ -21,8 +22,8 @@ export default function Footer() {
         </FooterColumn>
         <FooterColumn>
           <p>www.berge-hyttene.no</p>
-          <p><Link to="/salgsbetingelser" style={{ color: 'white', textDecoration: 'none' }}>Salgsbetingelser</Link></p>
-          <p><Link to="/personvern" style={{ color: 'white', textDecoration: 'none' }}>Personvern</Link></p>
+          <p><FooterLink to="/salgsbetingelser">Salgsbetingelser</FooterLink></p>
+          <p><FooterLink to="/personvern">Personvern</FooterLink></p>
         </FooterColumn>
         <FooterColumn>
           <SocialLinks>

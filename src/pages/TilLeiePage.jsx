@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import HelpText from "../components/ui/HelpText";
 import Tooltip from "../components/ui/Tooltip";
 import ErrorBoundary from '../components/ui/ErrorBoundary';
+import StarRating from "../components/ui/StarRating";
 
 import {
   TilLeieSearchContainer,
@@ -36,35 +37,18 @@ import {
 } from "../styles/layout/pageStyles";
 import {
   GridWrapper,
+  CabinLink,
   CabinCard,
   CabinImage,
   CabinInfo,
   CabinTitle,
   CabinLocation,
-  CabinPrice,
-  RatingStars
+  CabinPrice
 } from "../styles/cabins/cabinStyles";
 
 const SearchResultsSection = styled.div`
   margin-top: 2rem;
 `;
-
-const StarRating = ({ score }) => {
-  if (score === 0) return null;
-
-  const fullStars = Math.floor(score);
-  const halfStar = score % 1 >= 0.25 && score % 1 < 0.75;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-  return (
-    <RatingStars>
-      {'★'.repeat(fullStars)}
-      {halfStar && '⯪'}
-      {'☆'.repeat(emptyStars)}
-      <span style={{ marginLeft: 6, color: '#444' }}>{score.toFixed(1)}</span>
-    </RatingStars>
-  );
-};
 
 export default function TilLeiePage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -362,7 +346,7 @@ export default function TilLeiePage() {
             <>
               <GridWrapper>
                 {currentCabins.map((cabin) => (
-                  <Link key={cabin.id} to={`/hytte/${cabin.id}`} style={{ textDecoration: 'none' }}>
+                  <CabinLink key={cabin.id} to={`/hytte/${cabin.id}`}>
                     <CabinCard>
                       {cabin.image_urls?.[0] && (
                         <CabinImage src={cabin.image_urls[0]} alt={cabin.title} />
@@ -374,7 +358,7 @@ export default function TilLeiePage() {
                         <StarRating score={cabin.average_score} />
                       </CabinInfo>
                     </CabinCard>
-                  </Link>
+                  </CabinLink>
                 ))}
               </GridWrapper>
 

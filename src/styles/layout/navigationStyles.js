@@ -258,6 +258,12 @@ export const MobileMenu = styled.div`
   }
 `;
 
+export const MobileMenuUserWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+`;
+
 // Legacy exports (kept for backward compatibility if needed)
 export const HeaderContainer = styled.header`
   background-color: ${colors.primary};
@@ -483,6 +489,15 @@ export const FooterColumn = styled.div`
 
 export const FooterSpan = styled.span`
   font-weight: ${typography.fontWeights.semibold};
+`;
+
+export const FooterLink = styled(Link)`
+  color: ${colors.white};
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const SocialLinks = styled.div`

@@ -34,6 +34,12 @@ export const Paragraph = styled.p`
   color: #333;
 `;
 
+export const ItalicParagraph = styled(Paragraph)`
+  font-style: italic;
+  margin-top: 2rem;
+  text-align: center;
+`;
+
 export const ValuesList = styled.ul`
   list-style: none;
   padding: 0;

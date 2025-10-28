@@ -16,7 +16,8 @@ import {
   AuthSection,
   AuthButton,
   HamburgerButton,
-  MobileMenu
+  MobileMenu,
+  MobileMenuUserWrapper
 } from "../../styles/layout/navigationStyles";
 
 export default function Navigation() {
@@ -115,9 +116,9 @@ export default function Navigation() {
 
         <MobileMenu $isOpen={isMenuOpen}>
           {user && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <MobileMenuUserWrapper>
               <UserMenu />
-            </div>
+            </MobileMenuUserWrapper>
           )}
           <NavList>
             <NavItem>
