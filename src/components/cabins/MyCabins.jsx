@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
 import { formatPrice } from "../../utils/formatters";
+import { cancelSubscription } from "../../hooks/useSubscription";
 import {
   MyCabinsGrid,
   MyCabinCard,
@@ -37,46 +38,74 @@ export default function MyCabins() {
   };
 
   const handleDelete = async (cabinId) => {
-    const confirmDelete = window.confirm("Er du sikker på at du vil slette hytten?");
+    const confirmDelete = window.confirm("Er du sikker på at du vil slette hytten? Dette vil også kansellere tilhørende abonnement.");
     if (!confirmDelete) return;
 
-    const { data: cabin, error: fetchError } = await supabase
-      .from("cabins")
-      .select("image_urls")
-      .eq("id", cabinId)
-      .single();
+    try {
+      // Fetch cabin details including subscription_id
+      const { data: cabin, error: fetchError } = await supabase
+        .from("cabins")
+        .select("image_urls, subscription_id")
+        .eq("id", cabinId)
+        .single();
 
-    if (fetchError) {
-      console.error("Feil ved henting av hytte:", fetchError.message);
-      return;
-    }
-
-    const filesToDelete = (cabin.image_urls || []).map((url) => {
-      const fileName = url.split("/").pop();
-      return fileName;
-    });
-
-    if (filesToDelete.length > 0) {
-      const { error: storageError } = await supabase
-        .storage
-        .from("cabins-images")
-        .remove(filesToDelete);
-
-      if (storageError) {
-        console.error("Feil ved sletting av bilder:", storageError.message);
+      if (fetchError) {
+        console.error("Feil ved henting av hytte:", fetchError.message);
+        alert("Kunne ikke hente hytteinformasjon. Vennligst prøv igjen.");
+        return;
       }
-    }
 
-    const { error: deleteError } = await supabase
-      .from("cabins")
-      .delete()
-      .eq("id", cabinId);
+      // Cancel subscription if it exists
+      if (cabin.subscription_id) {
+        try {
+          await cancelSubscription(cabin.subscription_id);
+          console.log("Abonnement kansellert for hytte:", cabinId);
+        } catch (subscriptionError) {
+          console.error("Feil ved kansellering av abonnement:", subscriptionError.message);
+          // Continue with deletion even if subscription cancellation fails
+          const continueDelete = window.confirm(
+            "Kunne ikke kansellere abonnementet automatisk. Vil du fortsette med å slette hytten? Du må eventuelt kansellere abonnementet manuelt."
+          );
+          if (!continueDelete) return;
+        }
+      }
 
-    if (!deleteError) {
-      alert("Hytten er slettet!");
-      setCabins(cabins.filter((c) => c.id !== cabinId));
-    } else {
-      console.error("Feil ved sletting:", deleteError.message);
+      // Delete images from storage
+      const filesToDelete = (cabin.image_urls || []).map((url) => {
+        const fileName = url.split("/").pop();
+        return fileName;
+      });
+
+      if (filesToDelete.length > 0) {
+        const { error: storageError } = await supabase
+          .storage
+          .from("cabins-images")
+          .remove(filesToDelete);
+
+        if (storageError) {
+          console.error("Feil ved sletting av bilder:", storageError.message);
+        }
+      }
+
+      // Delete the cabin
+      const { error: deleteError } = await supabase
+        .from("cabins")
+        .delete()
+        .eq("id", cabinId);
+
+      if (!deleteError) {
+        const successMessage = cabin.subscription_id 
+          ? "Hytten og tilhørende abonnement er slettet!"
+          : "Hytten er slettet!";
+        alert(successMessage);
+        setCabins(cabins.filter((c) => c.id !== cabinId));
+      } else {
+        console.error("Feil ved sletting av hytte:", deleteError.message);
+        alert("Kunne ikke slette hytten. Vennligst prøv igjen.");
+      }
+    } catch (error) {
+      console.error("Uventet feil ved sletting:", error.message);
+      alert("En uventet feil oppstod. Vennligst prøv igjen.");
     }
   };
 
