@@ -12,6 +12,7 @@ import PopularPage from './pages/PopularPage';
 import NyHyttePage from './pages/NyHyttePage';
 import ShowCabinPage from "./pages/ShowCabinPage";
 import PersonvernPage from './pages/PersonvernPage';
+import TermsOfSale from './pages/TermsOfSale';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import CookieBanner from './components/ui/CookieBanner';
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/ny-hytte" element={<NyHyttePage />} />
         <Route path="/hytte/:id" element={<ShowCabinPage />} />
         <Route path="/personvern" element={<PersonvernPage />} />
+        <Route path="/salgsbetingelser" element={<TermsOfSale />} />
       </Routes>
       <CookieBanner />
     </AuthProvider>
