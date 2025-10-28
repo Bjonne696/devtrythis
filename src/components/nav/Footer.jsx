@@ -14,18 +14,19 @@ export default function Footer() {
     <FooterContainer>
       <FooterContent>
         <FooterColumn>
-        <p><FooterSpan>Location:</FooterSpan> Oslo, Norway</p>
-        <p><FooterSpan>Contact:</FooterSpan> Anitaberge@yahoo.no</p>
-      </FooterColumn>
-      <FooterColumn>
-        <p>www.berge-hyttene.no</p>
-      </FooterColumn>
-      <FooterColumn>
-        <SocialLinks>
-          <IconWrapper><FaFacebookF /></IconWrapper>
-          <IconWrapper><FaTiktok /></IconWrapper>
-          <IconWrapper><FaInstagram /></IconWrapper>
-        </SocialLinks>
+          <p><FooterSpan>Bedrift:</FooterSpan> Berge Hyttene - Eid av Anita Berge</p>
+          <p><FooterSpan>Org.nr:</FooterSpan> 926 576 259</p>
+          <p><FooterSpan>E-post:</FooterSpan> Anitaberge@yahoo.no</p>
+        </FooterColumn>
+        <FooterColumn>
+          <p>www.berge-hyttene.no</p>
+        </FooterColumn>
+        <FooterColumn>
+          <SocialLinks>
+            <IconWrapper><FaFacebookF /></IconWrapper>
+            <IconWrapper><FaTiktok /></IconWrapper>
+            <IconWrapper><FaInstagram /></IconWrapper>
+          </SocialLinks>
         </FooterColumn>
       </FooterContent>
     </FooterContainer>
