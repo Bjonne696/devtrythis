@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa6";
 import {
   FooterContainer,
@@ -20,6 +21,8 @@ export default function Footer() {
         </FooterColumn>
         <FooterColumn>
           <p>www.berge-hyttene.no</p>
+          <p><Link to="/salgsbetingelser" style={{ color: 'white', textDecoration: 'none' }}>Salgsbetingelser</Link></p>
+          <p><Link to="/personvern" style={{ color: 'white', textDecoration: 'none' }}>Personvern</Link></p>
         </FooterColumn>
         <FooterColumn>
           <SocialLinks>
