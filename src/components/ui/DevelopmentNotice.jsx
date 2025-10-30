@@ -10,7 +10,7 @@ export default function DevelopmentNotice() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('devNoticeDismissed');
+    const dismissed = sessionStorage.getItem('devNoticeDismissed');
     if (dismissed === 'true') {
       setIsVisible(false);
     }
@@ -18,7 +18,7 @@ export default function DevelopmentNotice() {
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem('devNoticeDismissed', 'true');
+    sessionStorage.setItem('devNoticeDismissed', 'true');
   };
 
   if (!isVisible) {
