@@ -20,7 +20,7 @@ export default function PersonvernPage() {
           <Title>Personvernerklæring</Title>
 
           <TextBlock>
-            Denne personvernerklæringen beskriver hvordan Berge Hyttene samler
+            Denne personvernerklæringen beskriver hvordan Ferieplassen samler
             inn, bruker og beskytter dine personopplysninger i henhold til GDPR.
           </TextBlock>
 

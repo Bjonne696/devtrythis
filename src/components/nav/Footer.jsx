@@ -16,12 +16,12 @@ export default function Footer() {
     <FooterContainer>
       <FooterContent>
         <FooterColumn>
-          <p><FooterSpan>Bedrift:</FooterSpan> Berge Hyttene - Eid av Anita Berge</p>
+          <p><FooterSpan>Bedrift:</FooterSpan> Ferieplassen - Eid av Anita Berge</p>
           <p><FooterSpan>Org.nr:</FooterSpan> 926 576 259</p>
           <p><FooterSpan>E-post:</FooterSpan> Anitaberge@yahoo.no</p>
         </FooterColumn>
         <FooterColumn>
-          <p>www.bergehyttene.no</p>
+          <p>www.ferieplassen.no</p>
           <p><FooterLink to="/salgsbetingelser">Salgsbetingelser</FooterLink></p>
           <p><FooterLink to="/personvern">Personvern</FooterLink></p>
         </FooterColumn>

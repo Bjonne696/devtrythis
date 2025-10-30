@@ -104,7 +104,7 @@ export default function HomePage() {
     <PageWrapper>
       <Navigation />
       <MainContent>
-        <h1>Velkommen til Berge Hyttene</h1>
+        <h1>Velkommen til Ferieplassen</h1>
         <DevelopmentNotice />
         <CabinCarousel />
         <SearchContainer>

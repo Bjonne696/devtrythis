@@ -45,7 +45,7 @@ export default function Navigation() {
       <NavContainer>
         <LogoSection>
           <LogoLink to="/" onClick={closeMenu}>
-            <CompactLogo src="/logo.png" alt="Berge Hyttene" />
+            <CompactLogo src="/logo.png" alt="Ferieplassen" />
           </LogoLink>
         </LogoSection>
 

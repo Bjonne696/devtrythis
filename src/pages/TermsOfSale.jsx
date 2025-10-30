@@ -25,7 +25,7 @@ export default function TermsOfSale() {
       <Section>
         <SectionTitle>1. Generelt</SectionTitle>
         <Paragraph>
-          Disse salgsbetingelsene gjelder for utleie av hytter gjennom Berge Hyttene, 
+          Disse salgsbetingelsene gjelder for utleie av hytter gjennom Ferieplassen, 
           eid av Anita Berge (org.nr. 926 576 259). Ved å gjennomføre en booking 
           aksepterer du disse vilkårene.
         </Paragraph>
@@ -57,7 +57,7 @@ export default function TermsOfSale() {
         <SubTitle>2.3 Leiebetaling</SubTitle>
         <Paragraph>
           Leietaker betaler avtalt beløp direkte til hytteeier etter godkjent booking. 
-          Berge Hyttene er kun en formidlingsplattform og håndterer ikke leiebetaling 
+          Ferieplassen er kun en formidlingsplattform og håndterer ikke leiebetaling 
           mellom leietaker og hytteeier.
         </Paragraph>
 
@@ -157,7 +157,7 @@ export default function TermsOfSale() {
 
         <SubTitle>5.4 Tvister mellom leietaker og hytteeier</SubTitle>
         <Paragraph>
-          Berge Hyttene er en formidlingsplattform. Tvister som oppstår mellom 
+          Ferieplassen er en formidlingsplattform. Tvister som oppstår mellom 
           leietaker og hytteeier angående selve leieavtalen må løses direkte mellom 
           partene. Vi kan bistå med formidling ved behov.
         </Paragraph>
@@ -190,10 +190,10 @@ export default function TermsOfSale() {
       <ContactBox>
         <ContactInfo>
           <strong>Kontaktinformasjon:</strong><br />
-          Berge Hyttene - Eid av Anita Berge<br />
+          Ferieplassen - Eid av Anita Berge<br />
           Org.nr: 926 576 259<br />
           E-post: <a href="mailto:Anitaberge@yahoo.no">Anitaberge@yahoo.no</a><br />
-          Nettside: www.bergehyttene.no
+          Nettside: www.ferieplassen.no
         </ContactInfo>
       </ContactBox>
     </TermsContainer>
