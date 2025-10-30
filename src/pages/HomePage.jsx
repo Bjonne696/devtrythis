@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navigation from "../components/nav/Navigation";
 import Footer from "../components/nav/Footer";
 import CabinCarousel from "../components/cabins/CabinCarousel";
+import DevelopmentNotice from "../components/ui/DevelopmentNotice";
 import supabase from "../lib/supabaseClient";
 import { formatPrice } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -104,6 +105,7 @@ export default function HomePage() {
       <Navigation />
       <MainContent>
         <h1>Velkommen til Berge Hyttene</h1>
+        <DevelopmentNotice />
         <CabinCarousel />
         <SearchContainer>
           <SearchInput

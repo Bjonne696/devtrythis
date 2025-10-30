@@ -21,7 +21,7 @@ export default function Footer() {
           <p><FooterSpan>E-post:</FooterSpan> Anitaberge@yahoo.no</p>
         </FooterColumn>
         <FooterColumn>
-          <p>www.berge-hyttene.no</p>
+          <p>www.bergehyttene.no</p>
           <p><FooterLink to="/salgsbetingelser">Salgsbetingelser</FooterLink></p>
           <p><FooterLink to="/personvern">Personvern</FooterLink></p>
         </FooterColumn>

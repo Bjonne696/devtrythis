@@ -193,7 +193,7 @@ export default function TermsOfSale() {
           Berge Hyttene - Eid av Anita Berge<br />
           Org.nr: 926 576 259<br />
           E-post: <a href="mailto:Anitaberge@yahoo.no">Anitaberge@yahoo.no</a><br />
-          Nettside: www.berge-hyttene.no
+          Nettside: www.bergehyttene.no
         </ContactInfo>
       </ContactBox>
     </TermsContainer>

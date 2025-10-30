@@ -28,7 +28,7 @@ export default function OmOssPage() {
               En drøm som blir virkelighet
             </SectionTitle>
             <Paragraph>
-              Berge-Hyttene har vært en drøm i over 20 år. Det hele startet med en visjon om å skape
+              Berge Hyttene har vært en drøm i over 20 år. Det hele startet med en visjon om å skape
               et sted hvor familier og venner kunne komme sammen, slappe av og nyte Norges fantastiske natur.
             </Paragraph>
 
@@ -44,7 +44,7 @@ export default function OmOssPage() {
             </SectionTitle>
             <Paragraph>
               Vi tror på at de beste øyeblikkene i livet skjer når vi kobler oss fra hverdagens stress
-              og kobler oss til naturen og de vi er glad i. Berge-Hyttene skal være ditt andre hjem
+              og kobler oss til naturen og de vi er glad i. Berge Hyttene skal være ditt andre hjem
               - et sted hvor du kan lade batteriene og skape uforglemmelige øyeblikk.
             </Paragraph>
 
@@ -73,7 +73,7 @@ export default function OmOssPage() {
             </Paragraph>
 
             <ItalicParagraph>
-              Takk for at du velger Berge-Hyttene. Vi ser frem til å være en del av dine minner.
+              Takk for at du velger Berge Hyttene. Vi ser frem til å være en del av dine minner.
             </ItalicParagraph>
           </Section>
         </OmOssContainer>
