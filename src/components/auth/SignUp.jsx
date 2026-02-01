@@ -135,7 +135,7 @@ function SignUp() {
       <Heading>Opprett hyttekonto</Heading>
 
       <HelpText icon="🎯">
-        <strong>Velkommen til Hytteplattformen!</strong><br />
+        <strong>Velkommen til Ferieplassen!</strong><br />
         Opprett din konto for å leie ut din hytte eller finne drømmehytta.
         Alle felt merket med * er påkrevd.
       </HelpText>
