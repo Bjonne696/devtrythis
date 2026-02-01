@@ -13,14 +13,6 @@ deploymentTarget = "autoscale"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 40521
-externalPort = 3000
-
-[[ports]]
-localPort = 44335
-externalPort = 3001
-
 [workflows]
 runButton = "Project"
 
