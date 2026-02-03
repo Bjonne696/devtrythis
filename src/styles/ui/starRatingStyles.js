@@ -1,28 +1,40 @@
-
 import styled from "styled-components";
 
-export const StarContainer = styled.div`
+export const RatingContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 2px;
+  margin-top: 0.5rem;
 `;
 
 export const Star = styled.span`
-  font-size: ${props => props.$size || '1rem'};
-  color: ${props => props.$filled ? '#ffd700' : '#e0e0e0'};
-  cursor: ${props => props.$interactive ? 'pointer' : 'default'};
-  transition: color 0.2s ease;
-  
-  ${props => props.$interactive && `
-    &:hover {
-      color: #ffd700;
-    }
-  `}
+  font-size: 1rem;
+  color: ${props => props.$filled ? '#f5a623' : '#d4d4d4'};
+  line-height: 1;
+`;
+
+export const HalfStarWrapper = styled.span`
+  position: relative;
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+`;
+
+export const HalfStarBack = styled.span`
+  color: #d4d4d4;
+`;
+
+export const HalfStarFront = styled.span`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
+  color: #f5a623;
 `;
 
 export const RatingText = styled.span`
-  color: #666;
-  font-size: ${props => props.$size === 'large' ? '1rem' : '0.875rem'};
-  margin-left: 0.5rem;
-  font-weight: 500;
+  margin-left: 8px;
+  color: #444;
+  font-size: 0.9rem;
 `;
