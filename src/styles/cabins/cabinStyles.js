@@ -18,25 +18,16 @@ import {
 // Common cabin grid and card styles
 export const GridWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, 270px);
   gap: 1.5rem;
   margin: 2rem 0;
   max-width: 1200px;
   padding: 0 ${spacing.md};
+  justify-content: center;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  @media (max-width: 480px) {
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    justify-items: center;
   }
 `;
 
@@ -50,8 +41,8 @@ export const CabinCard = styled(CardBase)`
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 100%;
-  max-width: 100%;
+  width: 270px;
+  height: 400px;
   box-sizing: border-box;
 
   &:hover {
@@ -72,6 +63,11 @@ export const CabinCard = styled(CardBase)`
   }
 
   @media (max-width: 480px) {
+    width: 100%;
+    max-width: 270px;
+    height: 400px;
+    margin: 0 auto;
+
     &:hover {
       transform: none;
     }
@@ -80,34 +76,22 @@ export const CabinCard = styled(CardBase)`
 
 export const CabinImage = styled.img`
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 
   ${CabinCard}:hover & {
     transform: scale(1.02);
-  }
-
-  @media (max-width: 768px) {
-    height: 180px;
-  }
-
-  @media (max-width: 480px) {
-    height: 160px;
   }
 `;
 
 export const CabinInfo = styled.div`
   padding: ${spacing.md};
   flex: 1;
-
-  @media (max-width: 768px) {
-    padding: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.75rem;
-  }
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 export const CabinTitle = styled.h3`
@@ -116,17 +100,12 @@ export const CabinTitle = styled.h3`
   margin: 0 0 ${spacing.sm} 0;
   color: ${colors.text};
   transition: color 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   ${CabinCard}:hover & {
     color: ${colors.accent};
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9rem;
   }
 `;
 
@@ -134,14 +113,9 @@ export const CabinLocation = styled.p`
   font-size: 0.9rem;
   color: ${colors.textLight};
   margin: 0 0 ${spacing.sm} 0;
-
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.75rem;
-  }
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CabinPrice = styled.p`
@@ -149,14 +123,6 @@ export const CabinPrice = styled.p`
   font-size: 1rem;
   color: ${colors.text};
   margin: 0;
-
-  @media (max-width: 768px) {
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.85rem;
-  }
 `;
 
 export const RatingStars = styled.div`
@@ -186,14 +152,14 @@ export const CarouselWrapper = styled.div`
   position: relative;
   overflow: hidden;
   margin-top: ${spacing.xl};
-  height: 380px;
+  height: 450px;
 
   @media (max-width: 768px) {
-    height: 340px;
+    height: 420px;
   }
 
   @media (max-width: 480px) {
-    height: 300px;
+    height: 420px;
   }
 `;
 
@@ -206,8 +172,8 @@ export const CarouselCabinCard = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 280px;
-  height: 320px;
+  width: 270px;
+  height: 400px;
   transform: translate(-50%, -50%) scale(0.1);
   opacity: 0;
   z-index: 0;
@@ -250,30 +216,13 @@ export const CarouselCabinCard = styled.div`
     z-index: 1;
     opacity: 0.3;
   `}
-
-  @media (max-width: 768px) {
-    width: 250px;
-    height: 290px;
-  }
-
-  @media (max-width: 480px) {
-    width: 220px;
-    height: 260px;
-  }
 `;
 
 export const CarouselImage = styled.img`
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
-
-  @media (max-width: 768px) {
-    height: 180px;
-  }
-
-  @media (max-width: 480px) {
-    height: 160px;
-  }
+  flex-shrink: 0;
 `;
 
 export const CarouselInfo = styled.div`
@@ -282,14 +231,7 @@ export const CarouselInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  @media (max-width: 768px) {
-    padding: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.75rem;
-  }
+  overflow: hidden;
 `;
 
 export const CarouselTitle = styled.h4`
@@ -297,28 +239,18 @@ export const CarouselTitle = styled.h4`
   font-weight: ${typography.fontWeights.semibold};
   color: ${colors.text};
   margin: 0 0 ${spacing.sm} 0;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9rem;
-  }
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CarouselLocation = styled.p`
   font-size: 0.9rem;
   color: ${colors.textLight};
   margin: 0 0 ${spacing.sm} 0;
-
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.75rem;
-  }
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CarouselPrice = styled.p`
@@ -326,14 +258,6 @@ export const CarouselPrice = styled.p`
   font-size: 1rem;
   color: ${colors.text};
   margin: 0;
-
-  @media (max-width: 768px) {
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.85rem;
-  }
 `;
 
 export const CarouselControls = styled.div`
