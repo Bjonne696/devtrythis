@@ -32,7 +32,7 @@ export default function PopularPage() {
   const [allPopularCabins, setAllPopularCabins] = useState([]);
   const [filteredCabins, setFilteredCabins] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const cabinsPerPage = 8;
+  const cabinsPerPage = 12;
   const navigate = useNavigate();
 
   const handleCabinClick = (cabinId) => {

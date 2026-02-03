@@ -18,16 +18,17 @@ import {
 // Common cabin grid and card styles
 export const GridWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, 270px);
+  grid-template-columns: repeat(auto-fill, minmax(270px, 270px));
   gap: 1.5rem;
-  margin: 2rem 0;
+  margin: 2rem auto;
   max-width: 1200px;
   padding: 0 ${spacing.md};
   justify-content: center;
+  width: 100%;
 
   @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    grid-template-columns: 270px;
+    justify-content: center;
   }
 `;
 

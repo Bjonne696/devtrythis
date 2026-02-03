@@ -35,7 +35,7 @@ export default function HomePage() {
   const [allCabins, setAllCabins] = useState([]);
   const [filteredCabins, setFilteredCabins] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const cabinsPerPage = 8;
+  const cabinsPerPage = 12;
 
   useEffect(() => {
     const fetchAllCabins = async () => {

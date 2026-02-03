@@ -28,7 +28,7 @@ export default function NewCabinsGrid() {
         .from('cabins')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(8);
+        .limit(12);
 
       if (cabinsError || !cabins) {
         console.error('Feil ved henting av nye hytter:', cabinsError?.message);
