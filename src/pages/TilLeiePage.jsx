@@ -62,7 +62,7 @@ export default function TilLeiePage() {
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const cabinsPerPage = 8;
+  const cabinsPerPage = 12;
 
   const commonFacilities = [
     "Kjøkken",
