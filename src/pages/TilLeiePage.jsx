@@ -228,7 +228,7 @@ export default function TilLeiePage() {
       <MainContent>
         <h1>Til leie</h1>
 
-        <HelpText icon="🔍">
+        <HelpText icon="🔍" id="til-leie">
           <strong>Finn din perfekte hytte!</strong><br />
           Bruk søkefeltet for å finne hytter etter sted. Kombiner med filtre for å snevre inn søket ditt.
         </HelpText>

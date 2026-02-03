@@ -11,6 +11,7 @@ export const HelpTextContainer = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
+  position: relative;
 `;
 
 export const HelpIcon = styled.div`
@@ -29,6 +30,7 @@ export const HelpIcon = styled.div`
 
 export const HelpContent = styled.div`
   line-height: 1.5;
+  flex: 1;
 
   ul {
     margin: 0.5rem 0;
@@ -37,5 +39,22 @@ export const HelpContent = styled.div`
 
   li {
     margin: 0.25rem 0;
+  }
+`;
+
+export const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #0c5460;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
   }
 `;

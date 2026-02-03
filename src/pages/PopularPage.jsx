@@ -229,7 +229,7 @@ export default function PopularPage() {
       <MainContent>
         <h1>Populære hytter</h1>
 
-        <HelpText icon="⭐">
+        <HelpText icon="⭐" id="popular">
           <strong>Finn de beste hyttene!</strong><br />
           Her vises kun hytter med høy vurdering (3.5+ stjerner). Bruk filtrene for å finne din drømmehytte.
         </HelpText>
