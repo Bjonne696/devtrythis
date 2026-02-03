@@ -43,15 +43,16 @@ const RatingText = styled.span`
 export default function StarRating({ score }) {
   if (score === 0) return null;
 
+  const decimal = score % 1;
   const fullStars = Math.floor(score);
-  const hasHalfStar = score % 1 >= 0.25 && score % 1 < 0.75;
-  const hasFullAfterDecimal = score % 1 >= 0.75;
-  const adjustedFullStars = hasFullAfterDecimal ? fullStars + 1 : fullStars;
-  const emptyStars = 5 - adjustedFullStars - (hasHalfStar ? 1 : 0);
+  const hasHalfStar = decimal >= 0.25 && decimal < 0.75;
+  const roundUp = decimal >= 0.75;
+  const displayFullStars = roundUp ? Math.min(fullStars + 1, 5) : fullStars;
+  const emptyStars = 5 - displayFullStars - (hasHalfStar ? 1 : 0);
 
   return (
     <RatingContainer>
-      {[...Array(adjustedFullStars)].map((_, i) => (
+      {[...Array(displayFullStars)].map((_, i) => (
         <Star key={`full-${i}`} $filled>★</Star>
       ))}
       {hasHalfStar && (
