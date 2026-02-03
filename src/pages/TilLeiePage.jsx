@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
-import styled from "styled-components";
 import supabase from "../lib/supabaseClient";
 import { formatPrice } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -22,7 +21,8 @@ import {
   DateRangeContainer,
   DateInput,
   DateSeparator,
-  ClearFiltersButton
+  ClearFiltersButton,
+  SearchResultsSection
 } from "../styles/pages/tilLeiePageStyles";
 import {
   PageWrapper,
@@ -45,10 +45,6 @@ import {
   CabinLocation,
   CabinPrice
 } from "../styles/cabins/cabinStyles";
-
-const SearchResultsSection = styled.div`
-  margin-top: 2rem;
-`;
 
 export default function TilLeiePage() {
   const [searchTerm, setSearchTerm] = useState("");
