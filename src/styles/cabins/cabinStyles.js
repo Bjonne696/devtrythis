@@ -16,19 +16,22 @@ import {
 } from '../common/index.js';
 
 // Common cabin grid and card styles
-export const GridWrapper = styled(ResponsiveGrid)`
-  margin: ${spacing['2xl']} auto;
+export const GridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 2rem 0;
   max-width: 1200px;
   padding: 0 ${spacing.md};
 
-  ${media.md} {
-    margin: ${spacing.xl} 0;
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   @media (max-width: 480px) {
@@ -52,8 +55,8 @@ export const CabinCard = styled(CardBase)`
   box-sizing: border-box;
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(75, 56, 50, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
   &:hover::before {
@@ -68,7 +71,7 @@ export const CabinCard = styled(CardBase)`
     pointer-events: none;
   }
 
-  ${media.md} {
+  @media (max-width: 480px) {
     &:hover {
       transform: none;
     }
@@ -82,17 +85,33 @@ export const CabinImage = styled.img`
   transition: transform 0.3s ease;
 
   ${CabinCard}:hover & {
-    transform: scale(1.05);
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  @media (max-width: 480px) {
+    height: 160px;
   }
 `;
 
 export const CabinInfo = styled.div`
   padding: ${spacing.md};
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 `;
 
 export const CabinTitle = styled.h3`
-  font-size: ${typography.fontSizes.lg};
+  font-size: 1.1rem;
   font-weight: ${typography.fontWeights.semibold};
   margin: 0 0 ${spacing.sm} 0;
   color: ${colors.text};
@@ -101,27 +120,59 @@ export const CabinTitle = styled.h3`
   ${CabinCard}:hover & {
     color: ${colors.accent};
   }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const CabinLocation = styled.p`
-  font-size: ${typography.fontSizes.sm};
+  font-size: 0.9rem;
   color: ${colors.textLight};
   margin: 0 0 ${spacing.sm} 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 export const CabinPrice = styled.p`
   font-weight: ${typography.fontWeights.semibold};
-  font-size: ${typography.fontSizes.base};
+  font-size: 1rem;
   color: ${colors.text};
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 export const RatingStars = styled.div`
   color: ${colors.orange};
-  font-size: ${typography.fontSizes.base};
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   margin-top: ${spacing.sm};
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 export const RatingSpan = styled.span`
@@ -135,7 +186,15 @@ export const CarouselWrapper = styled.div`
   position: relative;
   overflow: hidden;
   margin-top: ${spacing.xl};
-  height: 460px;
+  height: 380px;
+
+  @media (max-width: 768px) {
+    height: 340px;
+  }
+
+  @media (max-width: 480px) {
+    height: 300px;
+  }
 `;
 
 export const CarouselInner = styled.div`
@@ -148,7 +207,7 @@ export const CarouselCabinCard = styled.div`
   top: 50%;
   left: 50%;
   width: 280px;
-  height: 420px;
+  height: 320px;
   transform: translate(-50%, -50%) scale(0.1);
   opacity: 0;
   z-index: 0;
@@ -158,7 +217,7 @@ export const CarouselCabinCard = styled.div`
   background-color: ${colors.white};
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   ${props => props.$position === 'left-2' && css`
     transform: translate(-200%, -50%) scale(0.7);
@@ -177,6 +236,7 @@ export const CarouselCabinCard = styled.div`
     z-index: 3;
     opacity: 1;
     cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   `}
 
   ${props => props.$position === 'right-1' && css`
@@ -190,12 +250,30 @@ export const CarouselCabinCard = styled.div`
     z-index: 1;
     opacity: 0.3;
   `}
+
+  @media (max-width: 768px) {
+    width: 250px;
+    height: 290px;
+  }
+
+  @media (max-width: 480px) {
+    width: 220px;
+    height: 260px;
+  }
 `;
 
 export const CarouselImage = styled.img`
   width: 100%;
-  height: 60%;
+  height: 200px;
   object-fit: cover;
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  @media (max-width: 480px) {
+    height: 160px;
+  }
 `;
 
 export const CarouselInfo = styled.div`
@@ -204,25 +282,58 @@ export const CarouselInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 `;
 
 export const CarouselTitle = styled.h4`
-  font-size: ${typography.fontSizes.base};
+  font-size: 1.1rem;
   font-weight: ${typography.fontWeights.semibold};
   color: ${colors.text};
   margin: 0 0 ${spacing.sm} 0;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const CarouselLocation = styled.p`
-  font-size: ${typography.fontSizes.sm};
+  font-size: 0.9rem;
   color: ${colors.textLight};
   margin: 0 0 ${spacing.sm} 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 export const CarouselPrice = styled.p`
   font-weight: ${typography.fontWeights.semibold};
+  font-size: 1rem;
   color: ${colors.text};
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 export const CarouselControls = styled.div`

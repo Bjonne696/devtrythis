@@ -7,12 +7,11 @@ import {
   CarouselWrapper,
   CarouselInner,
   CarouselCabinCard,
-  CabinImage,
-  CabinInfo,
-  CabinTitle,
-  CabinLocation,
-  CabinPrice,
-  RatingStars,
+  CarouselImage,
+  CarouselInfo,
+  CarouselTitle,
+  CarouselLocation,
+  CarouselPrice,
   PrevButton,
   NextButton
 } from "../../styles/cabins/cabinStyles";
@@ -98,14 +97,14 @@ export default function CabinCarousel() {
           <Link key={cabin.id} to={`/hytte/${cabin.id}`}>
             <CarouselCabinCard $position={getPosition(index)}>
               {cabin.image_urls?.[0] && (
-                <CabinImage src={cabin.image_urls[0]} alt={cabin.title} />
+                <CarouselImage src={cabin.image_urls[0]} alt={cabin.title} />
               )}
-              <CabinInfo>
-                <CabinTitle>{cabin.title}</CabinTitle>
-                <CabinLocation>{cabin.location}</CabinLocation>
-                <CabinPrice>{formatPrice(cabin.price_per_night)} / natt</CabinPrice>
+              <CarouselInfo>
+                <CarouselTitle>{cabin.title}</CarouselTitle>
+                <CarouselLocation>{cabin.location}</CarouselLocation>
+                <CarouselPrice>{formatPrice(cabin.price_per_night)} / natt</CarouselPrice>
                 <StarRating score={cabin.average_score} />
-              </CabinInfo>
+              </CarouselInfo>
             </CarouselCabinCard>
           </Link>
         ))}

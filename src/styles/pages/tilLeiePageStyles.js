@@ -224,8 +224,26 @@ export const SectionTitle = styled.h2`
   font-size: ${typography.fontSizes['2xl']};
 `;
 
-export const GridWrapper = styled(ResponsiveGrid)`
-  margin: ${spacing['2xl']} 0;
+export const GridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 2rem 0;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 `;
 
 export const CabinCard = styled(CardBase)`
@@ -233,7 +251,13 @@ export const CabinCard = styled(CardBase)`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(75, 56, 50, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 480px) {
+    &:hover {
+      transform: none;
+    }
   }
 `;
 
@@ -241,37 +265,85 @@ export const CabinImage = styled.img`
   width: 100%;
   height: 200px;
   object-fit: cover;
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  @media (max-width: 480px) {
+    height: 160px;
+  }
 `;
 
 export const CabinInfo = styled.div`
-  padding: ${spacing.lg};
+  padding: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 `;
 
 export const CabinTitle = styled.h3`
-  font-size: ${typography.fontSizes.lg};
+  font-size: 1.1rem;
   font-weight: ${typography.fontWeights.semibold};
   margin: 0 0 ${spacing.sm} 0;
   color: ${colors.primary};
   font-family: ${typography.fontFamilyHeading};
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const CabinLocation = styled.p`
-  font-size: ${typography.fontSizes.sm};
+  font-size: 0.9rem;
   color: ${colors.textLight};
   margin: 0 0 ${spacing.sm} 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 export const CabinPrice = styled.p`
   font-weight: ${typography.fontWeights.semibold};
-  font-size: ${typography.fontSizes.base};
+  font-size: 1rem;
   color: ${colors.primary};
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 export const RatingStars = styled.div`
   color: ${colors.orange};
-  font-size: ${typography.fontSizes.sm};
+  font-size: 0.9rem;
   margin-top: ${spacing.sm};
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 export const PaginationContainer = styled.div`
