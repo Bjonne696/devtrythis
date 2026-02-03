@@ -2,7 +2,7 @@ import React from "react";
 import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
 import NewCabinsGrid from "../components/cabins/NewCabinsGrid";
-import { NyeHytterPageWrapper as PageWrapper, NyeHytterMainContent as MainContent } from "../styles/pages/nyeHytterPageStyles";
+import { PageWrapper, MainContent } from "../styles/layout/pageStyles";
 
 export default function NyeHytterPage() {
   return (
