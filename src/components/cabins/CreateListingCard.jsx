@@ -18,7 +18,7 @@ function CreateListingCard({ isLoggedIn = false }) {
       navigate('/ny-hytte');
     } else {
       sessionStorage.setItem('redirectAfterAuth', '/ny-hytte');
-      navigate('/registrer');
+      navigate('/register');
     }
   };
 

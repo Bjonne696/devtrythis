@@ -89,6 +89,7 @@ export const CreateListingDescription = styled.p`
 export const CreateListingCTA = styled.span`
   display: inline-block;
   margin-top: ${spacing.md};
+  margin-bottom: ${spacing.lg};
   padding: ${spacing.sm} ${spacing.lg};
   background-color: ${colors.primary};
   color: ${colors.white};
