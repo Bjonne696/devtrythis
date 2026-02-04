@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
 import CreateListingCard from "../components/cabins/CreateListingCard";
+import { useAuth } from "../contexts/AuthContext";
 import supabase from "../lib/supabaseClient";
 import { formatPrice } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -48,6 +49,7 @@ import {
 } from "../styles/cabins/cabinStyles";
 
 export default function TilLeiePage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [allCabins, setAllCabins] = useState([]);
   const [filteredCabins, setFilteredCabins] = useState([]);
@@ -357,7 +359,7 @@ export default function TilLeiePage() {
                     </CabinCard>
                   </CabinLink>
                 ))}
-                <CreateListingCard />
+                <CreateListingCard isLoggedIn={!!user} />
               </GridWrapper>
 
               {totalPages > 1 && (

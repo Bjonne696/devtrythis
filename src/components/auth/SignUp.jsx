@@ -117,13 +117,9 @@ function SignUp() {
       console.error('INSERT ERROR:', insertError);
       setError(insertError.message);
     } else {
-      alert('Bruker registrert! Du kan nå logge inn.');
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPassword('');
-      setRegion('');
-      navigate('/login'); // 🔁 Endret fra /min-profil
+      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+      sessionStorage.removeItem('redirectAfterAuth');
+      navigate(redirectPath || '/min-profil');
     }
 
     setLoading(false);

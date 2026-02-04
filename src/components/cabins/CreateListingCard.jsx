@@ -1,8 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  CreateListingLink,
   CreateListingCardWrapper,
   CreateListingIconSection,
   CreateListingIcon,
@@ -12,13 +10,11 @@ import {
   CreateListingCTA
 } from '../../styles/cabins/createListingCardStyles';
 
-export default function CreateListingCard() {
-  const { user } = useAuth();
+function CreateListingCard({ isLoggedIn = false }) {
   const navigate = useNavigate();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    if (user) {
+  const handleClick = () => {
+    if (isLoggedIn) {
       navigate('/ny-hytte');
     } else {
       sessionStorage.setItem('redirectAfterAuth', '/ny-hytte');
@@ -37,9 +33,11 @@ export default function CreateListingCard() {
           Del din hytte med andre og tjen ekstra inntekt på feriedager du ikke bruker den.
         </CreateListingDescription>
         <CreateListingCTA>
-          {user ? 'Opprett annonse' : 'Kom i gang'}
+          {isLoggedIn ? 'Opprett annonse' : 'Kom i gang'}
         </CreateListingCTA>
       </CreateListingInfo>
     </CreateListingCardWrapper>
   );
 }
+
+export default CreateListingCard;

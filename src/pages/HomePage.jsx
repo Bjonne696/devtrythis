@@ -4,6 +4,7 @@ import Footer from "../components/nav/Footer";
 import CabinCarousel from "../components/cabins/CabinCarousel";
 import DevelopmentNotice from "../components/ui/DevelopmentNotice";
 import CreateListingCard from "../components/cabins/CreateListingCard";
+import { useAuth } from "../contexts/AuthContext";
 import supabase from "../lib/supabaseClient";
 import { formatPrice } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -32,6 +33,7 @@ import {
 import StarRating from "../components/ui/StarRating";
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [allCabins, setAllCabins] = useState([]);
   const [filteredCabins, setFilteredCabins] = useState([]);
@@ -156,7 +158,7 @@ export default function HomePage() {
                     </CabinCard>
                   </CabinLink>
                 ))}
-                <CreateListingCard />
+                <CreateListingCard isLoggedIn={!!user} />
               </GridWrapper>
 
               {totalPages > 1 && (

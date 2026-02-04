@@ -1,16 +1,10 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { 
   colors,
   spacing,
   borderRadius,
   typography
 } from '../common/index.js';
-
-export const CreateListingLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-`;
 
 export const CreateListingCardWrapper = styled.div`
   cursor: pointer;
