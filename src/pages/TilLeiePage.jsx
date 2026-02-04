@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navigation from '../components/nav/Navigation';
 import Footer from "../components/nav/Footer";
+import CreateListingCard from "../components/cabins/CreateListingCard";
 import supabase from "../lib/supabaseClient";
 import { formatPrice } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -356,6 +357,7 @@ export default function TilLeiePage() {
                     </CabinCard>
                   </CabinLink>
                 ))}
+                <CreateListingCard />
               </GridWrapper>
 
               {totalPages > 1 && (
