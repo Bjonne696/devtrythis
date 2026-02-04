@@ -62,39 +62,38 @@ export const CreateListingIcon = styled.div`
 `;
 
 export const CreateListingInfo = styled.div`
-  padding: ${spacing.lg};
+  padding: ${spacing.md} ${spacing.lg} ${spacing.xl};
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
 `;
 
 export const CreateListingTitle = styled.h3`
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: ${typography.fontWeights.semibold};
-  margin: 0 0 ${spacing.sm} 0;
+  margin: 0 0 ${spacing.xs} 0;
   color: ${colors.primary};
   font-family: ${typography.fontFamilyHeading};
 `;
 
 export const CreateListingDescription = styled.p`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: ${colors.textLight};
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 `;
 
 export const CreateListingCTA = styled.span`
   display: inline-block;
-  margin-top: ${spacing.md};
-  margin-bottom: ${spacing.lg};
+  margin-top: auto;
   padding: ${spacing.sm} ${spacing.lg};
   background-color: ${colors.primary};
   color: ${colors.white};
   border-radius: ${borderRadius.base};
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: ${typography.fontWeights.medium};
   transition: all 0.2s ease;
 

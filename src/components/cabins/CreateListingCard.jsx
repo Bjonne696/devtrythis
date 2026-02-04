@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import {
   CreateListingCardWrapper,
   CreateListingIconSection,
@@ -11,14 +10,12 @@ import {
 } from '../../styles/cabins/createListingCardStyles';
 
 function CreateListingCard({ isLoggedIn = false }) {
-  const navigate = useNavigate();
-
   const handleClick = () => {
     if (isLoggedIn) {
-      navigate('/ny-hytte');
+      window.location.href = '/ny-hytte';
     } else {
       sessionStorage.setItem('redirectAfterAuth', '/ny-hytte');
-      navigate('/register');
+      window.location.href = '/register';
     }
   };
 
