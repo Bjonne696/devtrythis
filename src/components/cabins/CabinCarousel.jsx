@@ -15,10 +15,25 @@ import {
   PrevButton,
   NextButton
 } from "../../styles/cabins/cabinStyles";
+import {
+  CreateListingIconSection,
+  CreateListingIcon,
+  CreateListingInfo,
+  CreateListingTitle,
+  CreateListingDescription,
+  CreateListingCTA
+} from '../../styles/cabins/createListingCardStyles';
 
 export default function CabinCarousel() {
   const [cabins, setCabins] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     const fetchCabinsWithRatings = async () => {
@@ -65,20 +80,26 @@ export default function CabinCarousel() {
     fetchCabinsWithRatings();
   }, []);
 
+  const showCreateListingCard = cabins.length <= 4;
+
+  const carouselItems = showCreateListingCard
+    ? [...cabins, { id: '__create_listing__', isCreateListing: true }]
+    : cabins;
+
   const prev = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? cabins.length - 1 : prevIndex - 1
+      prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1
     );
   };
 
   const next = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === cabins.length - 1 ? 0 : prevIndex + 1
+      prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const getPosition = (index) => {
-    const total = cabins.length;
+    const total = carouselItems.length;
     const relIndex = (index - currentIndex + total) % total;
 
     if (relIndex === 0) return 'main';
@@ -89,25 +110,60 @@ export default function CabinCarousel() {
     return 'off';
   };
 
+  const handleCreateListingClick = () => {
+    if (user) {
+      window.location.href = '/ny-hytte';
+    } else {
+      sessionStorage.setItem('redirectAfterAuth', '/ny-hytte');
+      window.location.href = '/register';
+    }
+  };
+
   return (
     <CarouselWrapper>
       <PrevButton onClick={prev}>❮</PrevButton>
       <CarouselInner>
-        {cabins.map((cabin, index) => (
-          <Link key={cabin.id} to={`/hytte/${cabin.id}`}>
-            <CarouselCabinCard $position={getPosition(index)}>
-              {cabin.image_urls?.[0] && (
-                <CarouselImage src={cabin.image_urls[0]} alt={cabin.title} />
-              )}
-              <CarouselInfo>
-                <CarouselTitle>{cabin.title}</CarouselTitle>
-                <CarouselLocation>{cabin.location}</CarouselLocation>
-                <CarouselPrice>{formatPrice(cabin.price_per_night)} / natt</CarouselPrice>
-                <StarRating score={cabin.average_score} />
-              </CarouselInfo>
-            </CarouselCabinCard>
-          </Link>
-        ))}
+        {carouselItems.map((item, index) => {
+          if (item.isCreateListing) {
+            return (
+              <CarouselCabinCard
+                key="create-listing"
+                $position={getPosition(index)}
+                onClick={handleCreateListingClick}
+                style={{ cursor: 'pointer', border: '2px dashed var(--color-primary, #4B3832)', background: 'linear-gradient(135deg, #f5f0ed 0%, #faf8f6 100%)' }}
+              >
+                <CreateListingIconSection>
+                  <CreateListingIcon>🏠</CreateListingIcon>
+                </CreateListingIconSection>
+                <CreateListingInfo>
+                  <CreateListingTitle>Leie ut din hytte?</CreateListingTitle>
+                  <CreateListingDescription>
+                    Del din hytte med andre og tjen ekstra inntekt på feriedager du ikke bruker den.
+                  </CreateListingDescription>
+                  <CreateListingCTA>
+                    {user ? 'Opprett annonse' : 'Kom i gang'}
+                  </CreateListingCTA>
+                </CreateListingInfo>
+              </CarouselCabinCard>
+            );
+          }
+
+          return (
+            <Link key={item.id} to={`/hytte/${item.id}`}>
+              <CarouselCabinCard $position={getPosition(index)}>
+                {item.image_urls?.[0] && (
+                  <CarouselImage src={item.image_urls[0]} alt={item.title} />
+                )}
+                <CarouselInfo>
+                  <CarouselTitle>{item.title}</CarouselTitle>
+                  <CarouselLocation>{item.location}</CarouselLocation>
+                  <CarouselPrice>{formatPrice(item.price_per_night)} / natt</CarouselPrice>
+                  <StarRating score={item.average_score} />
+                </CarouselInfo>
+              </CarouselCabinCard>
+            </Link>
+          );
+        })}
       </CarouselInner>
       <NextButton onClick={next}>❯</NextButton>
     </CarouselWrapper>

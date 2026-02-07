@@ -127,11 +127,16 @@ export default function HomePage() {
           </SectionTitle>
 
           {currentCabins.length === 0 ? (
-            <NoResults>
-              {searchTerm
-                ? "Ingen hytter matcher søket ditt."
-                : "Ingen hytter tilgjengelig for øyeblikket."}
-            </NoResults>
+            <>
+              <NoResults>
+                {searchTerm
+                  ? "Ingen hytter matcher søket ditt."
+                  : "Ingen hytter tilgjengelig for øyeblikket."}
+              </NoResults>
+              <GridWrapper style={{ justifyContent: 'center' }}>
+                <CreateListingCard isLoggedIn={!!user} />
+              </GridWrapper>
+            </>
           ) : (
             <>
               <GridWrapper>

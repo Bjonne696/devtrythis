@@ -41,6 +41,7 @@ import {
   NoResults
 } from '../styles/layout/pageStyles';
 import StarRating from "../components/ui/StarRating";
+import CreateListingCard from "../components/cabins/CreateListingCard";
 
 export default function PopularPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,8 +55,15 @@ export default function PopularPage() {
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
   const cabinsPerPage = 12;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   const commonFacilities = [
     "Kjøkken",
@@ -335,13 +343,18 @@ export default function PopularPage() {
         ) : isLoading ? (
           <LoadingSpinner>Laster hytter...</LoadingSpinner>
         ) : currentCabins.length === 0 ? (
-          <NoResults>
-            {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
-              ? checkInDate && checkOutDate
-                ? 'Ingen populære hytter er tilgjengelige for de valgte datoene og filtrene.'
-                : 'Ingen populære hytter matcher dine filtre.'
-              : 'Ingen populære hytter tilgjengelig for øyeblikket.'}
-          </NoResults>
+          <>
+            <NoResults>
+              {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
+                ? checkInDate && checkOutDate
+                  ? 'Ingen populære hytter er tilgjengelige for de valgte datoene og filtrene.'
+                  : 'Ingen populære hytter matcher dine filtre.'
+                : 'Ingen populære hytter tilgjengelig for øyeblikket.'}
+            </NoResults>
+            <GridWrapper style={{ justifyContent: 'center' }}>
+              <CreateListingCard isLoggedIn={!!user} />
+            </GridWrapper>
+          </>
         ) : (
           <>
             <GridWrapper>

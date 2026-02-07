@@ -334,13 +334,18 @@ export default function TilLeiePage() {
           ) : isLoading ? (
             <LoadingSpinner>Laster hytter...</LoadingSpinner>
           ) : currentCabins.length === 0 ? (
-            <NoResults>
-              {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
-                ? checkInDate && checkOutDate
-                  ? 'Ingen hytter er tilgjengelige for de valgte datoene og filtrene.'
-                  : 'Ingen hytter matcher dine filtre.'
-                : 'Ingen hytter tilgjengelig for øyeblikket.'}
-            </NoResults>
+            <>
+              <NoResults>
+                {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
+                  ? checkInDate && checkOutDate
+                    ? 'Ingen hytter er tilgjengelige for de valgte datoene og filtrene.'
+                    : 'Ingen hytter matcher dine filtre.'
+                  : 'Ingen hytter tilgjengelig for øyeblikket.'}
+              </NoResults>
+              <GridWrapper style={{ justifyContent: 'center' }}>
+                <CreateListingCard isLoggedIn={!!user} />
+              </GridWrapper>
+            </>
           ) : (
             <>
               <GridWrapper>
