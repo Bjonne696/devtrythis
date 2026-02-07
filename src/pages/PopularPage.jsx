@@ -371,6 +371,7 @@ export default function PopularPage() {
                   </CabinInfo>
                 </CabinCard>
               ))}
+              {currentCabins.length < 12 && <CreateListingCard isLoggedIn={!!user} />}
             </GridWrapper>
 
             {totalPages > 1 && (

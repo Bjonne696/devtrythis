@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import supabase from "../../lib/supabaseClient";
 import { formatPrice } from "../../utils/formatters";
 import StarRating from "../ui/StarRating";
+import CreateListingCard from "./CreateListingCard";
 import {
   GridWrapper,
   CabinCard,
@@ -13,14 +14,22 @@ import {
   CabinPrice,
   RatingStars
 } from '../../styles/cabins/cabinStyles';
+import { NoResults } from '../../styles/layout/pageStyles';
 
 export default function NewCabinsGrid() {
   const [cabins, setCabins] = useState([]);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const handleCabinClick = (cabinId) => {
     navigate(`/hytte/${cabinId}`);
   };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     const fetchNewCabins = async () => {
@@ -63,6 +72,17 @@ export default function NewCabinsGrid() {
     fetchNewCabins();
   }, []);
 
+  if (cabins.length === 0) {
+    return (
+      <div>
+        <NoResults>Ingen nye hytter tilgjengelig for øyeblikket.</NoResults>
+        <GridWrapper style={{ justifyContent: 'center' }}>
+          <CreateListingCard isLoggedIn={!!user} />
+        </GridWrapper>
+      </div>
+    );
+  }
+
   return (
     <div>
       <GridWrapper>
@@ -79,6 +99,7 @@ export default function NewCabinsGrid() {
             </CabinInfo>
           </CabinCard>
         ))}
+        {cabins.length < 12 && <CreateListingCard isLoggedIn={!!user} />}
       </GridWrapper>
     </div>
   );
