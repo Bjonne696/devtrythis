@@ -1,6 +1,7 @@
 import { useState } from "react";
 import BookingRequestModal from "./BookingRequestModal";
 import StarRating from "../ui/StarRating";
+import { formatPrice } from '../../utils/formatters';
 import {
   Details,
   RatingSection,
@@ -49,7 +50,7 @@ export default function CabinDetails({ cabin, averageRating }) {
       <p>{cabin.description || "Ingen beskrivelse."}</p>
       <p>
         <strong>Pris:</strong>{" "}
-        {cabin.price_per_night != null ? `${cabin.price_per_night} kr/natt` : "Ukjent"}
+        {cabin.price_per_night != null ? `${formatPrice(cabin.price_per_night)} / natt` : "Ukjent"}
       </p>
       {averageRating > 0 && (
         <RatingSection>
