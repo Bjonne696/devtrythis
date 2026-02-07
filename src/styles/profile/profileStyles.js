@@ -228,22 +228,6 @@ export const StyledCard = styled.div`
   }
 `;
 
-export const Textarea = styled.textarea`
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  min-height: 100px;
-  resize: vertical;
-  font-family: inherit;
-
-  &:focus {
-    outline: none;
-    border-color: #4b3832;
-  }
-`;
-
 export const ActionButton = styled.button`
   background-color: #4b3832;
   color: white;

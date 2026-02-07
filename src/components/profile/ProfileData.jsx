@@ -16,7 +16,6 @@ import {
   MiddleSection,
   Box,
   StyledCard,
-  Textarea,
   ActionButton,
   SaveButton,
   CabinImage,
@@ -30,9 +29,6 @@ import { MainWrapper, Heading, ProfileSection, SectionHeading, SectionContent } 
 
 export default function ProfileData() {
   const { profile, user } = useAuth();
-  const [about, setAbout] = useState("");
-  const [editAbout, setEditAbout] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [incomingReviews, setIncomingReviews] = useState([]);
@@ -46,13 +42,11 @@ export default function ProfileData() {
     if (!user?.id) return;
     const { data, error } = await supabase
       .from("profiles")
-      .select("about, avatar_url")
+      .select("avatar_url")
       .eq("id", user.id)
       .single();
 
     if (!error && data) {
-      setAbout(data.about || "");
-      setEditAbout(data.about || "");
       if (data.avatar_url) {
         const { data: urlData } = supabase.storage
           .from("avatars")
@@ -140,18 +134,6 @@ export default function ProfileData() {
     }
   }, [user?.id]);
 
-  const handleSaveAbout = async () => {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ about: editAbout })
-      .eq("id", profile.id);
-
-    if (!error) {
-      setAbout(editAbout);
-      setIsEditing(false);
-    }
-  };
-
   if (!profile) return <p>Laster profil...</p>;
 
   const isOwner = user?.id === profile.id;
@@ -180,25 +162,6 @@ export default function ProfileData() {
       </TopSection>
 
       <MiddleSection>
-        <Box>
-          <h3>Om</h3>
-          {isEditing ? (
-            <>
-              <Textarea
-                value={editAbout}
-                onChange={(e) => setEditAbout(e.target.value)}
-              />
-              <SaveButton onClick={handleSaveAbout}>Lagre</SaveButton>
-            </>
-          ) : (
-            <>
-              <p>{about || "Ingen beskrivelse lagt til ennå."}</p>
-              {isOwner && (
-                <SaveButton onClick={() => setIsEditing(true)}>Rediger</SaveButton>
-              )}
-            </>
-          )}
-        </Box>
         <Box>
           <h3>Review</h3>
           {incomingReviews.length === 0 ? (
