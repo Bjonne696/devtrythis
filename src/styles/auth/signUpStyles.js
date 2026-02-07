@@ -50,7 +50,7 @@ export const Label = styled(LabelBase)`
 `;
 
 export const Input = styled(InputBase)`
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => props.$hasError ? '#d32f2f' : '#e0e0e0'};
   
   &:focus {
     border-color: ${colors.primary};
@@ -80,6 +80,11 @@ export const Error = styled.div`
   color: ${colors.error};
   font-size: ${typography.fontSizes.sm};
   margin-top: ${spacing.xs};
+`;
+
+export const FieldError = styled(Error)`
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0 0;
 `;
 
 export const ToggleText = styled.p`

@@ -21,7 +21,14 @@ import {
   CabinImage,
   PlaceholderImage,
   ProfileImage,
-  ProfileRow
+  ProfileRow,
+  ReviewListContainer,
+  ReviewCard,
+  OwnerInfoText,
+  ContactLink,
+  ViewCabinButton,
+  ReviewStatusText,
+  DeleteReviewButton
 } from "../../styles/profile/profileStyles";
 import { MainWrapper, Heading, ProfileSection, SectionHeading, SectionContent } from "../../styles/pages/minProfilPageStyles";
 
@@ -167,33 +174,20 @@ export default function ProfileData() {
           {incomingReviews.length === 0 ? (
             <p>Ingen vurderinger på dine hytter ennå.</p>
           ) : (
-            <div style={{
-              maxHeight: "300px",
-              overflowY: "auto",
-              padding: "0.5rem",
-              border: "1px solid #e0e0e0",
-              borderRadius: "0.5rem",
-              backgroundColor: "#f9f9f9"
-            }}>
+            <ReviewListContainer>
               {incomingReviews
                 .filter((rev) => rev.cabins?.owner_id === user?.id)
                 .map((rev, index) => (
-                  <div key={index} style={{
-                    marginBottom: "1rem",
-                    padding: "1rem",
-                    backgroundColor: "white",
-                    borderRadius: "0.5rem",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
-                  }}>
+                  <ReviewCard key={index}>
                     <p>
                       <strong>{rev.cabins?.title}</strong><br />
                       Score: {rev.rating} ⭐<br />
                       Kommentar: {rev.comment}
                     </p>
-                  </div>
+                  </ReviewCard>
                 ))
               }
-            </div>
+            </ReviewListContainer>
           )}
         </Box>
       </MiddleSection>
@@ -247,22 +241,21 @@ export default function ProfileData() {
                 )}
 
                 {rental.cabins?.profiles && (
-                  <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#666" }}>
+                  <OwnerInfoText>
                     Eier: {rental.cabins.profiles.name} {rental.cabins.profiles.last_name}
                     {rental.cabins.profiles.email && (
-                      <> • <a href={`mailto:${rental.cabins.profiles.email}`} style={{ color: "#2b6cb0" }}>
+                      <> • <ContactLink href={`mailto:${rental.cabins.profiles.email}`}>
                         Kontakt eier
-                      </a></>
+                      </ContactLink></>
                     )}
-                  </p>
+                  </OwnerInfoText>
                 )}
 
-                <ActionButton 
+                <ViewCabinButton 
                   onClick={() => navigate(`/hytte/${rental.cabins.id}`)}
-                  style={{ marginTop: "1rem" }}
                 >
                   Se hytteside
-                </ActionButton>
+                </ViewCabinButton>
               </StyledCard>
             ))
           ) : (
@@ -293,15 +286,14 @@ export default function ProfileData() {
 
                 {reviews.includes(booking.cabins.id) ? (
                   <>
-                    <p style={{ color: "green", marginTop: "0.5rem" }}>
+                    <ReviewStatusText>
                       Du har allerede vurdert denne hytta.
-                    </p>
-                    <SaveButton
+                    </ReviewStatusText>
+                    <DeleteReviewButton
                       onClick={() => handleDeleteReview(booking.cabins.id)}
-                      style={{ backgroundColor: "#e53e3e" }}
                     >
                       Slett vurdering
-                    </SaveButton>
+                    </DeleteReviewButton>
                   </>
                 ) : (
                   <AddReviewForm

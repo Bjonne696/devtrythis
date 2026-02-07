@@ -11,6 +11,7 @@ import {
   InfoItem,
   ActionButton,
   NoSubscription,
+  SubText,
   WarningText
 } from '../../styles/subscription/subscriptionStatusStyles';
 
@@ -31,9 +32,9 @@ export default function SubscriptionStatus({ userId }) {
       <StatusWrapper>
         <NoSubscription>
           <p>Du har ingen aktive abonnementer.</p>
-          <p style={{ fontSize: '0.9rem' }}>
+          <SubText>
             Opprett en hytte for å komme i gang med abonnement.
-          </p>
+          </SubText>
         </NoSubscription>
       </StatusWrapper>
     );

@@ -133,7 +133,7 @@ export default function HomePage() {
                   ? "Ingen hytter matcher søket ditt."
                   : "Ingen hytter tilgjengelig for øyeblikket."}
               </NoResults>
-              <GridWrapper style={{ justifyContent: 'center' }}>
+              <GridWrapper $centered>
                 <CreateListingCard isLoggedIn={!!user} />
               </GridWrapper>
             </>

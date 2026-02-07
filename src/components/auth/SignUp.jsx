@@ -11,6 +11,7 @@ import {
   Label,
   Input,
   Error,
+  FieldError,
   Button
 } from '../../styles/auth/signUpStyles';
 
@@ -145,12 +146,12 @@ function SignUp() {
             required
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            style={{ borderColor: fieldErrors.firstName ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.firstName}
           />
           {fieldErrors.firstName && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.firstName}
-            </Error>
+            </FieldError>
           )}
         </FormGroup>
 
@@ -162,12 +163,12 @@ function SignUp() {
             required
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            style={{ borderColor: fieldErrors.lastName ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.lastName}
           />
           {fieldErrors.lastName && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.lastName}
-            </Error>
+            </FieldError>
           )}
         </FormGroup>
 
@@ -179,12 +180,12 @@ function SignUp() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ borderColor: fieldErrors.email ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.email}
           />
           {fieldErrors.email && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.email}
-            </Error>
+            </FieldError>
           )}
         </FormGroup>
 
@@ -200,12 +201,12 @@ function SignUp() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Minst 8 tegn, bokstaver og tall"
-            style={{ borderColor: fieldErrors.password ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.password}
           />
           {fieldErrors.password && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.password}
-            </Error>
+            </FieldError>
           )}
         </FormGroup>
 

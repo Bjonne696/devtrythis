@@ -10,6 +10,7 @@ import {
   Label,
   Input,
   Error,
+  FieldError,
   ForgotPasswordButton,
   RegisterInfo
 } from "../../styles/auth/signInStyles";
@@ -87,12 +88,12 @@ function SignIn() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ borderColor: fieldErrors.email ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.email}
           />
           {fieldErrors.email && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.email}
-            </Error>
+            </FieldError>
           )}
         </LabelGroup>
 
@@ -106,12 +107,12 @@ function SignIn() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ borderColor: fieldErrors.password ? '#d32f2f' : '#ccc' }}
+            $hasError={!!fieldErrors.password}
           />
           {fieldErrors.password && (
-            <Error style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0' }}>
+            <FieldError>
               {fieldErrors.password}
-            </Error>
+            </FieldError>
           )}
         </LabelGroup>
 

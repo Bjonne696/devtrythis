@@ -47,13 +47,13 @@ export const Label = styled.label`
 
 export const Input = styled.input`
   padding: 0.75rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => props.$hasError ? '#d32f2f' : '#e0e0e0'};
   border-radius: 0.5rem;
   font-size: 1rem;
   
   &:focus {
     outline: none;
-    border-color: #4b3832;
+    border-color: ${props => props.$hasError ? '#d32f2f' : '#4b3832'};
   }
   
   &:disabled {
@@ -64,7 +64,7 @@ export const Input = styled.input`
 
 export const TextArea = styled.textarea`
   padding: 0.75rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => props.$hasError ? '#d32f2f' : '#e0e0e0'};
   border-radius: 0.5rem;
   font-size: 1rem;
   min-height: 100px;
@@ -72,7 +72,7 @@ export const TextArea = styled.textarea`
   
   &:focus {
     outline: none;
-    border-color: #4b3832;
+    border-color: ${props => props.$hasError ? '#d32f2f' : '#4b3832'};
   }
 `;
 

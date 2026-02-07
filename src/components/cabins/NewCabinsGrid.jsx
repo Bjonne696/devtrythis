@@ -76,7 +76,7 @@ export default function NewCabinsGrid() {
     return (
       <div>
         <NoResults>Ingen nye hytter tilgjengelig for øyeblikket.</NoResults>
-        <GridWrapper style={{ justifyContent: 'center' }}>
+        <GridWrapper $centered>
           <CreateListingCard isLoggedIn={!!user} />
         </GridWrapper>
       </div>

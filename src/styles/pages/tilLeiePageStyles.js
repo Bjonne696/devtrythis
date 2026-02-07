@@ -229,6 +229,7 @@ export const GridWrapper = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin: 2rem 0;
+  ${props => props.$centered && 'justify-content: center;'}
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);

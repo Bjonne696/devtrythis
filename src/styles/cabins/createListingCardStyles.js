@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { CarouselCabinCard } from './cabinStyles.js';
 import { 
   colors,
   spacing,
@@ -99,5 +100,16 @@ export const CreateListingCTA = styled.span`
 
   ${CreateListingCardWrapper}:hover & {
     background-color: ${colors.primaryHover};
+  }
+`;
+
+export const CreateListingCarouselCard = styled(CarouselCabinCard)`
+  cursor: pointer;
+  border: 2px dashed ${colors.primary};
+  background: linear-gradient(135deg, #f5f0ed 0%, #faf8f6 100%);
+
+  &:hover {
+    border-style: solid;
+    background: linear-gradient(135deg, #faf8f6 0%, #f5f0ed 100%);
   }
 `;

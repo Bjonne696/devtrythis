@@ -291,3 +291,47 @@ export const ErrorMessage = styled.div`
   border-left: 4px solid #c33;
   margin: 1rem 0;
 `;
+
+export const ReviewListContainer = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  background-color: #f9f9f9;
+`;
+
+export const ReviewCard = styled.div`
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+export const OwnerInfoText = styled.p`
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+`;
+
+export const ContactLink = styled.a`
+  color: #2b6cb0;
+`;
+
+export const ViewCabinButton = styled(ActionButton)`
+  margin-top: 1rem;
+`;
+
+export const ReviewStatusText = styled.p`
+  color: green;
+  margin-top: 0.5rem;
+`;
+
+export const DeleteReviewButton = styled(SaveButton)`
+  background-color: #e53e3e;
+
+  &:hover {
+    background-color: #c53030;
+  }
+`;

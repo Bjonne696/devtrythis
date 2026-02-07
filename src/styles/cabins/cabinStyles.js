@@ -25,6 +25,7 @@ export const GridWrapper = styled.div`
   padding: 0 ${spacing.md};
   justify-content: center;
   width: 100%;
+  ${props => props.$centered && 'justify-content: center;'}
 
   @media (max-width: 600px) {
     grid-template-columns: 270px;

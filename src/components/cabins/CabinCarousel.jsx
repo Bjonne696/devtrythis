@@ -21,7 +21,8 @@ import {
   CreateListingInfo,
   CreateListingTitle,
   CreateListingDescription,
-  CreateListingCTA
+  CreateListingCTA,
+  CreateListingCarouselCard
 } from '../../styles/cabins/createListingCardStyles';
 
 export default function CabinCarousel() {
@@ -126,11 +127,10 @@ export default function CabinCarousel() {
         {carouselItems.map((item, index) => {
           if (item.isCreateListing) {
             return (
-              <CarouselCabinCard
+              <CreateListingCarouselCard
                 key="create-listing"
                 $position={getPosition(index)}
                 onClick={handleCreateListingClick}
-                style={{ cursor: 'pointer', border: '2px dashed var(--color-primary, #4B3832)', background: 'linear-gradient(135deg, #f5f0ed 0%, #faf8f6 100%)' }}
               >
                 <CreateListingIconSection>
                   <CreateListingIcon>🏠</CreateListingIcon>
@@ -144,7 +144,7 @@ export default function CabinCarousel() {
                     {user ? 'Opprett annonse' : 'Kom i gang'}
                   </CreateListingCTA>
                 </CreateListingInfo>
-              </CarouselCabinCard>
+              </CreateListingCarouselCard>
             );
           }
 

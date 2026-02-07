@@ -342,7 +342,7 @@ export default function TilLeiePage() {
                     : 'Ingen hytter matcher dine filtre.'
                   : 'Ingen hytter tilgjengelig for øyeblikket.'}
               </NoResults>
-              <GridWrapper style={{ justifyContent: 'center' }}>
+              <GridWrapper $centered>
                 <CreateListingCard isLoggedIn={!!user} />
               </GridWrapper>
             </>

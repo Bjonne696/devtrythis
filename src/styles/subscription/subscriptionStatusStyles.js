@@ -94,6 +94,12 @@ export const NoSubscription = styled.div`
   }
 `;
 
+export const SubText = styled.p`
+  font-size: 0.9rem;
+  margin: 0;
+  color: #6c757d;
+`;
+
 export const WarningText = styled.p`
   background: #fff3cd;
   border: 1px solid #ffc107;

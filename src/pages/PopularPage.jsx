@@ -351,7 +351,7 @@ export default function PopularPage() {
                   : 'Ingen populære hytter matcher dine filtre.'
                 : 'Ingen populære hytter tilgjengelig for øyeblikket.'}
             </NoResults>
-            <GridWrapper style={{ justifyContent: 'center' }}>
+            <GridWrapper $centered>
               <CreateListingCard isLoggedIn={!!user} />
             </GridWrapper>
           </>

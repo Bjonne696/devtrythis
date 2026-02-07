@@ -17,6 +17,15 @@ import {
   CheckboxGroup,
   SubmitButton
 } from "../../styles/cabins/cabinStyles";
+import {
+  AdminAlert,
+  WarningAlert,
+  ErrorText,
+  FileInfo,
+  MapWrapper,
+  SubmitError,
+  CheckboxLabel
+} from "../../styles/cabins/newCabinFormStyles";
 
 const facilitiesList = [
   "Kjøkken",
@@ -253,30 +262,16 @@ export default function NewCabinForm() {
       <h1>Opprett ny hytteannonse</h1>
       
       {isAdmin && (
-        <div style={{ 
-          background: '#d4edda', 
-          border: '1px solid #28a745', 
-          borderRadius: '6px', 
-          padding: '1rem', 
-          marginBottom: '1.5rem',
-          color: '#155724'
-        }}>
+        <AdminAlert>
           <strong>✓ Admin-konto:</strong> Hytta vil bli automatisk publisert uten behov for abonnement.
-        </div>
+        </AdminAlert>
       )}
       
       {!canPublish && !subLoading && (
-        <div style={{ 
-          background: '#fff3cd', 
-          border: '1px solid #ffc107', 
-          borderRadius: '6px', 
-          padding: '1rem', 
-          marginBottom: '1.5rem',
-          color: '#856404'
-        }}>
+        <WarningAlert>
           <strong>ℹ️ Viktig:</strong> Du trenger et aktivt abonnement for at hytta skal bli synlig for leietakere. 
           Etter at du har opprettet hytta, får du mulighet til å aktivere abonnement.
-        </div>
+        </WarningAlert>
       )}
       
       <HelpText>
@@ -300,13 +295,13 @@ export default function NewCabinForm() {
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => handleFieldBlur('title')}
             placeholder="Eksempel: Koselig familiehytte ved sjøen"
-            style={{ borderColor: touched.title && errors.title ? '#d32f2f' : '#ccc' }}
+            $hasError={touched.title && errors.title}
             required 
           />
           {touched.title && errors.title && (
-            <p style={{ color: '#d32f2f', fontSize: '0.8rem', margin: '0.5rem 0 0 0' }}>
+            <ErrorText>
               {errors.title}
-            </p>
+            </ErrorText>
           )}
         </FormField>
 
@@ -319,13 +314,13 @@ export default function NewCabinForm() {
             onChange={(e) => setDescription(e.target.value)}
             onBlur={() => handleFieldBlur('description')}
             placeholder="Beskriv hytta, beliggenheten, aktiviteter i nærheten og spesielle egenskaper..."
-            style={{ borderColor: touched.description && errors.description ? '#d32f2f' : '#ccc' }}
+            $hasError={touched.description && errors.description}
             required 
           />
           {touched.description && errors.description && (
-            <p style={{ color: '#d32f2f', fontSize: '0.8rem', margin: '0.5rem 0 0 0' }}>
+            <ErrorText>
               {errors.description}
-            </p>
+            </ErrorText>
           )}
         </FormField>
 
@@ -341,13 +336,13 @@ export default function NewCabinForm() {
             placeholder="1500"
             min="100"
             max="10000"
-            style={{ borderColor: touched.price && errors.price ? '#d32f2f' : '#ccc' }}
+            $hasError={touched.price && errors.price}
             required 
           />
           {touched.price && errors.price && (
-            <p style={{ color: '#d32f2f', fontSize: '0.8rem', margin: '0.5rem 0 0 0' }}>
+            <ErrorText>
               {errors.price}
-            </p>
+            </ErrorText>
           )}
         </FormField>
 
@@ -381,14 +376,14 @@ export default function NewCabinForm() {
             required
           />
           {files.length > 0 && (
-            <p style={{ color: '#4b3832', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+            <FileInfo>
               {files.length} bilde(r) valgt
-            </p>
+            </FileInfo>
           )}
           {errors.files && (
-            <p style={{ color: '#d32f2f', fontSize: '0.8rem', margin: '0.5rem 0 0 0' }}>
+            <ErrorText>
               {errors.files}
-            </p>
+            </ErrorText>
           )}
         </FormField>
 
@@ -396,15 +391,14 @@ export default function NewCabinForm() {
           <Tooltip text="Premium annonser vises høyere i søkeresultatene og får mer oppmerksomhet. Koster ekstra, men gir bedre synlighet.">
             <Label>Premium annonse (koster mer) *</Label>
           </Tooltip>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <Input
+          <CheckboxLabel>
+            <input
               type="checkbox"
               checked={isPremium}
               onChange={() => setIsPremium(!isPremium)}
-              style={{ width: 'auto' }}
             />
             Ja, jeg vil ha premium-plassering
-          </label>
+          </CheckboxLabel>
         </FormField>
 
         {latitude && longitude && (
@@ -426,19 +420,19 @@ export default function NewCabinForm() {
               />
             </MapContainer>
             {locationInfo.address && (
-              <div style={{ marginTop: "1rem" }}>
+              <MapWrapper>
                 <strong>Adresse funnet:</strong><br />
                 {locationInfo.address}<br />
                 {locationInfo.postalCode} {locationInfo.city}
-              </div>
+              </MapWrapper>
             )}
           </FormField>
         )}
 
         {errors.submit && (
-          <p style={{ color: '#d32f2f', fontSize: '0.9rem', margin: '1rem 0', textAlign: 'center' }}>
+          <SubmitError>
             {errors.submit}
-          </p>
+          </SubmitError>
         )}
         
         <SubmitButton type="submit" disabled={loading}>
