@@ -507,14 +507,11 @@ export const SocialLinks = styled.div`
 `;
 
 export const IconWrapper = styled.div`
-  color: ${colors.white};
+  color: ${colors.textMuted};
   font-size: ${typography.fontSizes.lg};
-  cursor: pointer;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: ${colors.textMuted};
-  }
+  cursor: default;
+  opacity: 0.5;
+  pointer-events: none;
 `;
 
 export const Logo = styled.img`
