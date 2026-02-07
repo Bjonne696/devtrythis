@@ -11,6 +11,14 @@ export const MainWrapper = styled.main`
   padding: ${spacing['2xl']};
   min-height: 60vh;
   background-color: ${colors.background};
+
+  @media (max-width: 768px) {
+    padding: ${spacing.lg};
+  }
+
+  @media (max-width: 480px) {
+    padding: ${spacing.md};
+  }
 `;
 
 export const Heading = styled.h1`
@@ -19,9 +27,18 @@ export const Heading = styled.h1`
   font-family: ${typography.fontFamilyHeading};
   margin-bottom: ${spacing['2xl']};
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: ${typography.fontSizes.xl};
+    margin-bottom: ${spacing.lg};
+  }
+
+  @media (max-width: 480px) {
+    font-size: ${typography.fontSizes.lg};
+    margin-bottom: ${spacing.md};
+  }
 `;
 
-// Admin table styles
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -29,6 +46,10 @@ export const Table = styled.table`
   background-color: ${colors.white};
   border-radius: ${borderRadius.base};
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    margin-top: ${spacing.lg};
+  }
 `;
 
 export const Th = styled.th`
@@ -38,11 +59,31 @@ export const Th = styled.th`
   text-align: left;
   font-weight: ${typography.fontWeights.semibold};
   color: ${colors.text};
+
+  @media (max-width: 768px) {
+    padding: ${spacing.sm};
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: ${spacing.xs} ${spacing.sm};
+    font-size: 0.8rem;
+  }
 `;
 
 export const Td = styled.td`
   border: 1px solid ${colors.border};
   padding: ${spacing.md};
+
+  @media (max-width: 768px) {
+    padding: ${spacing.sm};
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: ${spacing.xs} ${spacing.sm};
+    font-size: 0.8rem;
+  }
 `;
 
 export const DeleteButton = styled.button`
@@ -57,11 +98,21 @@ export const DeleteButton = styled.button`
   &:hover {
     background-color: #ffcccc;
   }
+
+  @media (max-width: 480px) {
+    padding: ${spacing.xs} ${spacing.sm};
+    font-size: 0.8rem;
+    width: 100%;
+  }
 `;
 
 export const AdminWrapper = styled.div`
   max-width: 800px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 export const SubHeading = styled.h2`
@@ -69,4 +120,13 @@ export const SubHeading = styled.h2`
   font-size: ${typography.fontSizes.xl};
   font-family: ${typography.fontFamilyHeading};
   margin-bottom: ${spacing.lg};
+
+  @media (max-width: 768px) {
+    font-size: ${typography.fontSizes.lg};
+    margin-bottom: ${spacing.md};
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `;

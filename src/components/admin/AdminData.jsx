@@ -33,7 +33,6 @@ export default function AdminData() {
     const bekreft = window.confirm("Er du sikker på at du vil slette denne brukeren?");
     if (!bekreft) return;
 
-    // Slett fra profiles
     const { error: profileError } = await supabase
       .from("profiles")
       .delete()
@@ -44,7 +43,6 @@ export default function AdminData() {
       return;
     }
 
-    // Slett fra auth.users (hvis du har opprettet RPC-funksjonen)
     const { error: authError } = await supabase.rpc("delete_user_account", {
       uid: userId,
     });
@@ -54,7 +52,7 @@ export default function AdminData() {
     }
 
     alert("Bruker slettet!");
-    fetchProfiles(); // Oppdater visning
+    fetchProfiles();
   };
 
   return (
@@ -74,10 +72,10 @@ export default function AdminData() {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <Td>{`${user.name} ${user.last_name}`}</Td>
-              <Td>{user.region || "-"}</Td>
-              <Td>{user.email}</Td>
-              <Td>
+              <Td data-label="Navn">{`${user.name} ${user.last_name}`}</Td>
+              <Td data-label="Område">{user.region || "-"}</Td>
+              <Td data-label="E-post">{user.email}</Td>
+              <Td data-label="Handling">
                 <DeleteButton onClick={() => handleDelete(user.id)}>Slett</DeleteButton>
               </Td>
             </tr>

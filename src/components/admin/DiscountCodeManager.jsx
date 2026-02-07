@@ -13,7 +13,8 @@ import {
   Td,
   StatusBadge,
   SuccessMessage,
-  EmptyMessage
+  EmptyMessage,
+  ActionGroup
 } from '../../styles/admin/discountCodeManagerStyles';
 
 export default function DiscountCodeManager() {
@@ -136,10 +137,10 @@ export default function DiscountCodeManager() {
         <tbody>
           {codes.map((code) => (
             <tr key={code.id}>
-              <Td><strong>{code.code}</strong></Td>
-              <Td>{code.duration_months} måned{code.duration_months > 1 ? 'er' : ''} gratis</Td>
-              <Td>{new Date(code.valid_until).toLocaleDateString('nb-NO')}</Td>
-              <Td>
+              <Td data-label="Kode"><strong>{code.code}</strong></Td>
+              <Td data-label="Varighet">{code.duration_months} måned{code.duration_months > 1 ? 'er' : ''} gratis</Td>
+              <Td data-label="Gyldig til">{new Date(code.valid_until).toLocaleDateString('nb-NO')}</Td>
+              <Td data-label="Status">
                 {isExpired(code.valid_until) ? (
                   <StatusBadge $active={false}>Utløpt</StatusBadge>
                 ) : (
@@ -148,21 +149,23 @@ export default function DiscountCodeManager() {
                   </StatusBadge>
                 )}
               </Td>
-              <Td>
-                <Button 
-                  onClick={() => toggleActive(code.id)} 
-                  className="small with-margin"
-                  disabled={isExpired(code.valid_until)}
-                >
-                  {code.is_active ? 'Deaktiver' : 'Aktiver'}
-                </Button>
-                <Button 
-                  $variant="delete" 
-                  onClick={() => handleDelete(code.id)}
-                  className="small"
-                >
-                  Slett
-                </Button>
+              <Td data-label="Handlinger">
+                <ActionGroup>
+                  <Button 
+                    onClick={() => toggleActive(code.id)} 
+                    className="small"
+                    disabled={isExpired(code.valid_until)}
+                  >
+                    {code.is_active ? 'Deaktiver' : 'Aktiver'}
+                  </Button>
+                  <Button 
+                    $variant="delete" 
+                    onClick={() => handleDelete(code.id)}
+                    className="small"
+                  >
+                    Slett
+                  </Button>
+                </ActionGroup>
               </Td>
             </tr>
           ))}
