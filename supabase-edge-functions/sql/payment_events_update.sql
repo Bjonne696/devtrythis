@@ -47,6 +47,26 @@ BEGIN
   END IF;
 END $$;
 
+-- Sørg for at UNIQUE-constraint finnes på provider_event_id
+-- (dekker tilfellet der kolonnen allerede fantes uten UNIQUE)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints tc
+    JOIN information_schema.constraint_column_usage ccu
+      ON tc.constraint_name = ccu.constraint_name
+      AND tc.table_schema = ccu.table_schema
+    WHERE tc.table_schema = 'public'
+      AND tc.table_name = 'payment_events'
+      AND tc.constraint_type = 'UNIQUE'
+      AND ccu.column_name = 'provider_event_id'
+  ) THEN
+    ALTER TABLE payment_events
+      ADD CONSTRAINT payment_events_provider_event_id_unique
+      UNIQUE (provider_event_id);
+  END IF;
+END $$;
+
 -- Indeks for raskere idempotency-sjekk
 CREATE INDEX IF NOT EXISTS idx_payment_events_provider_event_id
   ON payment_events (provider_event_id)
