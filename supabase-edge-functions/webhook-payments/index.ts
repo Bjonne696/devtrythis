@@ -16,7 +16,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 
 async function verifyVippsSignature(
   req: Request,
-  rawBody: string,
+  bodyBytes: ArrayBuffer,
   secret: string
 ): Promise<boolean> {
   try {
@@ -27,29 +27,32 @@ async function verifyVippsSignature(
       return false;
     }
 
-    const signatureMatch = authHeader.match(/Signature=([A-Za-z0-9+/=]+)\s*$/);
-    if (!signatureMatch) {
-      console.error("Could not extract Signature from Authorization header");
+    const sigIdx = authHeader.indexOf("Signature=");
+    if (sigIdx === -1) {
+      console.error("Could not find Signature= in Authorization header");
       return false;
     }
-    const providedSignature = signatureMatch[1];
+    const providedSignature = authHeader.slice(sigIdx + "Signature=".length).trim();
+    if (!providedSignature) {
+      console.error("Empty signature value in Authorization header");
+      return false;
+    }
 
     const xMsContentSha256 = (req.headers.get("x-ms-content-sha256") || "").trim();
     const xMsDate = (req.headers.get("x-ms-date") || "").trim();
-    const host = (
-      req.headers.get("x-forwarded-host") ||
+    let host = (
       req.headers.get("host") ||
+      req.headers.get("x-forwarded-host") ||
       ""
     ).trim();
+    host = host.replace(/:443$/, "");
 
     if (!xMsContentSha256 || !xMsDate || !host) {
       console.error("Missing required headers. x-ms-content-sha256:", !!xMsContentSha256, "x-ms-date:", !!xMsDate, "host:", !!host);
       return false;
     }
 
-    const encoder = new TextEncoder();
-    const safeBody = rawBody ?? "";
-    const bodyHashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(safeBody));
+    const bodyHashBuffer = await crypto.subtle.digest("SHA-256", bodyBytes);
     const computedBodyHash = arrayBufferToBase64(bodyHashBuffer);
 
     if (computedBodyHash !== xMsContentSha256) {
@@ -64,6 +67,7 @@ async function verifyVippsSignature(
     const stringToSign =
       `${method}\n${pathAndQuery}\n${xMsDate};${host};${xMsContentSha256}`;
 
+    const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey(
       "raw",
       encoder.encode(secret),
@@ -77,6 +81,7 @@ async function verifyVippsSignature(
 
     if (computedSignature !== providedSignature) {
       console.error("Signature mismatch. Check VIPPS_WEBHOOK_SECRET.");
+      console.error("String to sign:", JSON.stringify(stringToSign));
       console.error("Method:", method, "Path:", pathAndQuery, "Host:", host);
       console.error("Date header:", xMsDate, "Body hash:", xMsContentSha256);
       return false;
@@ -112,9 +117,10 @@ serve(async (req) => {
   }
 
   try {
-    const rawBody = await req.text();
+    const bodyBytes = await req.arrayBuffer();
+    const rawBody = new TextDecoder().decode(bodyBytes);
 
-    const isValid = await verifyVippsSignature(req, rawBody, VIPPS_WEBHOOK_SECRET);
+    const isValid = await verifyVippsSignature(req, bodyBytes, VIPPS_WEBHOOK_SECRET);
     if (!isValid) {
       console.error("Invalid webhook signature - rejecting request");
       return new Response(
