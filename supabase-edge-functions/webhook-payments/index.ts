@@ -144,35 +144,35 @@ serve(async (req) => {
     const eventType = extractEventType(payload);
     console.log(`Processing webhook: eventType=${eventType}, eventId=${eventId}`);
 
-    const { data: inserted, error: insertError } = await supabase
+    const { data: existing } = await supabase
       .from("payment_events")
-      .insert(
+      .select("id")
+      .eq("provider_event_id", eventId)
+      .maybeSingle();
+
+    const isDuplicate = !!existing;
+
+    const { error: upsertError } = await supabase
+      .from("payment_events")
+      .upsert(
         {
           provider_event_id: eventId,
           event_type: eventType,
           payload: payload,
           processed_at: new Date().toISOString(),
         },
-        { onConflict: "provider_event_id", ignoreDuplicates: true }
-      )
-      .select("id");
-
-    if (insertError) {
-      if (insertError.code === "23505") {
-        console.log(`Event ${eventId} duplicate (23505), returning 200`);
-        return new Response(JSON.stringify({ status: "already_processed" }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-      console.error("Error inserting payment event:", insertError);
-      return new Response(
-        JSON.stringify({ error: "Kunne ikke lagre event" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        { onConflict: "provider_event_id" }
       );
+
+    if (upsertError) {
+      console.error("Error upserting payment event:", upsertError);
+      return new Response(JSON.stringify({ status: "error" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    if (!inserted || inserted.length === 0) {
+    if (isDuplicate) {
       console.log(`Event ${eventId} already processed (duplicate), returning 200`);
       return new Response(JSON.stringify({ status: "already_processed" }), {
         status: 200,
