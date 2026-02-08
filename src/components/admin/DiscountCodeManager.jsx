@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import supabase from '../../lib/supabaseClient';
 import {
   Wrapper,
   Title,
@@ -18,56 +19,116 @@ import {
 } from '../../styles/admin/discountCodeManagerStyles';
 
 export default function DiscountCodeManager() {
-  const [codes, setCodes] = useState([
-    {
-      id: 1,
-      code: 'SUMMER2025',
-      duration_months: 2,
-      valid_until: '2025-12-31',
-      is_active: true,
-    }
-  ]);
-
+  const [codes, setCodes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     code: '',
     duration_months: 1,
     valid_until: '',
+    description: '',
   });
-
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const fetchCodes = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('discount_codes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Feil ved henting av rabattkoder:', error);
+      setErrorMessage('Kunne ikke hente rabattkoder. Sjekk at tabellen finnes i databasen.');
+    } else {
+      setCodes(data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCodes();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.code || !formData.valid_until) {
       alert('Vennligst fyll ut alle felt');
       return;
     }
 
-    const newCode = {
-      id: Date.now(),
-      code: formData.code.toUpperCase(),
-      duration_months: parseInt(formData.duration_months),
-      valid_until: formData.valid_until,
-      is_active: true,
-    };
+    const { data, error } = await supabase
+      .from('discount_codes')
+      .insert({
+        code: formData.code.toUpperCase(),
+        duration_months: parseInt(formData.duration_months),
+        valid_until: formData.valid_until,
+        description: formData.description || null,
+        is_active: true,
+      })
+      .select()
+      .single();
 
-    setCodes([...codes, newCode]);
-    setFormData({ code: '', duration_months: 1, valid_until: '' });
-    setSuccessMessage(`Rabattkode "${newCode.code}" opprettet!`);
-    
+    if (error) {
+      if (error.code === '23505') {
+        setErrorMessage(`Rabattkoden "${formData.code.toUpperCase()}" finnes allerede.`);
+      } else {
+        console.error('Feil ved oppretting av rabattkode:', error);
+        setErrorMessage('Kunne ikke opprette rabattkode. Sjekk at du har admin-rettigheter.');
+      }
+      setTimeout(() => setErrorMessage(''), 5000);
+      return;
+    }
+
+    setCodes([data, ...codes]);
+    setFormData({ code: '', duration_months: 1, valid_until: '', description: '' });
+    setErrorMessage('');
+    setSuccessMessage(`Rabattkode "${data.code}" opprettet!`);
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne rabattkoden?')) {
-      setCodes(codes.filter(code => code.id !== id));
+  const handleDelete = async (id, code) => {
+    if (!window.confirm(`Er du sikker på at du vil slette rabattkoden "${code}"?`)) {
+      return;
     }
+
+    const { error } = await supabase
+      .from('discount_codes')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Feil ved sletting av rabattkode:', error);
+      setErrorMessage('Kunne ikke slette rabattkoden.');
+      setTimeout(() => setErrorMessage(''), 5000);
+      return;
+    }
+
+    setCodes(codes.filter(c => c.id !== id));
+    setErrorMessage('');
+    setSuccessMessage(`Rabattkode "${code}" slettet.`);
+    setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  const toggleActive = (id) => {
-    setCodes(codes.map(code => 
-      code.id === id ? { ...code, is_active: !code.is_active } : code
+  const toggleActive = async (id) => {
+    const code = codes.find(c => c.id === id);
+    if (!code) return;
+
+    const { error } = await supabase
+      .from('discount_codes')
+      .update({ is_active: !code.is_active })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Feil ved endring av status:', error);
+      setErrorMessage('Kunne ikke endre status på rabattkoden.');
+      setTimeout(() => setErrorMessage(''), 5000);
+      return;
+    }
+
+    setCodes(codes.map(c =>
+      c.id === id ? { ...c, is_active: !c.is_active } : c
     ));
   };
 
@@ -75,11 +136,21 @@ export default function DiscountCodeManager() {
     return new Date(validUntil) < new Date();
   };
 
+  if (loading) {
+    return (
+      <Wrapper>
+        <Title>Rabattkoder</Title>
+        <EmptyMessage>Laster rabattkoder...</EmptyMessage>
+      </Wrapper>
+    );
+  }
+
   return (
     <Wrapper>
-      <Title>🎟️ Rabattkoder</Title>
+      <Title>Rabattkoder</Title>
 
       {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+      {errorMessage && <SuccessMessage style={{ background: '#fff0f0', color: '#c00' }}>{errorMessage}</SuccessMessage>}
 
       <form onSubmit={handleSubmit}>
         <FormGrid>
@@ -118,6 +189,16 @@ export default function DiscountCodeManager() {
             />
           </FormGroup>
 
+          <FormGroup>
+            <Label>Beskrivelse (valgfritt)</Label>
+            <Input
+              type="text"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Velkomsttilbud - 1 mnd gratis"
+            />
+          </FormGroup>
+
           <FormGroup className="align-end">
             <Button type="submit">Opprett rabattkode</Button>
           </FormGroup>
@@ -130,6 +211,7 @@ export default function DiscountCodeManager() {
             <Th>Kode</Th>
             <Th>Varighet</Th>
             <Th>Gyldig til</Th>
+            <Th>Beskrivelse</Th>
             <Th>Status</Th>
             <Th>Handlinger</Th>
           </tr>
@@ -140,6 +222,7 @@ export default function DiscountCodeManager() {
               <Td data-label="Kode"><strong>{code.code}</strong></Td>
               <Td data-label="Varighet">{code.duration_months} måned{code.duration_months > 1 ? 'er' : ''} gratis</Td>
               <Td data-label="Gyldig til">{new Date(code.valid_until).toLocaleDateString('nb-NO')}</Td>
+              <Td data-label="Beskrivelse">{code.description || '—'}</Td>
               <Td data-label="Status">
                 {isExpired(code.valid_until) ? (
                   <StatusBadge $active={false}>Utløpt</StatusBadge>
@@ -151,16 +234,16 @@ export default function DiscountCodeManager() {
               </Td>
               <Td data-label="Handlinger">
                 <ActionGroup>
-                  <Button 
-                    onClick={() => toggleActive(code.id)} 
+                  <Button
+                    onClick={() => toggleActive(code.id)}
                     className="small"
                     disabled={isExpired(code.valid_until)}
                   >
                     {code.is_active ? 'Deaktiver' : 'Aktiver'}
                   </Button>
-                  <Button 
-                    $variant="delete" 
-                    onClick={() => handleDelete(code.id)}
+                  <Button
+                    $variant="delete"
+                    onClick={() => handleDelete(code.id, code.code)}
                     className="small"
                   >
                     Slett

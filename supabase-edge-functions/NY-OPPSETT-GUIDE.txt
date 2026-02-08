@@ -107,10 +107,10 @@ STEG 3: Deploy "webhook-payments"
   VIKTIG - SLÅ AV JWT-VERIFISERING:
   Etter deploy, gå til:
     Edge Functions > webhook-payments > Settings
-  Finn "Verify JWT" og slå den AV.
+  Finn "Verify JWT with legacy secret" og slå den AV.
 
   HVORFOR: Vipps sender webhooks direkte til denne funksjonen
-  uten Supabase JWT-token. Hvis JWT-verifisering er PÅ, vil
+  uten Supabase JWT-token. Hvis denne innstillingen er PÅ, vil
   ALLE webhooks fra Vipps bli avvist med 401-feil, og
   abonnementer vil aldri bli aktivert.
 
@@ -123,7 +123,7 @@ STEG 4: Deploy "cancel-subscription"
 STEG 5: Bekreft at alt er deployet
   - Du skal nå se tre funksjoner i listen:
     ✓ create-agreement
-    ✓ webhook-payments (med JWT-verifisering AVSLÅTT)
+    ✓ webhook-payments (med "Verify JWT with legacy secret" AVSLÅTT)
     ✓ cancel-subscription
 
 
@@ -149,6 +149,7 @@ Deploy funksjonene EN FOR EN:
   supabase functions deploy cancel-subscription --project-ref DIN-PROJECT-REF
 
   MERK: --no-verify-jwt for webhook-payments er PÅKREVD.
+  Dette tilsvarer å slå AV "Verify JWT with legacy secret" i Dashboard.
   Se forklaring under Metode A, Steg 3.
 
 
@@ -256,7 +257,7 @@ Gå gjennom denne listen og huk av alt:
 [ ] payment_events_update.sql kjørt i SQL Editor uten feil
 [ ] create-agreement Edge Function deployet (via Dashboard eller CLI)
 [ ] webhook-payments Edge Function deployet (via Dashboard eller CLI)
-[ ] webhook-payments: "Verify JWT" er AVSLÅTT i Settings
+[ ] webhook-payments: "Verify JWT with legacy secret" er AVSLÅTT i Settings
 [ ] cancel-subscription Edge Function deployet (via Dashboard eller CLI)
 [ ] Webhook registrert via Vipps API (Del 5.2)
 [ ] VIPPS_WEBHOOK_SECRET lagret i Supabase secrets (fra webhook-registrering)
@@ -294,7 +295,7 @@ DEL 8: FEILSØKING
   Webhook-en mottar ikke data fra Vipps.
   1. Sjekk Edge Function-loggen for "webhook-payments":
      Supabase Dashboard > Edge Functions > webhook-payments > Logs
-  2. Sjekk at "Verify JWT" er AVSLÅTT for webhook-payments:
+  2. Sjekk at "Verify JWT with legacy secret" er AVSLÅTT for webhook-payments:
      Dashboard > Edge Functions > webhook-payments > Settings
   3. Sjekk at webhook er registrert riktig (kjør Del 5.4)
   4. Sjekk at VIPPS_WEBHOOK_SECRET er riktig lagret
