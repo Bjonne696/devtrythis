@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const VIPPS_WEBHOOK_SECRET = Deno.env.get("VIPPS_WEBHOOK_SECRET")!;
@@ -25,14 +26,13 @@ async function verifyVippsSignature(
     const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
 
     if (!authHeader.startsWith("HMAC-SHA256")) {
-      console.error("Authorization header does not start with HMAC-SHA256");
-      console.error("Received Authorization:", authHeader.substring(0, 50));
+      console.error("Auth header not HMAC-SHA256. Got:", authHeader.substring(0, 60));
       return false;
     }
 
     const signatureMatch = authHeader.match(/Signature=(.+)$/);
     if (!signatureMatch) {
-      console.error("Could not extract signature from Authorization header");
+      console.error("Could not extract Signature from Authorization header");
       return false;
     }
     const providedSignature = signatureMatch[1];
@@ -42,11 +42,16 @@ async function verifyVippsSignature(
     const computedBodyHash = arrayBufferToBase64(bodyHashBuffer);
 
     if (computedBodyHash !== xMsContentSha256) {
-      console.error("Body hash mismatch. Computed:", computedBodyHash, "Received:", xMsContentSha256);
+      console.error("Body hash mismatch. Computed:", computedBodyHash, "Header:", xMsContentSha256);
       return false;
     }
 
-    const stringToSign = `${xMsDate}\n${host}\n${xMsContentSha256}`;
+    const url = new URL(req.url);
+    const pathAndQuery = url.pathname + url.search;
+
+    const method = req.method;
+    const stringToSign =
+      `${method}\n${pathAndQuery}\n${xMsDate};${host};${xMsContentSha256}`;
 
     const key = await crypto.subtle.importKey(
       "raw",
@@ -60,8 +65,9 @@ async function verifyVippsSignature(
     const computedSignature = arrayBufferToBase64(signatureBuffer);
 
     if (computedSignature !== providedSignature) {
-      console.error("Signature mismatch. Check that VIPPS_WEBHOOK_SECRET is correct.");
-      console.error("Host used:", host);
+      console.error("Signature mismatch. Check VIPPS_WEBHOOK_SECRET.");
+      console.error("String to sign:", JSON.stringify(stringToSign));
+      console.error("Host used:", host, "Path:", pathAndQuery);
       return false;
     }
 
@@ -70,6 +76,23 @@ async function verifyVippsSignature(
     console.error("Signature verification error:", error);
     return false;
   }
+}
+
+function extractEventId(payload: Record<string, unknown>): string | null {
+  if (payload.chargeId && payload.eventType) {
+    return `${payload.chargeId}-${payload.eventType}-${payload.occurred || ""}`;
+  }
+  if (payload.agreementId && payload.eventType) {
+    return `${payload.agreementId}-${payload.eventType}-${payload.occurred || ""}`;
+  }
+  if (payload.eventId) return String(payload.eventId);
+  if (payload.id) return String(payload.id);
+  if (payload.reference) return String(payload.reference);
+  return null;
+}
+
+function extractEventType(payload: Record<string, unknown>): string {
+  return String(payload.eventType || payload.name || "unknown");
 }
 
 serve(async (req) => {
@@ -82,7 +105,7 @@ serve(async (req) => {
 
     const isValid = await verifyVippsSignature(req, rawBody, VIPPS_WEBHOOK_SECRET);
     if (!isValid) {
-      console.error("Invalid webhook signature");
+      console.error("Invalid webhook signature - rejecting request");
       return new Response(
         JSON.stringify({ error: "Ugyldig signatur" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
@@ -92,16 +115,17 @@ serve(async (req) => {
     const payload = JSON.parse(rawBody);
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const eventId = payload.eventId || payload.id || payload.reference;
+    const eventId = extractEventId(payload);
     if (!eventId) {
-      console.error("Webhook payload missing event ID, logging payload keys:", Object.keys(payload));
+      console.error("Could not construct event ID. Payload keys:", Object.keys(payload));
       return new Response(
         JSON.stringify({ error: "Mangler event-ID" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const eventType = payload.name || payload.eventType || "unknown";
+    const eventType = extractEventType(payload);
+    console.log(`Processing webhook: eventType=${eventType}, eventId=${eventId}`);
 
     const { data: existingEvent } = await supabase
       .from("payment_events")
@@ -124,25 +148,27 @@ serve(async (req) => {
       processed_at: new Date().toISOString(),
     });
 
-    const agreementId = payload.agreementId || payload.agreement?.id;
+    const agreementId = payload.agreementId as string | undefined;
 
     if (!agreementId) {
-      console.log(`No agreementId found in payload for event type: ${eventType}`);
+      console.log(`No agreementId in payload for event: ${eventType}`);
       return new Response(JSON.stringify({ status: "ok", note: "no agreementId" }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    if (eventType === "recurring.agreement-activated" || eventType === "ACTIVE") {
+    if (eventType === "recurring.agreement-activated.v1") {
       await handleAgreementActivated(supabase, agreementId);
-    } else if (eventType === "recurring.agreement-stopped" || eventType === "STOPPED") {
+    } else if (eventType === "recurring.agreement-stopped.v1") {
       await handleAgreementStopped(supabase, agreementId);
-    } else if (eventType === "recurring.agreement-expired" || eventType === "EXPIRED") {
+    } else if (eventType === "recurring.agreement-expired.v1") {
       await handleAgreementExpired(supabase, agreementId);
-    } else if (eventType === "recurring.charge-captured" || eventType === "CHARGED") {
+    } else if (eventType === "recurring.agreement-rejected.v1") {
+      await handleAgreementRejected(supabase, agreementId);
+    } else if (eventType === "recurring.charge-captured.v1") {
       await handleChargeCaptured(supabase, agreementId);
-    } else if (eventType === "recurring.charge-failed" || eventType === "FAILED") {
+    } else if (eventType === "recurring.charge-failed.v1") {
       await handleChargeFailed(supabase, agreementId);
     } else {
       console.log(`Unhandled event type: ${eventType}`);
@@ -242,6 +268,31 @@ async function handleAgreementExpired(
       updated_at: new Date().toISOString(),
     })
     .eq("vipps_agreement_id", agreementId)
+    .select("cabin_id")
+    .single();
+
+  if (subscription?.cabin_id) {
+    await supabase
+      .from("cabins")
+      .update({ is_active: false })
+      .eq("id", subscription.cabin_id);
+  }
+}
+
+async function handleAgreementRejected(
+  supabase: ReturnType<typeof createClient>,
+  agreementId: string
+) {
+  console.log(`Agreement rejected: ${agreementId}`);
+
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .update({
+      status: "expired",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("vipps_agreement_id", agreementId)
+    .eq("status", "pending")
     .select("cabin_id")
     .single();
 

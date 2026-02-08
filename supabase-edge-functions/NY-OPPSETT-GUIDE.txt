@@ -1,0 +1,375 @@
+================================================================
+FERIEPLASSEN - OPPSETT AV VIPPS BETALINGSSYSTEM
+Komplett veiledning for produksjonsoppsett
+================================================================
+
+
+================================================================
+DEL 1: FORUTSETNINGER
+================================================================
+
+Før du starter, trenger du:
+
+1. En Supabase-konto med et prosjekt
+   - Gå til https://supabase.com/dashboard
+   - Logg inn og velg prosjektet ditt
+
+2. En Vipps MobilePay bedriftskonto med Recurring Payments aktivert
+   - Gå til https://portal.vippsmobilepay.com
+   - Du trenger tilgang til "Utvikler"-seksjonen
+   - Salgsenhet (MSN) må ha "Recurring Payments" aktivert
+     (Sjekk under salgsenhetsdetaljer i portalen)
+
+3. Følgende Vipps API-nøkler (finnes under "Utvikler" i Vipps-portalen):
+   - client_id
+   - client_secret
+   - Ocp-Apim-Subscription-Key
+   - Merchant Serial Number (MSN)
+
+
+================================================================
+DEL 2: LEGG INN SECRETS I SUPABASE
+================================================================
+
+Gå til Supabase Dashboard > Edge Functions > Secrets
+(eller Project Settings > Edge Functions)
+
+Legg inn disse verdiene EN FOR EN:
+
+   Navn:                           Verdi:
+   ─────────────────────────────    ──────────────────────────────
+   VIPPS_CLIENT_ID                 (din client_id fra Vipps-portalen)
+   VIPPS_CLIENT_SECRET             (din client_secret fra Vipps-portalen)
+   VIPPS_SUBSCRIPTION_KEY          (din Ocp-Apim-Subscription-Key)
+   VIPPS_MSN                       (ditt Merchant Serial Number)
+   SITE_URL                        https://ferieplassen.no
+
+VIKTIG om SITE_URL:
+  Riktig:  https://ferieplassen.no
+  Feil:    https://ferieplassen.no/
+  (Ingen skråstrek på slutten!)
+
+MERK: VIPPS_WEBHOOK_SECRET legges inn senere (i Del 5).
+MERK: SUPABASE_URL og SUPABASE_SERVICE_ROLE_KEY finnes allerede
+      automatisk i Edge Functions.
+
+
+================================================================
+DEL 3: KJØR SQL-OPPDATERINGER
+================================================================
+
+Gå til Supabase Dashboard > SQL Editor
+
+Kjør disse to SQL-filene i rekkefølge.
+Du finner innholdet i mappen: supabase-edge-functions/sql/
+
+STEG 1: Åpne filen "discount_codes.sql"
+  - Kopier HELE innholdet
+  - Lim inn i SQL Editor
+  - Klikk "Run"
+  - Sjekk at det står "Success" uten feilmeldinger
+
+STEG 2: Åpne filen "payment_events_update.sql"
+  - Kopier HELE innholdet
+  - Lim inn i SQL Editor
+  - Klikk "Run"
+  - Sjekk at det står "Success" uten feilmeldinger
+
+Begge filene er laget slik at de trygt kan kjøres flere ganger
+uten å ødelegge data.
+
+
+================================================================
+DEL 4: DEPLOY EDGE FUNCTIONS
+================================================================
+
+Du trenger Supabase CLI installert på din maskin.
+Installer med: npm install -g supabase
+
+Deretter, logg inn:
+  supabase login
+
+Link til prosjektet ditt:
+  supabase link --project-ref DIN-PROJECT-REF
+
+(DIN-PROJECT-REF finner du i Supabase Dashboard URL,
+ f.eks. https://supabase.com/dashboard/project/abc123def456
+ → project-ref er "abc123def456")
+
+Deploy funksjonene EN FOR EN:
+
+STEG 1: Deploy create-agreement
+  supabase functions deploy create-agreement --project-ref DIN-PROJECT-REF
+
+STEG 2: Deploy webhook-payments (VIKTIG: med --no-verify-jwt)
+  supabase functions deploy webhook-payments --project-ref DIN-PROJECT-REF --no-verify-jwt
+
+  VIKTIG: --no-verify-jwt er PÅKREVD fordi Vipps sender webhooks
+  uten Supabase JWT-token. Uten dette flagget vil alle webhooks
+  bli avvist med 401-feil.
+
+  Alternativt: Gå til Supabase Dashboard > Edge Functions >
+  webhook-payments > Settings > og slå AV "Verify JWT".
+
+STEG 3: Deploy cancel-subscription
+  supabase functions deploy cancel-subscription --project-ref DIN-PROJECT-REF
+
+
+================================================================
+DEL 5: REGISTRER WEBHOOK HOS VIPPS (VIA API)
+================================================================
+
+Webhooks registreres via Vipps API, ikke i portalen.
+Følg disse stegene nøyaktig:
+
+─── STEG 5.1: Hent Access Token ───
+
+Kjør denne kommandoen i terminalen (erstatt verdiene med dine egne):
+
+  curl -X POST https://api.vipps.no/accesstoken/get \
+    -H "Content-Type: application/json" \
+    -H "client_id: DIN-CLIENT-ID" \
+    -H "client_secret: DIN-CLIENT-SECRET" \
+    -H "Ocp-Apim-Subscription-Key: DIN-SUBSCRIPTION-KEY" \
+    -H "Merchant-Serial-Number: DIN-MSN" \
+    --data '{}'
+
+Du vil få tilbake noe som ser slik ut:
+  {
+    "token_type": "Bearer",
+    "access_token": "eyJ0eXAiOiJKV1Q...(lang streng)...",
+    "expires_in": "3599",
+    ...
+  }
+
+Kopier verdien av "access_token" (den lange strengen).
+
+
+─── STEG 5.2: Registrer Webhook ───
+
+Kjør denne kommandoen (erstatt DIN-ACCESS-TOKEN, DIN-SUBSCRIPTION-KEY
+og DIN-MSN med dine verdier):
+
+  curl -X POST https://api.vipps.no/webhooks/v1/webhooks \
+    -H "Authorization: Bearer DIN-ACCESS-TOKEN" \
+    -H "Ocp-Apim-Subscription-Key: DIN-SUBSCRIPTION-KEY" \
+    -H "Merchant-Serial-Number: DIN-MSN" \
+    -H "Content-Type: application/json" \
+    --data '{
+      "url": "https://DIN-SUPABASE-REF.supabase.co/functions/v1/webhook-payments",
+      "events": [
+        "recurring.agreement-activated.v1",
+        "recurring.agreement-rejected.v1",
+        "recurring.agreement-stopped.v1",
+        "recurring.agreement-expired.v1",
+        "recurring.charge-captured.v1",
+        "recurring.charge-failed.v1"
+      ]
+    }'
+
+VIKTIG: Erstatt "DIN-SUPABASE-REF" med din Supabase project reference.
+  Eks: https://ujvmqqnhkrustkgdvsfa.supabase.co/functions/v1/webhook-payments
+
+Du vil få tilbake noe som ser slik ut:
+  {
+    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "secret": "A0+AeKBRG2KRGvnNwJpQlb6IJFk48CKX..."
+  }
+
+
+─── STEG 5.3: Lagre Webhook Secret ───
+
+VIKTIG: Kopier "secret"-verdien fra responsen ovenfor!
+
+Gå tilbake til Supabase Dashboard > Edge Functions > Secrets
+og legg inn:
+
+   Navn:                   Verdi:
+   ─────────────────────   ──────────────────────────────
+   VIPPS_WEBHOOK_SECRET    (secret-verdien du nettopp fikk)
+
+Denne brukes til å verifisere at webhooks faktisk kommer fra Vipps
+og ikke har blitt endret underveis.
+
+
+─── STEG 5.4: Bekreft registreringen (valgfritt) ───
+
+For å sjekke at webhook ble registrert riktig:
+
+  curl -X GET https://api.vipps.no/webhooks/v1/webhooks \
+    -H "Authorization: Bearer DIN-ACCESS-TOKEN" \
+    -H "Ocp-Apim-Subscription-Key: DIN-SUBSCRIPTION-KEY" \
+    -H "Merchant-Serial-Number: DIN-MSN"
+
+Du skal se din registrerte URL og events i listen.
+
+
+================================================================
+DEL 6: SJEKKLISTE
+================================================================
+
+Gå gjennom denne listen og huk av alt:
+
+[ ] VIPPS_CLIENT_ID lagt inn i Supabase secrets
+[ ] VIPPS_CLIENT_SECRET lagt inn i Supabase secrets
+[ ] VIPPS_SUBSCRIPTION_KEY lagt inn i Supabase secrets
+[ ] VIPPS_MSN lagt inn i Supabase secrets
+[ ] SITE_URL satt til https://ferieplassen.no (uten / på slutten)
+[ ] discount_codes.sql kjørt i SQL Editor uten feil
+[ ] payment_events_update.sql kjørt i SQL Editor uten feil
+[ ] create-agreement Edge Function deployet
+[ ] webhook-payments Edge Function deployet med --no-verify-jwt
+[ ] cancel-subscription Edge Function deployet
+[ ] Webhook registrert via Vipps API (Del 5.2)
+[ ] VIPPS_WEBHOOK_SECRET lagret i Supabase secrets (fra webhook-registrering)
+
+
+================================================================
+DEL 7: TESTING
+================================================================
+
+Slik tester du at alt fungerer:
+
+1. Logg inn som en hytteeier på ferieplassen.no
+2. Opprett en ny hytte (den vil være usynlig for leietakere)
+3. Når abonnement-skjermen vises, velg plan og klikk "Aktiver med Vipps"
+4. Du skal bli sendt til Vipps sin betalingsside
+5. Godkjenn betalingen i Vipps-appen
+6. Du blir sendt tilbake til profilen din
+7. Vent noen sekunder - abonnementet skal bli "Aktiv"
+8. Hytta skal nå være synlig for leietakere
+
+
+================================================================
+DEL 8: FEILSØKING
+================================================================
+
+── Blir ikke sendt til Vipps ──
+  1. Sjekk Edge Function-loggen for "create-agreement":
+     Supabase Dashboard > Edge Functions > create-agreement > Logs
+  2. Vanlige årsaker:
+     - VIPPS_CLIENT_ID eller VIPPS_CLIENT_SECRET er feil
+     - MSN har ikke Recurring Payments aktivert
+     - SITE_URL har / på slutten
+
+── Abonnement forblir "Ventende" etter betaling ──
+  Webhook-en mottar ikke data fra Vipps.
+  1. Sjekk Edge Function-loggen for "webhook-payments":
+     Supabase Dashboard > Edge Functions > webhook-payments > Logs
+  2. Sjekk at webhook-payments er deployet med JWT AVSLÅTT
+  3. Sjekk at webhook er registrert riktig (kjør Del 5.4)
+  4. Sjekk at VIPPS_WEBHOOK_SECRET er riktig lagret
+
+── "Signature mismatch" i loggen ──
+  VIPPS_WEBHOOK_SECRET er feil eller ikke satt.
+  1. Sjekk at verdien i Supabase secrets matcher det du fikk
+     tilbake i Del 5.2
+  2. Pass på at det ikke er mellomrom foran eller bak verdien
+  3. Hvis du har mistet secret-en, må du registrere en ny webhook
+     (kjør Del 5.1 og 5.2 på nytt) og oppdatere VIPPS_WEBHOOK_SECRET
+
+── "Body hash mismatch" i loggen ──
+  Noe endrer innholdet i webhook-meldingen underveis.
+  Sjekk at det ikke er en proxy eller middleware som endrer
+  request body.
+
+── Webhook mottas men hytta aktiveres ikke ──
+  1. Sjekk at subscriptions-tabellen har riktig vipps_agreement_id
+  2. Sjekk at subscription-status er "pending" (den må matche)
+  3. Sjekk payment_events-tabellen for å se mottatte webhooks
+
+
+================================================================
+DEL 9: RABATTKODER (VALGFRITT)
+================================================================
+
+For å opprette en rabattkode, kjør dette i Supabase SQL Editor:
+
+  INSERT INTO discount_codes (code, duration_months, is_active, valid_until, description)
+  VALUES ('VELKOMMEN', 1, true, '2026-12-31', 'Velkomsttilbud - 1 mnd gratis');
+
+Forklaring av feltene:
+  - code: Koden brukeren skriver inn (blir automatisk store bokstaver)
+  - duration_months: Antall måneder gratis
+  - is_active: true = aktiv, false = deaktivert
+  - valid_until: Siste dato koden er gyldig
+  - max_uses: Maks antall ganger koden kan brukes (NULL = ubegrenset)
+  - description: Beskrivelse for deg selv
+
+For å deaktivere en kode:
+  UPDATE discount_codes SET is_active = false WHERE code = 'VELKOMMEN';
+
+
+================================================================
+DEL 10: PRISER OG ØREOMREGNING
+================================================================
+
+Vipps bruker "øre" internt (1 krone = 100 øre).
+Koden håndterer dette automatisk:
+  - Standard: 99 kr i appen → sendes som 9900 øre til Vipps
+  - Premium: 149 kr i appen → sendes som 14900 øre til Vipps
+
+Du trenger IKKE å tenke på dette - det skjer automatisk.
+I appen og i Vipps vil kunden alltid se riktig beløp i kroner.
+
+
+================================================================
+DEL 11: WEBHOOK EVENT-TYPER
+================================================================
+
+Systemet håndterer disse hendelsene fra Vipps:
+
+AVTALE-HENDELSER:
+  recurring.agreement-activated.v1   → Bruker godkjente avtalen
+                                       → Abonnement settes til "active"
+                                       → Hytta blir synlig
+
+  recurring.agreement-rejected.v1    → Bruker avviste avtalen
+                                       → Abonnement settes til "expired"
+
+  recurring.agreement-stopped.v1     → Avtalen er stoppet (av bruker, admin,
+                                       eller merchant via cancel-subscription)
+                                       → Abonnement settes til "canceled"
+                                       → Hytta deaktiveres ved periodeslutt
+
+  recurring.agreement-expired.v1     → Avtalen har utløpt
+                                       → Abonnement settes til "expired"
+                                       → Hytta deaktiveres umiddelbart
+
+BETALINGS-HENDELSER:
+  recurring.charge-captured.v1       → Månedlig betaling gjennomført
+                                       → Betalingsperioden forlenges 1 måned
+
+  recurring.charge-failed.v1         → Betaling feilet
+                                       → Abonnement settes til "past_due"
+                                       → Hytta deaktiveres
+                                       → Vipps prøver igjen i opptil 7 dager
+
+
+================================================================
+DEL 12: SLETTE/ERSTATTE WEBHOOK
+================================================================
+
+Hvis du trenger å endre webhook-URL eller events:
+
+1. Hent access token (Del 5.1)
+
+2. Se registrerte webhooks:
+   curl -X GET https://api.vipps.no/webhooks/v1/webhooks \
+     -H "Authorization: Bearer DIN-ACCESS-TOKEN" \
+     -H "Ocp-Apim-Subscription-Key: DIN-SUBSCRIPTION-KEY" \
+     -H "Merchant-Serial-Number: DIN-MSN"
+
+3. Registrer ny webhook først (Del 5.2)
+
+4. Slett gammel webhook (erstatt WEBHOOK-ID med id fra steg 2):
+   curl -X DELETE https://api.vipps.no/webhooks/v1/webhooks/WEBHOOK-ID \
+     -H "Authorization: Bearer DIN-ACCESS-TOKEN" \
+     -H "Ocp-Apim-Subscription-Key: DIN-SUBSCRIPTION-KEY" \
+     -H "Merchant-Serial-Number: DIN-MSN"
+
+5. Oppdater VIPPS_WEBHOOK_SECRET i Supabase secrets med den nye
+   secret-verdien fra steg 3.
+
+TIPS: Registrer den nye webhook-en FØR du sletter den gamle,
+slik at du ikke mister noen hendelser i mellomtiden.

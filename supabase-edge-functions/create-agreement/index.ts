@@ -174,7 +174,7 @@ serve(async (req) => {
 
     const accessToken = await getVippsAccessToken();
 
-    const siteUrl = Deno.env.get("SITE_URL") || "https://berge-hyttene.no";
+    const siteUrl = Deno.env.get("SITE_URL") || "https://ferieplassen.no";
     const idempotencyKey = crypto.randomUUID();
 
     const agreementBody: Record<string, unknown> = {
@@ -189,7 +189,7 @@ serve(async (req) => {
       },
       merchantRedirectUrl: `${siteUrl}/vipps/callback`,
       merchantAgreementUrl: `${siteUrl}/min-profil`,
-      productName: `Berge Hyttene - ${planType === "premium" ? "Premium" : "Standard"}`,
+      productName: `Ferieplassen - ${planType === "premium" ? "Premium" : "Standard"}`,
       productDescription: `Månedlig abonnement for hytteutleie (${priceNok} kr/mnd)`,
       ...(profile?.phone ? { phoneNumber: profile.phone.replace(/\s/g, "").replace("+47", "") } : {}),
     };
@@ -206,7 +206,7 @@ serve(async (req) => {
         "Merchant-Serial-Number": VIPPS_MSN,
         "Idempotency-Key": idempotencyKey,
         "Content-Type": "application/json",
-        "Vipps-System-Name": "berge-hyttene",
+        "Vipps-System-Name": "ferieplassen",
         "Vipps-System-Version": "1.0.0",
       },
       body: JSON.stringify(agreementBody),
