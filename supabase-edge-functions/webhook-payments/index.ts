@@ -20,25 +20,36 @@ async function verifyVippsSignature(
   secret: string
 ): Promise<boolean> {
   try {
-    const authHeader = req.headers.get("Authorization") || "";
-    const xMsDate = req.headers.get("x-ms-date") || "";
-    const xMsContentSha256 = req.headers.get("x-ms-content-sha256") || "";
-    const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
+    const authHeader = (req.headers.get("Authorization") || "").trim();
 
-    if (!authHeader.startsWith("HMAC-SHA256")) {
+    if (!authHeader.toUpperCase().startsWith("HMAC-SHA256")) {
       console.error("Auth header not HMAC-SHA256. Got:", authHeader.substring(0, 60));
       return false;
     }
 
-    const signatureMatch = authHeader.match(/Signature=(.+)$/);
+    const signatureMatch = authHeader.match(/Signature=([A-Za-z0-9+/=]+)\s*$/);
     if (!signatureMatch) {
       console.error("Could not extract Signature from Authorization header");
       return false;
     }
     const providedSignature = signatureMatch[1];
 
+    const xMsContentSha256 = (req.headers.get("x-ms-content-sha256") || "").trim();
+    const xMsDate = (req.headers.get("x-ms-date") || "").trim();
+    const host = (
+      req.headers.get("x-forwarded-host") ||
+      req.headers.get("host") ||
+      ""
+    ).trim();
+
+    if (!xMsContentSha256 || !xMsDate || !host) {
+      console.error("Missing required headers. x-ms-content-sha256:", !!xMsContentSha256, "x-ms-date:", !!xMsDate, "host:", !!host);
+      return false;
+    }
+
     const encoder = new TextEncoder();
-    const bodyHashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(rawBody));
+    const safeBody = rawBody ?? "";
+    const bodyHashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(safeBody));
     const computedBodyHash = arrayBufferToBase64(bodyHashBuffer);
 
     if (computedBodyHash !== xMsContentSha256) {
@@ -49,7 +60,7 @@ async function verifyVippsSignature(
     const url = new URL(req.url);
     const pathAndQuery = url.pathname + url.search;
 
-    const method = req.method;
+    const method = req.method.toUpperCase();
     const stringToSign =
       `${method}\n${pathAndQuery}\n${xMsDate};${host};${xMsContentSha256}`;
 
@@ -66,8 +77,8 @@ async function verifyVippsSignature(
 
     if (computedSignature !== providedSignature) {
       console.error("Signature mismatch. Check VIPPS_WEBHOOK_SECRET.");
-      console.error("String to sign:", JSON.stringify(stringToSign));
-      console.error("Host used:", host, "Path:", pathAndQuery);
+      console.error("Method:", method, "Path:", pathAndQuery, "Host:", host);
+      console.error("Date header:", xMsDate, "Body hash:", xMsContentSha256);
       return false;
     }
 
@@ -127,26 +138,41 @@ serve(async (req) => {
     const eventType = extractEventType(payload);
     console.log(`Processing webhook: eventType=${eventType}, eventId=${eventId}`);
 
-    const { data: existingEvent } = await supabase
+    const { data: inserted, error: insertError } = await supabase
       .from("payment_events")
-      .select("id")
-      .eq("provider_event_id", eventId)
-      .maybeSingle();
+      .insert(
+        {
+          provider_event_id: eventId,
+          event_type: eventType,
+          payload: payload,
+          processed_at: new Date().toISOString(),
+        },
+        { onConflict: "provider_event_id", ignoreDuplicates: true }
+      )
+      .select("id");
 
-    if (existingEvent) {
-      console.log(`Event ${eventId} already processed, skipping`);
+    if (insertError) {
+      if (insertError.code === "23505") {
+        console.log(`Event ${eventId} duplicate (23505), returning 200`);
+        return new Response(JSON.stringify({ status: "already_processed" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      console.error("Error inserting payment event:", insertError);
+      return new Response(
+        JSON.stringify({ error: "Kunne ikke lagre event" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!inserted || inserted.length === 0) {
+      console.log(`Event ${eventId} already processed (duplicate), returning 200`);
       return new Response(JSON.stringify({ status: "already_processed" }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
-
-    await supabase.from("payment_events").insert({
-      provider_event_id: eventId,
-      event_type: eventType,
-      payload: payload,
-      processed_at: new Date().toISOString(),
-    });
 
     const agreementId = payload.agreementId as string | undefined;
 
@@ -178,7 +204,7 @@ serve(async (req) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Webhook processing error:", error);
     return new Response(
       JSON.stringify({ error: "Intern feil" }),
