@@ -13,6 +13,7 @@ import NyHyttePage from './pages/NyHyttePage';
 import ShowCabinPage from "./pages/ShowCabinPage";
 import PersonvernPage from './pages/PersonvernPage';
 import TermsOfSale from './pages/TermsOfSale';
+import VippsCallbackPage from './pages/VippsCallbackPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import CookieBanner from './components/ui/CookieBanner';
@@ -35,6 +36,7 @@ function App() {
         <Route path="/hytte/:id" element={<ShowCabinPage />} />
         <Route path="/personvern" element={<PersonvernPage />} />
         <Route path="/salgsbetingelser" element={<TermsOfSale />} />
+        <Route path="/vipps/callback" element={<VippsCallbackPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <CookieBanner />

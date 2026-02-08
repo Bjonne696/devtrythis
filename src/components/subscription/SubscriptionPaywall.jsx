@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createSubscription } from '../../hooks/useSubscription';
+import { createSubscription, validateDiscountCode } from '../../hooks/useSubscription';
 import {
   PaywallWrapper,
   PaywallTitle,
@@ -21,6 +21,7 @@ import {
 export default function SubscriptionPaywall({ cabinId, onSuccess }) {
   const [selectedPlan, setSelectedPlan] = useState('basic');
   const [loading, setLoading] = useState(false);
+  const [validatingCode, setValidatingCode] = useState(false);
   const [error, setError] = useState(null);
   const [discountCode, setDiscountCode] = useState('');
   const [validatedDiscount, setValidatedDiscount] = useState(null);
@@ -49,29 +50,23 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
     },
   };
 
-  const handleValidateDiscount = () => {
-    const mockCodes = [
-      {
-        code: 'SUMMER2025',
-        duration_months: 2,
-        valid_until: '2025-12-31',
-        is_active: true,
-      }
-    ];
+  const handleValidateDiscount = async () => {
+    if (!discountCode.trim()) return;
 
-    const code = mockCodes.find(c => 
-      c.code === discountCode.toUpperCase() && 
-      c.is_active && 
-      new Date(c.valid_until) >= new Date()
-    );
+    setValidatingCode(true);
+    setError(null);
 
-    if (code) {
-      setValidatedDiscount(code);
+    const result = await validateDiscountCode(discountCode);
+
+    if (result.valid) {
+      setValidatedDiscount(result.discount);
       setError(null);
     } else {
-      setError('Ugyldig eller utløpt rabattkode');
+      setError(result.error);
       setValidatedDiscount(null);
     }
+
+    setValidatingCode(false);
   };
 
   const handleActivate = async () => {
@@ -81,15 +76,7 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
     try {
       const result = await createSubscription(cabinId, selectedPlan, validatedDiscount?.code);
       
-      // For mock provider, the redirect URL is local
-      if (result.redirectUrl.startsWith('/')) {
-        // Mock payment - auto approve after short delay
-        setTimeout(() => {
-          alert('Abonnement aktivert! (Test-modus)');
-          if (onSuccess) onSuccess();
-        }, 1000);
-      } else {
-        // Real Vipps - redirect to payment page
+      if (result.redirectUrl) {
         window.location.href = result.redirectUrl;
       }
     } catch (err) {
@@ -138,9 +125,9 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
         <ValidateButton 
           type="button" 
           onClick={handleValidateDiscount}
-          disabled={!discountCode}
+          disabled={!discountCode || validatingCode}
         >
-          Valider kode
+          {validatingCode ? 'Validerer...' : 'Valider kode'}
         </ValidateButton>
       </DiscountBox>
 
@@ -158,7 +145,7 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
       <ActivateButton onClick={handleActivate} disabled={loading}>
-        {loading ? 'Aktiverer...' : validatedDiscount 
+        {loading ? 'Sender deg til Vipps...' : validatedDiscount 
           ? `Aktiver med ${validatedDiscount.duration_months} måned${validatedDiscount.duration_months > 1 ? 'er' : ''} gratis` 
           : `Aktiver med Vipps (${plans[selectedPlan].price} NOK/mnd)`
         }
