@@ -83,6 +83,52 @@ uten å ødelegge data.
 DEL 4: DEPLOY EDGE FUNCTIONS
 ================================================================
 
+Du kan deploye Edge Functions enten via Supabase Dashboard (enklest)
+eller via CLI (for avanserte brukere). Velg den metoden som passer deg.
+
+
+──── METODE A: VIA SUPABASE DASHBOARD (ANBEFALT) ────
+
+STEG 1: Gå til Supabase Dashboard > Edge Functions
+  - Klikk "Deploy a new function"
+
+STEG 2: Deploy "create-agreement"
+  - Gi funksjonen navnet: create-agreement
+  - Lim inn hele innholdet fra filen:
+    supabase-edge-functions/create-agreement/index.ts
+  - Klikk "Deploy"
+
+STEG 3: Deploy "webhook-payments"
+  - Gi funksjonen navnet: webhook-payments
+  - Lim inn hele innholdet fra filen:
+    supabase-edge-functions/webhook-payments/index.ts
+  - Klikk "Deploy"
+
+  VIKTIG - SLÅ AV JWT-VERIFISERING:
+  Etter deploy, gå til:
+    Edge Functions > webhook-payments > Settings
+  Finn "Verify JWT" og slå den AV.
+
+  HVORFOR: Vipps sender webhooks direkte til denne funksjonen
+  uten Supabase JWT-token. Hvis JWT-verifisering er PÅ, vil
+  ALLE webhooks fra Vipps bli avvist med 401-feil, og
+  abonnementer vil aldri bli aktivert.
+
+STEG 4: Deploy "cancel-subscription"
+  - Gi funksjonen navnet: cancel-subscription
+  - Lim inn hele innholdet fra filen:
+    supabase-edge-functions/cancel-subscription/index.ts
+  - Klikk "Deploy"
+
+STEG 5: Bekreft at alt er deployet
+  - Du skal nå se tre funksjoner i listen:
+    ✓ create-agreement
+    ✓ webhook-payments (med JWT-verifisering AVSLÅTT)
+    ✓ cancel-subscription
+
+
+──── METODE B: VIA CLI (ALTERNATIV) ────
+
 Du trenger Supabase CLI installert på din maskin.
 Installer med: npm install -g supabase
 
@@ -98,21 +144,12 @@ Link til prosjektet ditt:
 
 Deploy funksjonene EN FOR EN:
 
-STEG 1: Deploy create-agreement
   supabase functions deploy create-agreement --project-ref DIN-PROJECT-REF
-
-STEG 2: Deploy webhook-payments (VIKTIG: med --no-verify-jwt)
   supabase functions deploy webhook-payments --project-ref DIN-PROJECT-REF --no-verify-jwt
-
-  VIKTIG: --no-verify-jwt er PÅKREVD fordi Vipps sender webhooks
-  uten Supabase JWT-token. Uten dette flagget vil alle webhooks
-  bli avvist med 401-feil.
-
-  Alternativt: Gå til Supabase Dashboard > Edge Functions >
-  webhook-payments > Settings > og slå AV "Verify JWT".
-
-STEG 3: Deploy cancel-subscription
   supabase functions deploy cancel-subscription --project-ref DIN-PROJECT-REF
+
+  MERK: --no-verify-jwt for webhook-payments er PÅKREVD.
+  Se forklaring under Metode A, Steg 3.
 
 
 ================================================================
@@ -217,9 +254,10 @@ Gå gjennom denne listen og huk av alt:
 [ ] SITE_URL satt til https://ferieplassen.no (uten / på slutten)
 [ ] discount_codes.sql kjørt i SQL Editor uten feil
 [ ] payment_events_update.sql kjørt i SQL Editor uten feil
-[ ] create-agreement Edge Function deployet
-[ ] webhook-payments Edge Function deployet med --no-verify-jwt
-[ ] cancel-subscription Edge Function deployet
+[ ] create-agreement Edge Function deployet (via Dashboard eller CLI)
+[ ] webhook-payments Edge Function deployet (via Dashboard eller CLI)
+[ ] webhook-payments: "Verify JWT" er AVSLÅTT i Settings
+[ ] cancel-subscription Edge Function deployet (via Dashboard eller CLI)
 [ ] Webhook registrert via Vipps API (Del 5.2)
 [ ] VIPPS_WEBHOOK_SECRET lagret i Supabase secrets (fra webhook-registrering)
 
@@ -256,7 +294,8 @@ DEL 8: FEILSØKING
   Webhook-en mottar ikke data fra Vipps.
   1. Sjekk Edge Function-loggen for "webhook-payments":
      Supabase Dashboard > Edge Functions > webhook-payments > Logs
-  2. Sjekk at webhook-payments er deployet med JWT AVSLÅTT
+  2. Sjekk at "Verify JWT" er AVSLÅTT for webhook-payments:
+     Dashboard > Edge Functions > webhook-payments > Settings
   3. Sjekk at webhook er registrert riktig (kjør Del 5.4)
   4. Sjekk at VIPPS_WEBHOOK_SECRET er riktig lagret
 
