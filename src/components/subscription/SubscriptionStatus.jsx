@@ -34,9 +34,9 @@ export default function SubscriptionStatus({ userId }) {
           <StatusTitle>Abonnementsstatus</StatusTitle>
           <StatusBadge $status="none">Ingen abonnement</StatusBadge>
         </StatusHeader>
-        <StatusText>
+        <SubText>
           Du har ingen abonnement ennå.
-        </StatusText>
+        </SubText>
       </StatusWrapper>
     );
   }
