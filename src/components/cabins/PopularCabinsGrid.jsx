@@ -28,7 +28,8 @@ export default function PopularCabinsGrid() {
     const fetchPopularCabins = async () => {
       const { data: cabins, error: cabinsError } = await supabase
         .from('cabins')
-        .select('*');
+        .select('*')
+        .eq('is_active', true);
 
       if (cabinsError || !cabins) {
         console.error('Feil ved henting av hytter:', cabinsError?.message);

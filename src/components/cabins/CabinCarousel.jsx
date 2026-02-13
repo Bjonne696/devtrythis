@@ -41,6 +41,7 @@ export default function CabinCarousel() {
       const { data: cabins, error: cabinsError } = await supabase
         .from('cabins')
         .select('*')
+        .eq('is_active', true)
         .eq('is_premium', true)
         .limit(20);
 
