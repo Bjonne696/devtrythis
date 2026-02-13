@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navigation from '../components/nav/Navigation';
 import Footer from '../components/nav/Footer';
 import styled from 'styled-components';
@@ -37,7 +37,7 @@ const CallbackTitle = styled.h1`
 const CallbackMessage = styled.p`
   font-size: 1.1rem;
   color: ${colors.textLight};
-  max-width: 500px;
+  max-width: 520px;
   line-height: 1.6;
 `;
 
@@ -57,35 +57,66 @@ const Spinner = styled.div`
 
 export default function VippsCallbackPage() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState('processing');
+  const location = useLocation();
+  const [phase, setPhase] = useState('processing');
+
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus('redirecting');
-      navigate('/min-profil', { replace: true });
-    }, 3000);
+    // Vi "behandler" kort for UX, men redirecter raskt.
+    // Webhooken er source of truth uansett – min-profil viser status der.
+    const hasError =
+      params.get('error') ||
+      params.get('error_description') ||
+      params.get('status') === 'error';
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+    if (hasError) {
+      // Hvis Vipps sender feil i querystring, send bruker til min-profil men med hint
+      setPhase('error');
+      const t = setTimeout(() => {
+        navigate('/min-profil', { replace: true, state: { vippsCallback: 'error' } });
+      }, 1200);
+      return () => clearTimeout(t);
+    }
+
+    const t = setTimeout(() => {
+      setPhase('redirecting');
+      navigate('/min-profil', { replace: true, state: { vippsCallback: 'success' } });
+    }, 800);
+
+    return () => clearTimeout(t);
+  }, [navigate, params]);
 
   return (
     <CallbackWrapper>
       <Navigation />
       <CallbackContent>
-        {status === 'processing' && (
+        {phase === 'processing' && (
           <>
             <CallbackIcon>✅</CallbackIcon>
-            <CallbackTitle>Takk for betalingen!</CallbackTitle>
+            <CallbackTitle>Takk! Vi behandler abonnementet ditt</CallbackTitle>
             <CallbackMessage>
-              Vi behandler abonnementet ditt. Du blir sendt til profilen din om et øyeblikk...
+              Du blir sendt til profilen din straks. Der kan du se status på abonnementet.
             </CallbackMessage>
             <Spinner />
           </>
         )}
-        {status === 'redirecting' && (
+
+        {phase === 'redirecting' && (
           <>
             <CallbackIcon>🏠</CallbackIcon>
-            <CallbackTitle>Sender deg til profilen...</CallbackTitle>
+            <CallbackTitle>Sender deg til profilen…</CallbackTitle>
+            <Spinner />
+          </>
+        )}
+
+        {phase === 'error' && (
+          <>
+            <CallbackIcon>⚠️</CallbackIcon>
+            <CallbackTitle>Noe gikk galt hos Vipps</CallbackTitle>
+            <CallbackMessage>
+              Vi sender deg til profilen din, så du kan prøve igjen.
+            </CallbackMessage>
             <Spinner />
           </>
         )}

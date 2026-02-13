@@ -37,6 +37,7 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       price: 99,
       features: [
         'Hytte synlig for leietakere',
+        'Grunnleggende statistikk',
         'E-post varsling',
         'Ubegrenset antall bookinger',
       ],
@@ -47,7 +48,9 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       features: [
         'Alt i Standard',
         'Fremhevet plassering',
+        'Detaljert statistikk',
         'Prioritert support',
+        'Markedsføringstips',
       ],
     },
   };
