@@ -90,7 +90,7 @@ export function useSubscriptionsList(userId) {
 
       const { data, error: fetchError } = await supabase
         .from('subscriptions')
-        .select('id, status, plan_type, price_nok, current_period_end, cabin_id, created_at, vipps_agreement_id, discount_code')
+        .select('id, status, plan_type, price_nok, current_period_start, current_period_end, free_until, next_charge_at, cabin_id, created_at, vipps_agreement_id, discount_code')
         .eq('owner_id', userId)
         .order('created_at', { ascending: false });
 
