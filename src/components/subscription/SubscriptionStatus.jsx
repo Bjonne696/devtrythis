@@ -91,45 +91,45 @@ export default function SubscriptionStatus({ userId }) {
             <InfoItem>
               <p>Pris</p>
               <strong>{subscription.price_nok} NOK/måned</strong>
-            </InfoItem
+            </InfoItem>
 
-              {subscription.current_period_start && (
-                <InfoItem>
-                  <p>Periode start</p>
-                  <strong>
-                    {format(new Date(subscription.current_period_start), "dd. MMMM yyyy", { locale: nb })}
-                  </strong>
-                </InfoItem>
-              )}
+            {subscription.current_period_start && (
+              <InfoItem>
+                <p>Periode start</p>
+                <strong>
+                  {format(new Date(subscription.current_period_start), "dd. MMMM yyyy", { locale: nb })}
+                </strong>
+              </InfoItem>
+            )}
 
-              {subscription.current_period_end && (
-                <InfoItem>
-                  <p>Periode slutt</p>
-                  <strong>
-                    {format(new Date(subscription.current_period_end), "dd. MMMM yyyy", { locale: nb })}
-                  </strong>
-                </InfoItem>
-              )}
+            {subscription.current_period_end && (
+              <InfoItem>
+                <p>Periode slutt</p>
+                <strong>
+                  {format(new Date(subscription.current_period_end), "dd. MMMM yyyy", { locale: nb })}
+                </strong>
+              </InfoItem>
+            )}
 
-              {subscription.free_until && (
-                <InfoItem>
-                  <p>Gratis til</p>
-                  <strong>
-                    {format(new Date(subscription.free_until), "dd. MMMM yyyy", { locale: nb })}
-                  </strong>
-                </InfoItem>
-              )}
+            {subscription.free_until && (
+              <InfoItem>
+                <p>Gratis til</p>
+                <strong>
+                  {format(new Date(subscription.free_until), "dd. MMMM yyyy", { locale: nb })}
+                </strong>
+              </InfoItem>
+            )}
 
-              {subscription.next_charge_at && (
-                <InfoItem>
-                  <p>Neste belastning</p>
-                  <strong>
-                    {format(new Date(subscription.next_charge_at), "dd. MMMM yyyy", { locale: nb })}
-                  </strong>
-                </InfoItem>
-              )}
+            {subscription.next_charge_at && (
+              <InfoItem>
+                <p>Neste belastning</p>
+                <strong>
+                  {format(new Date(subscription.next_charge_at), "dd. MMMM yyyy", { locale: nb })}
+                </strong>
+              </InfoItem>
+            )}
 
-
+            
             {subscription.current_period_end && (
               <InfoItem>
                 <p>Neste fornyelse</p>

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { createSubscription, validateDiscountCode } from '../../hooks/useSubscription';
 import {
   PaywallWrapper,
@@ -19,10 +21,13 @@ import {
 } from '../../styles/subscription/subscriptionPaywallStyles';
 
 export default function SubscriptionPaywall({ cabinId, onSuccess }) {
+  const navigate = useNavigate();
+
   const [selectedPlan, setSelectedPlan] = useState('basic');
   const [loading, setLoading] = useState(false);
   const [validatingCode, setValidatingCode] = useState(false);
   const [error, setError] = useState(null);
+
   const [discountCode, setDiscountCode] = useState('');
   const [validatedDiscount, setValidatedDiscount] = useState(null);
 
@@ -32,7 +37,6 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       price: 99,
       features: [
         'Hytte synlig for leietakere',
-        'Grunnleggende statistikk',
         'E-post varsling',
         'Ubegrenset antall bookinger',
       ],
@@ -43,30 +47,38 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       features: [
         'Alt i Standard',
         'Fremhevet plassering',
-        'Detaljert statistikk',
         'Prioritert support',
-        'Markedsføringstips',
       ],
     },
   };
 
+  // Hvis brukeren endrer koden etter validering, så er den ikke lenger “bekreftet”
+  useEffect(() => {
+    setValidatedDiscount(null);
+  }, [discountCode]);
+
+  const normalizeCode = (code) => code.trim().toUpperCase();
+
   const handleValidateDiscount = async () => {
-    if (!discountCode.trim()) return;
+    const code = normalizeCode(discountCode);
+    if (!code) return;
 
     setValidatingCode(true);
     setError(null);
 
-    const result = await validateDiscountCode(discountCode);
+    try {
+      const result = await validateDiscountCode(code);
 
-    if (result.valid) {
-      setValidatedDiscount(result.discount);
-      setError(null);
-    } else {
-      setError(result.error);
-      setValidatedDiscount(null);
+      if (result.valid) {
+        setValidatedDiscount(result.discount);
+        setError(null);
+      } else {
+        setError(result.error || 'Ugyldig rabattkode');
+        setValidatedDiscount(null);
+      }
+    } finally {
+      setValidatingCode(false);
     }
-
-    setValidatingCode(false);
   };
 
   const handleActivate = async () => {
@@ -74,29 +86,74 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
     setError(null);
 
     try {
-      const result = await createSubscription(cabinId, selectedPlan, validatedDiscount?.code);
-      
-      if (result.redirectUrl) {
-        window.location.href = result.redirectUrl;
+      const code = normalizeCode(discountCode);
+
+      // Hvis bruker har skrevet inn kode, må den være gyldig før vi fortsetter
+      if (code) {
+        // Hvis ikke validert (eller mismatch), valider nå
+        if (!validatedDiscount || validatedDiscount.code !== code) {
+          setValidatingCode(true);
+
+          const result = await validateDiscountCode(code);
+
+          setValidatingCode(false);
+
+          if (!result.valid) {
+            setError(result.error || 'Ugyldig rabattkode');
+            setLoading(false);
+            return; // STOPP (krav)
+          }
+
+          setValidatedDiscount(result.discount);
+        }
       }
-    } catch (err) {
-      setError(err.message);
+
+      const result = await createSubscription(cabinId, selectedPlan, code ? code : null);
+
+      // Gratis (ingen Vipps)
+      if (result?.free) {
+        if (typeof onSuccess === 'function') onSuccess(result);
+        navigate('/min-profil', { replace: true });
+        return;
+      }
+
+      // Vipps redirect
+      if (result?.redirectUrl) {
+        if (typeof onSuccess === 'function') onSuccess(result);
+        window.location.href = result.redirectUrl;
+        return;
+      }
+
+      // Fallback
+      setError('Uventet respons fra server. Prøv igjen.');
       setLoading(false);
+    } catch (err) {
+      setError(err?.message || 'Noe gikk galt');
+      setLoading(false);
+      setValidatingCode(false);
     }
   };
+
+  const buttonText = (() => {
+    if (loading) return 'Behandler...';
+    if (discountCode.trim()) {
+      return validatingCode ? 'Validerer kode...' : 'Aktiver (bruk rabattkode)';
+    }
+    return `Aktiver med Vipps (${plans[selectedPlan].price} NOK/mnd)`;
+  })();
 
   return (
     <PaywallWrapper>
       <PaywallTitle>🏔️ Aktiver din hyttelisting</PaywallTitle>
       <PaywallDescription>
-        For at hytta di skal bli synlig for leietakere, trenger du et aktivt abonnement. 
+        For at hytta di skal bli synlig for leietakere, trenger du et aktivt abonnement.
         Velg planen som passer best for deg:
       </PaywallDescription>
 
       <PlanSelector>
         {Object.entries(plans).map(([key, plan]) => (
-          <PlanCard 
-            key={key} 
+          <PlanCard
+            key={key}
             $selected={selectedPlan === key}
             onClick={() => setSelectedPlan(key)}
           >
@@ -112,9 +169,7 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       </PlanSelector>
 
       <DiscountBox>
-        <label>
-          🎟️ Har du en rabattkode?
-        </label>
+        <label>🎟️ Har du en rabattkode?</label>
         <DiscountInput
           type="text"
           value={discountCode}
@@ -122,10 +177,10 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
           placeholder="Skriv inn rabattkode"
           maxLength={20}
         />
-        <ValidateButton 
-          type="button" 
+        <ValidateButton
+          type="button"
           onClick={handleValidateDiscount}
-          disabled={!discountCode || validatingCode}
+          disabled={!discountCode.trim() || validatingCode || loading}
         >
           {validatingCode ? 'Validerer...' : 'Valider kode'}
         </ValidateButton>
@@ -133,22 +188,22 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
 
       {validatedDiscount && (
         <SuccessBox>
-          ✅ Rabattkode aktivert! Du får <strong>{validatedDiscount.duration_months} måned{validatedDiscount.duration_months > 1 ? 'er' : ''} gratis</strong> 🎉
+          ✅ Rabattkode validert: <strong>{validatedDiscount.code}</strong>
         </SuccessBox>
       )}
 
       <InfoBox>
-        💳 Betaling via Vipps MobilePay. Du kan kansellere når som helst. 
-        Ingen bindingstid.
+        💳 Betaling via Vipps MobilePay (når rabattkode ikke brukes / ikke er gyldig).
+        Du kan kansellere når som helst. Ingen bindingstid.
       </InfoBox>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
-      <ActivateButton onClick={handleActivate} disabled={loading}>
-        {loading ? 'Sender deg til Vipps...' : validatedDiscount 
-          ? `Aktiver med ${validatedDiscount.duration_months} måned${validatedDiscount.duration_months > 1 ? 'er' : ''} gratis` 
-          : `Aktiver med Vipps (${plans[selectedPlan].price} NOK/mnd)`
-        }
+      <ActivateButton
+        onClick={handleActivate}
+        disabled={loading || validatingCode}
+      >
+        {buttonText}
       </ActivateButton>
     </PaywallWrapper>
   );
