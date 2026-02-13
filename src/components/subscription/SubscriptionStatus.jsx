@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { useSubscription, cancelSubscription } from '../../hooks/useSubscription';
+import { useSubscriptionsList, cancelSubscription } from '../../hooks/useSubscription';
 import {
   StatusWrapper,
   StatusHeader,
@@ -16,7 +16,7 @@ import {
 } from '../../styles/subscription/subscriptionStatusStyles';
 
 export default function SubscriptionStatus({ userId }) {
-  const { subscription, loading, refetch } = useSubscription(userId);
+  const { subscriptions, loading, refetch } = useSubscriptionsList(userId);
   const [canceling, setCanceling] = useState(false);
 
   if (loading) {
@@ -27,18 +27,20 @@ export default function SubscriptionStatus({ userId }) {
     );
   }
 
-  if (!subscription) {
+  if (!subscriptions || subscriptions.length === 0) {
     return (
       <StatusWrapper>
-        <NoSubscription>
-          <p>Du har ingen aktive abonnementer.</p>
-          <SubText>
-            Opprett en hytte for å komme i gang med abonnement.
-          </SubText>
-        </NoSubscription>
+        <StatusHeader>
+          <StatusTitle>Abonnementsstatus</StatusTitle>
+          <StatusBadge $status="none">Ingen abonnement</StatusBadge>
+        </StatusHeader>
+        <StatusText>
+          Du har ingen abonnement ennå.
+        </StatusText>
       </StatusWrapper>
     );
   }
+
 
   const statusLabels = {
     active: 'Aktiv',
@@ -70,58 +72,65 @@ export default function SubscriptionStatus({ userId }) {
   };
 
   return (
-    <StatusWrapper>
-      <StatusHeader>
-        <StatusTitle>Abonnementsstatus</StatusTitle>
-        <StatusBadge $status={subscription.status}>
-          {statusLabels[subscription.status] || subscription.status}
-        </StatusBadge>
-      </StatusHeader>
+    <div style={{ display: 'grid', gap: '16px' }}>
+      {subscriptions.map((subscription) => (
+        <StatusWrapper key={subscription.id}>
+          <StatusHeader>
+            <StatusTitle>Abonnementsstatus</StatusTitle>
+            <StatusBadge $status={subscription.status}>
+              {statusLabels[subscription.status] || subscription.status}
+            </StatusBadge>
+          </StatusHeader>
 
-      <StatusInfo>
-        <InfoItem>
-          <p>Plan</p>
-          <strong>{planLabels[subscription.plan_type] || subscription.plan_type}</strong>
-        </InfoItem>
-        <InfoItem>
-          <p>Pris</p>
-          <strong>{subscription.price_nok} NOK/måned</strong>
-        </InfoItem>
-        {subscription.current_period_end && (
-          <InfoItem>
-            <p>Neste fornyelse</p>
-            <strong>
-              {format(new Date(subscription.current_period_end), 'dd. MMMM yyyy', { locale: nb })}
-            </strong>
-          </InfoItem>
-        )}
-        <InfoItem>
-          <p>Betalingsmetode</p>
-          <strong>Vipps MobilePay</strong>
-        </InfoItem>
-      </StatusInfo>
+          <StatusInfo>
+            <InfoItem>
+              <p>Plan</p>
+              <strong>{planLabels[subscription.plan_type] || subscription.plan_type}</strong>
+            </InfoItem>
 
-      {subscription.status === 'past_due' && (
-        <WarningText>
-          ⚠️ Betalingen feilet. Hytta er satt på pause. Vennligst oppdater betalingsinformasjonen din.
-        </WarningText>
-      )}
+            <InfoItem>
+              <p>Pris</p>
+              <strong>{subscription.price_nok} NOK/måned</strong>
+            </InfoItem>
 
-      {subscription.status === 'canceled' && (
-        <WarningText>
-          ℹ️ Abonnementet er kansellert. Hytta forblir aktiv til {subscription.current_period_end ? format(new Date(subscription.current_period_end), 'dd. MMMM yyyy', { locale: nb }) : 'slutten av perioden'}.
-        </WarningText>
-      )}
+            {subscription.current_period_end && (
+              <InfoItem>
+                <p>Neste fornyelse</p>
+                <strong>
+                  {format(new Date(subscription.current_period_end), 'dd. MMMM yyyy', { locale: nb })}
+                </strong>
+              </InfoItem>
+            )}
 
-      {subscription.status === 'active' && (
-        <ActionButton 
-          $variant="danger" 
-          onClick={handleCancel}
-          disabled={canceling}
-        >
-          {canceling ? 'Kansellerer...' : 'Kanseller abonnement'}
-        </ActionButton>
-      )}
-    </StatusWrapper>
+            <InfoItem>
+              <p>Betaling</p>
+              <strong>{subscription.discount_code ? 'Rabattkode (gratis)' : 'Vipps MobilePay'}</strong>
+            </InfoItem>
+          </StatusInfo>
+
+          {(subscription.status === 'active') && (
+            <ActionButton
+              $variant="danger"
+              onClick={async () => {
+                if (!confirm('Er du sikker på at du vil kansellere abonnementet?')) return;
+                setCanceling(true);
+                try {
+                  await cancelSubscription(subscription.id);
+                  alert('Abonnement kansellert.');
+                  refetch();
+                } catch (e) {
+                  alert(`Feil ved kansellering: ${e.message}`);
+                } finally {
+                  setCanceling(false);
+                }
+              }}
+              disabled={canceling}
+            >
+              {canceling ? 'Kansellerer...' : 'Kanseller abonnement'}
+            </ActionButton>
+          )}
+        </StatusWrapper>
+      ))}
+    </div>
   );
-}
+

@@ -79,6 +79,71 @@ export function useSubscription(userId, cabinId = null) {
   };
 }
 
+export function useSubscriptionsList(userId) {
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchSubscriptions = async () => {
+    try {
+      setLoading(true);
+
+      const { data, error: fetchError } = await supabase
+        .from('subscriptions')
+        .select('id, status, plan_type, price_nok, current_period_end, cabin_id, created_at, vipps_agreement_id, discount_code')
+        .eq('owner_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      setSubscriptions(data || []);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setSubscriptions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      setSubscriptions([]);
+      return;
+    }
+
+    fetchSubscriptions();
+
+    const channel = supabase
+      .channel('subscription_list_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'subscriptions',
+          filter: `owner_id=eq.${userId}`,
+        },
+        () => {
+          fetchSubscriptions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
+
+  return {
+    subscriptions,
+    loading,
+    error,
+    refetch: fetchSubscriptions,
+  };
+}
+
 export async function createSubscription(cabinId, planType = 'basic', discountCode = null) {
   try {
     const { data: { session } } = await supabase.auth.getSession();
