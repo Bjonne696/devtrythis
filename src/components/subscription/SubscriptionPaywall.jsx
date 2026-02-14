@@ -48,9 +48,7 @@ export default function SubscriptionPaywall({ cabinId, onSuccess }) {
       features: [
         'Alt i Standard',
         'Fremhevet plassering',
-        'Detaljert statistikk',
         'Prioritert support',
-        'Markedsføringstips',
       ],
     },
   };
