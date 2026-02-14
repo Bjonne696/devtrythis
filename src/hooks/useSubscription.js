@@ -254,3 +254,36 @@ export async function cancelSubscription(subscriptionId) {
     throw error;
   }
 }
+
+
+export async function deleteSubscription(cabinId) {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error('Du må være logget inn');
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-subscription`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cabinId }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Kunne ikke slette abonnement/hytte');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting subscription:', error);
+    throw error;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { useSubscriptionsList, cancelSubscription } from '../../hooks/useSubscription';
+import { useSubscriptionsList, cancelSubscription, createSubscription, deleteSubscription } from '../../hooks/useSubscription';
 import {
   StatusWrapper,
   StatusHeader,
@@ -58,18 +58,6 @@ export default function SubscriptionStatus({ userId }) {
     if (!confirm('Er du sikker på at du vil kansellere abonnementet? Hytta vil forbli aktiv til slutten av betalingsperioden.')) {
       return;
     }
-
-    setCanceling(true);
-    try {
-      await cancelSubscription(subscription.id);
-      alert('Abonnement kansellert. Hytta forblir aktiv til slutten av perioden.');
-      refetch();
-    } catch (error) {
-      alert(`Feil ved kansellering: ${error.message}`);
-    } finally {
-      setCanceling(false);
-    }
-  };
 
   return (
     <div style={{ display: 'grid', gap: '16px' }}>
@@ -166,8 +154,52 @@ export default function SubscriptionStatus({ userId }) {
               {canceling ? 'Kansellerer...' : 'Kanseller abonnement'}
             </ActionButton>
           )}
+          {(subscription.status === 'canceled' || subscription.status === 'past_due') && (
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <ActionButton
+                onClick={async () => {
+                  try {
+                    const res = await createSubscription(subscription.cabin_id, subscription.plan_type, null);
+
+                    if (res?.free) {
+                      refetch();
+                      return;
+                    }
+
+                    if (res?.redirectUrl) {
+                      window.location.href = res.redirectUrl;
+                      return;
+                    }
+
+                    refetch();
+                  } catch (e) {
+                    alert(`Feil ved reaktivering: ${e.message}`);
+                  }
+                }}
+              >
+                Aktiver på nytt
+              </ActionButton>
+
+              <ActionButton
+                $variant="danger"
+                onClick={async () => {
+                  if (!confirm('Slette abonnementet? Dette sletter også hytta.')) return;
+
+                  try {
+                    await deleteSubscription(subscription.cabin_id);
+                    refetch();
+                  } catch (e) {
+                    alert(`Feil ved sletting: ${e.message}`);
+                  }
+                }}
+              >
+                Slett abonnement
+              </ActionButton>
+            </div>
+          )}
         </StatusWrapper>
       ))}
     </div>
   );
+}
 }
