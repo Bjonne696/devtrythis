@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
@@ -36,6 +37,16 @@ import { MainWrapper, Heading, ProfileSection, SectionHeading, SectionContent } 
 
 export default function ProfileData() {
   const { profile, user } = useAuth();
+  const location = useLocation();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    // Trigger når man kommer tilbake fra VippsCallbackPage (vi sendte state vippsCallback)
+    if (location.state?.vippsCallback || location.state?.justActivated) {
+      setRefreshKey((k) => k + 1);
+    }
+  }, [location.state]);
+  
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [incomingReviews, setIncomingReviews] = useState([]);
@@ -196,7 +207,7 @@ export default function ProfileData() {
         <ProfileSection>
           <SectionHeading>Abonnement</SectionHeading>
           <SectionContent>
-            <SubscriptionStatus userId={user?.id} />
+            <SubscriptionStatus key={`subs-${refreshKey}`} userId={user?.id} />
           </SectionContent>
         </ProfileSection>
       )}
@@ -204,7 +215,7 @@ export default function ProfileData() {
       <ProfileSection>
         <SectionHeading>Mine annonser</SectionHeading>
         <SectionContent>
-          <MyCabins />
+          <MyCabins key={`mycabins-${refreshKey}`} />
         </SectionContent>
       </ProfileSection>
 
