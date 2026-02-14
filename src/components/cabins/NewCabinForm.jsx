@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Tooltip from "../ui/Tooltip";
 import HelpText from "../ui/HelpText";
-import SubscriptionPaywall from "../subscription/SubscriptionPaywall";
-import { useSubscription } from "../../hooks/useSubscription";
+import { createSubscription, validateDiscountCode } from "../../hooks/useSubscription";
 import {
   FormWrapper,
   FormField,
@@ -26,18 +26,57 @@ import {
   SubmitError,
   CheckboxLabel
 } from "../../styles/cabins/newCabinFormStyles";
+import {
+  SubscriptionSection,
+  SectionTitle,
+  PlanSelector,
+  PlanCard,
+  PlanName,
+  PlanPrice,
+  PlanFeatures,
+  DiscountSection,
+  DiscountInput,
+  ValidateButton,
+  DiscountSuccess,
+  DiscountError,
+  InfoBox,
+  SubmitMessage
+} from "../../styles/cabins/newCabinSubscriptionStyles";
 
 const facilitiesList = [
   "Kjøkken",
-  "Peis", 
+  "Peis",
   "Badstue",
   "Parkering",
   "Kjæledyr tillatt",
   "WiFi",
 ];
 
+const plans = {
+  basic: {
+    name: 'Standard',
+    price: 99,
+    features: [
+      'Hytte synlig for leietakere',
+      'Grunnleggende statistikk',
+      'E-post varsling',
+      'Ubegrenset antall bookinger',
+    ],
+  },
+  premium: {
+    name: 'Premium',
+    price: 149,
+    features: [
+      'Alt i Standard',
+      'Fremhevet plassering',
+      'Prioritert support',
+    ],
+  },
+};
+
 export default function NewCabinForm() {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -46,21 +85,29 @@ export default function NewCabinForm() {
   const [locationInfo, setLocationInfo] = useState({ address: "", postalCode: "", city: "" });
   const [files, setFiles] = useState([]);
   const [facilities, setFacilities] = useState([]);
-  const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [tempCabinId, setTempCabinId] = useState(null);
-  const [showPaywall, setShowPaywall] = useState(false);
-  
-  const { hasActiveSubscription, loading: subLoading, refetch: refetchSubscription } = useSubscription(user?.id);
-  
+
+  const [selectedPlan, setSelectedPlan] = useState('basic');
+  const [discountCode, setDiscountCode] = useState('');
+  const [validatedDiscount, setValidatedDiscount] = useState(null);
+  const [validatingCode, setValidatingCode] = useState(false);
+  const [discountError, setDiscountError] = useState(null);
+  const [submitMessage, setSubmitMessage] = useState(null);
+
   const isAdmin = profile?.role === 'admin';
-  const canPublish = isAdmin || hasActiveSubscription;
+
+  useEffect(() => {
+    setValidatedDiscount(null);
+    setDiscountError(null);
+  }, [discountCode]);
+
+  const normalizeCode = (code) => code.trim().toUpperCase();
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!title.trim()) {
       newErrors.title = "Tittel er påkrevd";
     } else if (title.trim().length < 10) {
@@ -149,94 +196,122 @@ export default function NewCabinForm() {
     );
   }
 
+  const handleValidateDiscount = async () => {
+    const code = normalizeCode(discountCode);
+    if (!code) return;
+
+    setValidatingCode(true);
+    setDiscountError(null);
+
+    try {
+      const result = await validateDiscountCode(code);
+      if (result.valid) {
+        setValidatedDiscount(result.discount);
+        setDiscountError(null);
+      } else {
+        setDiscountError(result.error || 'Ugyldig rabattkode');
+        setValidatedDiscount(null);
+      }
+    } finally {
+      setValidatingCode(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       setErrors({ submit: "Du må være logget inn" });
       return;
     }
-    
+
     if (!validateForm()) {
       setErrors(prev => ({ ...prev, submit: "Vennligst rett opp feilene over" }));
       return;
     }
-    
+
     setLoading(true);
     setErrors({});
+    setSubmitMessage(null);
 
-    const uploadedImageUrls = [];
-    for (let file of files) {
-      const filePath = `cabins-images/${uuidv4()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage.from("cabins-images").upload(filePath, file);
-      if (uploadError) {
-        console.error("Feil ved bildeopplasting:", uploadError.message);
+    const code = normalizeCode(discountCode);
+
+    if (!isAdmin && code) {
+      const result = await validateDiscountCode(code);
+      if (!result.valid) {
+        setDiscountError(result.error || 'Ugyldig rabattkode');
         setLoading(false);
         return;
       }
-      const { data: publicUrlData } = supabase.storage.from("cabins-images").getPublicUrl(filePath);
-      uploadedImageUrls.push(publicUrlData.publicUrl);
+      setValidatedDiscount(result.discount);
     }
 
-    const fullLocation = `${locationInfo.address}, ${locationInfo.postalCode} ${locationInfo.city}`;
+    try {
+      const uploadedImageUrls = [];
+      for (let file of files) {
+        const filePath = `cabins-images/${uuidv4()}-${file.name}`;
+        const { error: uploadError } = await supabase.storage.from("cabins-images").upload(filePath, file);
+        if (uploadError) {
+          setSubmitMessage({ type: 'error', text: `Feil ved bildeopplasting: ${uploadError.message}` });
+          setLoading(false);
+          return;
+        }
+        const { data: publicUrlData } = supabase.storage.from("cabins-images").getPublicUrl(filePath);
+        uploadedImageUrls.push(publicUrlData.publicUrl);
+      }
 
-    const { data: cabinData, error: insertError } = await supabase
-      .from("cabins")
-      .insert([
-        {
-          owner_id: user.id,
-          title,
-          description,
-          price_per_night: parseInt(price) * 100,
-          location: fullLocation,
-          latitude,
-          longitude,
-          facilities,
-          image_urls: uploadedImageUrls,
-          is_premium: isPremium,
-        },
-      ])
-      .select()
-      .single();
+      const fullLocation = `${locationInfo.address}, ${locationInfo.postalCode} ${locationInfo.city}`;
 
-    if (insertError) {
-      console.error("Feil ved lagring av hytte:", insertError.message);
+      const { data: cabinData, error: insertError } = await supabase
+        .from("cabins")
+        .insert([
+          {
+            owner_id: user.id,
+            title,
+            description,
+            price_per_night: parseInt(price) * 100,
+            location: fullLocation,
+            latitude,
+            longitude,
+            facilities,
+            image_urls: uploadedImageUrls,
+            is_premium: selectedPlan === 'premium',
+          },
+        ])
+        .select()
+        .single();
+
+      if (insertError) {
+        setSubmitMessage({ type: 'error', text: `Feil ved lagring av hytte: ${insertError.message}` });
+        setLoading(false);
+        return;
+      }
+
+      if (isAdmin) {
+        setSubmitMessage({ type: 'success', text: 'Hytta er publisert! (Admin-konto – ingen betaling kreves)' });
+        setTimeout(() => {
+          navigate('/min-profil', { replace: true, state: { justActivated: true } });
+        }, 1500);
+        return;
+      }
+
+      const subResult = await createSubscription(cabinData.id, selectedPlan, code || null);
+
+      if (subResult?.free) {
+        navigate('/min-profil', { replace: true, state: { justActivated: true } });
+        return;
+      }
+
+      if (subResult?.redirectUrl) {
+        window.location.href = subResult.redirectUrl;
+        return;
+      }
+
+      setSubmitMessage({ type: 'error', text: 'Uventet respons fra server. Prøv igjen.' });
       setLoading(false);
-      return;
+    } catch (err) {
+      setSubmitMessage({ type: 'error', text: err?.message || 'Noe gikk galt ved opprettelse.' });
+      setLoading(false);
     }
-
-    setLoading(false);
-
-    if (!canPublish) {
-      setTempCabinId(cabinData.id);
-      setShowPaywall(true);
-      alert("Hytta er opprettet! Aktiver abonnement for å gjøre den synlig for leietakere.");
-    } else {
-      const successMessage = isAdmin 
-        ? "Hytta er nå publisert og synlig! (Admin-konto - ingen betaling kreves)"
-        : "Hytta er nå publisert og synlig!";
-      alert(successMessage);
-      resetForm();
-    }
-  };
-
-  const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setPrice("");
-    setLatitude(59.9139);
-    setLongitude(10.7522);
-    setFiles([]);
-    setFacilities([]);
-    setIsPremium(false);
-    setLocationInfo({ address: "", postalCode: "", city: "" });
-    setTempCabinId(null);
-    setShowPaywall(false);
-  };
-
-  const handlePaywallSuccess = async () => {
-    await refetchSubscription();
-    alert("Abonnement aktivert! Hytta er nå synlig for leietakere.");
-    resetForm();
   };
 
   const handleFacilityChange = (facility) => {
@@ -245,35 +320,25 @@ export default function NewCabinForm() {
     );
   };
 
-  if (showPaywall && tempCabinId) {
-    return (
-      <FormWrapper>
-        <h1>Aktiver din hyttelisting</h1>
-        <SubscriptionPaywall 
-          cabinId={tempCabinId} 
-          onSuccess={handlePaywallSuccess}
-        />
-      </FormWrapper>
-    );
-  }
+  const buttonText = (() => {
+    if (loading) return 'Oppretter...';
+    if (isAdmin) return 'Publiser hytten (admin)';
+    if (discountCode.trim() && validatedDiscount) {
+      return 'Opprett hytte (bruk rabattkode)';
+    }
+    return `Opprett hytte og betal med Vipps (${plans[selectedPlan].price} NOK/mnd)`;
+  })();
 
   return (
     <FormWrapper>
       <h1>Opprett ny hytteannonse</h1>
-      
+
       {isAdmin && (
         <AdminAlert>
-          <strong>✓ Admin-konto:</strong> Hytta vil bli automatisk publisert uten behov for abonnement.
+          <strong>Admin-konto:</strong> Hytta vil bli automatisk publisert uten behov for abonnement.
         </AdminAlert>
       )}
-      
-      {!canPublish && !subLoading && (
-        <WarningAlert>
-          <strong>ℹ️ Viktig:</strong> Du trenger et aktivt abonnement for at hytta skal bli synlig for leietakere. 
-          Etter at du har opprettet hytta, får du mulighet til å aktivere abonnement.
-        </WarningAlert>
-      )}
-      
+
       <HelpText>
         <strong>Velkommen til hytteoppretting!</strong><br />
         Fyll ut alle feltene under for å lage en attraktiv annonse:
@@ -290,18 +355,16 @@ export default function NewCabinForm() {
           <Tooltip text="Skriv en kort, beskrivende tittel som fanger oppmerksomheten. Eksempel: 'Koselig familiehytte ved sjøen'">
             <Label>Tittel *</Label>
           </Tooltip>
-          <Input 
-            value={title} 
+          <Input
+            value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => handleFieldBlur('title')}
             placeholder="Eksempel: Koselig familiehytte ved sjøen"
             $hasError={touched.title && errors.title}
-            required 
+            required
           />
           {touched.title && errors.title && (
-            <ErrorText>
-              {errors.title}
-            </ErrorText>
+            <ErrorText>{errors.title}</ErrorText>
           )}
         </FormField>
 
@@ -309,18 +372,16 @@ export default function NewCabinForm() {
           <Tooltip text="Beskriv hytta detaljert: beliggenhet, utsikt, aktiviteter i nærheten, spesielle egenskaper. Jo mer informasjon, jo bedre!">
             <Label>Beskrivelse *</Label>
           </Tooltip>
-          <TextArea 
-            value={description} 
+          <TextArea
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             onBlur={() => handleFieldBlur('description')}
             placeholder="Beskriv hytta, beliggenheten, aktiviteter i nærheten og spesielle egenskaper..."
             $hasError={touched.description && errors.description}
-            required 
+            required
           />
           {touched.description && errors.description && (
-            <ErrorText>
-              {errors.description}
-            </ErrorText>
+            <ErrorText>{errors.description}</ErrorText>
           )}
         </FormField>
 
@@ -328,21 +389,19 @@ export default function NewCabinForm() {
           <Tooltip text="Sett en konkurransedyktig pris. Se på lignende hytter i området for å finne riktig prisnivå.">
             <Label>Pris per natt (kroner) *</Label>
           </Tooltip>
-          <Input 
-            type="number" 
-            value={price} 
+          <Input
+            type="number"
+            value={price}
             onChange={(e) => setPrice(e.target.value)}
             onBlur={() => handleFieldBlur('price')}
             placeholder="1500"
             min="100"
             max="10000"
             $hasError={touched.price && errors.price}
-            required 
+            required
           />
           {touched.price && errors.price && (
-            <ErrorText>
-              {errors.price}
-            </ErrorText>
+            <ErrorText>{errors.price}</ErrorText>
           )}
         </FormField>
 
@@ -376,29 +435,11 @@ export default function NewCabinForm() {
             required
           />
           {files.length > 0 && (
-            <FileInfo>
-              {files.length} bilde(r) valgt
-            </FileInfo>
+            <FileInfo>{files.length} bilde(r) valgt</FileInfo>
           )}
           {errors.files && (
-            <ErrorText>
-              {errors.files}
-            </ErrorText>
+            <ErrorText>{errors.files}</ErrorText>
           )}
-        </FormField>
-
-        <FormField>
-          <Tooltip text="Premium annonser vises høyere i søkeresultatene og får mer oppmerksomhet. Koster ekstra, men gir bedre synlighet.">
-            <Label>Premium annonse (koster mer) *</Label>
-          </Tooltip>
-          <CheckboxLabel>
-            <input
-              type="checkbox"
-              checked={isPremium}
-              onChange={() => setIsPremium(!isPremium)}
-            />
-            Ja, jeg vil ha premium-plassering
-          </CheckboxLabel>
         </FormField>
 
         {latitude && longitude && (
@@ -429,14 +470,72 @@ export default function NewCabinForm() {
           </FormField>
         )}
 
-        {errors.submit && (
-          <SubmitError>
-            {errors.submit}
-          </SubmitError>
+        {!isAdmin && (
+          <SubscriptionSection>
+            <SectionTitle>Velg abonnementsplan</SectionTitle>
+            <PlanSelector>
+              {Object.entries(plans).map(([key, plan]) => (
+                <PlanCard
+                  key={key}
+                  $selected={selectedPlan === key}
+                  onClick={() => setSelectedPlan(key)}
+                >
+                  <PlanName>{plan.name}</PlanName>
+                  <PlanPrice>{plan.price} NOK /mnd</PlanPrice>
+                  <PlanFeatures>
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx}>{feature}</li>
+                    ))}
+                  </PlanFeatures>
+                </PlanCard>
+              ))}
+            </PlanSelector>
+
+            <DiscountSection>
+              <label>Har du en rabattkode?</label>
+              <DiscountInput
+                type="text"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+                placeholder="Skriv inn rabattkode"
+                maxLength={20}
+              />
+              <ValidateButton
+                type="button"
+                onClick={handleValidateDiscount}
+                disabled={!discountCode.trim() || validatingCode || loading}
+              >
+                {validatingCode ? 'Validerer...' : 'Valider kode'}
+              </ValidateButton>
+              {validatedDiscount && (
+                <DiscountSuccess>
+                  Rabattkode validert: <strong>{validatedDiscount.code}</strong>
+                </DiscountSuccess>
+              )}
+              {discountError && (
+                <DiscountError>{discountError}</DiscountError>
+              )}
+            </DiscountSection>
+
+            <InfoBox>
+              Betaling skjer via Vipps MobilePay (når rabattkode ikke brukes).
+              Du kan kansellere når som helst. Ingen bindingstid.
+            </InfoBox>
+          </SubscriptionSection>
         )}
-        
-        <SubmitButton type="submit" disabled={loading}>
-          {loading ? "Laster opp..." : "Publiser hytten"}
+
+        {submitMessage && (
+          <SubmitMessage $type={submitMessage.type}>
+            {submitMessage.text}
+          </SubmitMessage>
+        )}
+
+        {errors.submit && (
+          <SubmitError>{errors.submit}</SubmitError>
+        )}
+
+        <SubmitButton type="submit" disabled={loading || validatingCode}>
+          {buttonText}
         </SubmitButton>
       </form>
     </FormWrapper>

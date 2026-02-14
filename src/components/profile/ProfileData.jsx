@@ -3,11 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
-import MyCabins from "../cabins/MyCabins";
 import AvatarUploader from "./AvatarUploader";
 import OwnerRequests from "../bookings/OwnerRequests";
 import AddReviewForm from "../reviews/AddReviewForm";
-import SubscriptionStatus from "../subscription/SubscriptionStatus";
+import MyCabinsWithSubscription from "./MyCabinsWithSubscription";
 import { useUpcomingRentals } from "../../hooks/useUpcomingRentals";
 import {
   ProfileWrapper,
@@ -50,7 +49,6 @@ export default function ProfileData() {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [incomingReviews, setIncomingReviews] = useState([]);
-  const [userCabins, setUserCabins] = useState([]);
   const [pastBookings, setPastBookings] = useState([]);
 
   const navigate = useNavigate();
@@ -114,17 +112,6 @@ export default function ProfileData() {
     }
   };
 
-  const fetchUserCabins = async () => {
-    const { data, error } = await supabase
-      .from("cabins")
-      .select("id, title, location, image_urls")
-      .eq("owner_id", user.id);
-
-    if (!error) {
-      setUserCabins(data);
-    }
-  };
-
   const handleDeleteReview = async (cabinId) => {
     const { error } = await supabase
       .from("reviews")
@@ -148,7 +135,6 @@ export default function ProfileData() {
       fetchPastBookings();
       fetchUserReviews();
       fetchIncomingReviews();
-      fetchUserCabins();
     }
   }, [user?.id]);
 
@@ -203,19 +189,10 @@ export default function ProfileData() {
         </Box>
       </MiddleSection>
 
-      {isOwner && (
-        <ProfileSection>
-          <SectionHeading>Abonnement</SectionHeading>
-          <SectionContent>
-            <SubscriptionStatus key={`subs-${refreshKey}`} userId={user?.id} />
-          </SectionContent>
-        </ProfileSection>
-      )}
-
       <ProfileSection>
-        <SectionHeading>Mine annonser</SectionHeading>
+        <SectionHeading>Mine annonser og abonnement</SectionHeading>
         <SectionContent>
-          <MyCabins key={`mycabins-${refreshKey}`} />
+          <MyCabinsWithSubscription key={`listings-${refreshKey}`} />
         </SectionContent>
       </ProfileSection>
 
