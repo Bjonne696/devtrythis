@@ -54,11 +54,6 @@ export default function SubscriptionStatus({ userId }) {
     premium: 'Premium',
   };
 
-  const handleCancel = async () => {
-    if (!confirm('Er du sikker på at du vil kansellere abonnementet? Hytta vil forbli aktiv til slutten av betalingsperioden.')) {
-      return;
-    }
-
   return (
     <div style={{ display: 'grid', gap: '16px' }}>
       {subscriptions.map((subscription) => (
@@ -201,5 +196,4 @@ export default function SubscriptionStatus({ userId }) {
       ))}
     </div>
   );
-}
 }
