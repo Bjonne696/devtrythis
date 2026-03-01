@@ -104,7 +104,7 @@ export default function MyCabinsWithSubscription() {
   const handleCancel = async (subscription) => {
     setConfirmAction({
       title: 'Kanseller abonnement',
-      message: 'Er du sikker på at du vil kansellere abonnementet? Hytta vil forbli aktiv til slutten av perioden.',
+      message: 'Er du sikker på at du vil kansellere abonnementet? Hytten vil bli fjernet fra siden, og du må opprette et nytt abonnement for å vise hytten igjen.',
       onConfirm: async () => {
         setConfirmAction(null);
         setActionLoading(subscription.id);
