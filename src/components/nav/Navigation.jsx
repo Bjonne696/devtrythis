@@ -63,7 +63,7 @@ export default function Navigation() {
             </NavItem>
             <NavItem>
               <NavLink to="/nye-hytter" $active={location.pathname === "/nye-hytter"} onClick={closeMenu}>
-                Nye feriebolig
+                Nye
               </NavLink>
             </NavItem>
             <NavItem>
@@ -133,7 +133,7 @@ export default function Navigation() {
             </NavItem>
             <NavItem>
               <NavLink to="/nye-hytter" $active={location.pathname === "/nye-hytter"} onClick={closeMenu}>
-                Nye feriebolig
+                Nye
               </NavLink>
             </NavItem>
             <NavItem>

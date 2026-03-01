@@ -125,7 +125,7 @@ export default function HomePage() {
           <SectionTitle>
             {searchTerm
               ? `Søkeresultater for "${searchTerm}" (${filteredCabins.length})`
-              : `Alle feriebolig (${filteredCabins.length})`}
+              : `Alle annonser (${filteredCabins.length})`}
           </SectionTitle>
 
           {currentCabins.length === 0 ? (

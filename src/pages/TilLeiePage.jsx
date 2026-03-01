@@ -326,7 +326,7 @@ export default function TilLeiePage() {
               } else if (hasFilters) {
                 return `Filtrerte feriebolig${dateText} (${filteredCabins.length})`;
               } else {
-                return `Alle feriebolig (${filteredCabins.length})`;
+                return `Alle annonser (${filteredCabins.length})`;
               }
             })()}
           </SectionTitle>
