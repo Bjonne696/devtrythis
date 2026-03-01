@@ -139,7 +139,7 @@ export default function CabinCarousel() {
                 <CreateListingInfo>
                   <CreateListingTitle>Leie ut din feriebolig?</CreateListingTitle>
                   <CreateListingDescription>
-                    Del din feriebolig med andre og tjen ekstra inntekt på feriedager du ikke bruker den.
+                    Del din feriebolig med andre og tjen ekstra inntekt på dager du ikke bruker den.
                   </CreateListingDescription>
                   <CreateListingCTA>
                     {user ? 'Opprett annonse' : 'Kom i gang'}

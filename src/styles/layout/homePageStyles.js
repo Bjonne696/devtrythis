@@ -17,10 +17,22 @@ export const PageWrapper = styled(BasePageWrapper)``;
 export const MainContent = styled(BaseMainContent)`
   > h1 {
     text-align: center !important;
+    margin-top: ${spacing['2xl']};
     margin-bottom: ${spacing.xl};
     width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-size: ${typography.fontSizes['3xl']};
+
+    ${media.md} {
+      font-size: ${typography.fontSizes['2xl']};
+      margin-top: ${spacing.xl};
+    }
+
+    ${media.sm} {
+      font-size: ${typography.fontSizes.xl};
+      margin-top: ${spacing.lg};
+    }
   }
 `;
 
