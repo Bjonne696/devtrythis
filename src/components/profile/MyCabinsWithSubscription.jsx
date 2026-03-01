@@ -246,7 +246,7 @@ export default function MyCabinsWithSubscription() {
                     )}
                     {sub.current_period_end && (
                       <SubscriptionDetail>
-                        Utløper: {format(new Date(sub.current_period_end), "dd.MM.yyyy", { locale: nb })}
+                        Fornyes: {format(new Date(sub.current_period_end), "dd.MM.yyyy", { locale: nb })}
                       </SubscriptionDetail>
                     )}
                     {sub.discount_code && (
