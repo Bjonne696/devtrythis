@@ -25,9 +25,9 @@ function CreateListingCard({ isLoggedIn = false }) {
         <CreateListingIcon>🏠</CreateListingIcon>
       </CreateListingIconSection>
       <CreateListingInfo>
-        <CreateListingTitle>Leie ut din hytte?</CreateListingTitle>
+        <CreateListingTitle>Leie ut din feriebolig?</CreateListingTitle>
         <CreateListingDescription>
-          Del din hytte med andre og tjen ekstra inntekt på feriedager du ikke bruker den.
+          Del din feriebolig med andre og tjen ekstra inntekt på feriedager du ikke bruker den.
         </CreateListingDescription>
         <CreateListingCTA>
           {isLoggedIn ? 'Opprett annonse' : 'Kom i gang'}

@@ -236,24 +236,24 @@ export default function PopularPage() {
     <PageWrapper>
       <Navigation />
       <MainContent>
-        <h1>Populære hytter</h1>
+        <h1>Populære feriebolig</h1>
 
         <HelpText icon="⭐" id="popular">
-          <strong>Finn de beste hyttene!</strong><br />
-          Her vises kun hytter med høy vurdering (3.5+ stjerner). Bruk filtrene for å finne din drømmehytte.
+          <strong>Finn de beste ferieboligene!</strong><br />
+          Her vises kun feriebolig med høy vurdering (3.5+ stjerner). Bruk filtrene for å finne din drømmebolig.
         </HelpText>
 
         <TilLeieSearchContainer>
           <SearchInput
             type="text"
-            placeholder="Søk etter populære hytter (tittel eller område)..."
+            placeholder="Søk etter populære feriebolig (tittel eller område)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
           <FiltersContainer>
             <FilterGroup>
-              <Tooltip text="Filtrer hytter basert på pris per natt. La felt stå tomme for å se alle priser.">
+              <Tooltip text="Filtrer feriebolig basert på pris per natt. La felt stå tomme for å se alle priser.">
                 <FilterLabel>Prisområde (per natt)</FilterLabel>
               </Tooltip>
               <PriceRangeContainer>
@@ -275,7 +275,7 @@ export default function PopularPage() {
             </FilterGroup>
 
             <FilterGroup>
-              <Tooltip text="Velg datoer for å se kun ledige hytter. Systemet sjekker automatisk om hyttene er tilgjengelige.">
+              <Tooltip text="Velg datoer for å se kun ledige feriebolig. Systemet sjekker automatisk om ferieboligene er tilgjengelige.">
                 <FilterLabel>Oppholdsperiode</FilterLabel>
               </Tooltip>
               <DateRangeContainer>
@@ -298,7 +298,7 @@ export default function PopularPage() {
             </FilterGroup>
 
             <FilterGroup>
-              <Tooltip text="Velg fasiliteter som er viktige for deg. Kun hytter med disse fasilitetene vil vises.">
+              <Tooltip text="Velg fasiliteter som er viktige for deg. Kun feriebolig med disse fasilitetene vil vises.">
                 <FilterLabel>Fasiliteter</FilterLabel>
               </Tooltip>
               <FacilitiesContainer>
@@ -332,9 +332,9 @@ export default function PopularPage() {
             if (searchTerm) {
               return `Søkeresultater for "${searchTerm}"${dateText} (${filteredCabins.length})`;
             } else if (hasFilters) {
-              return `Filtrerte populære hytter${dateText} (${filteredCabins.length})`;
+              return `Filtrerte populære feriebolig${dateText} (${filteredCabins.length})`;
             } else {
-              return `Alle populære hytter (${filteredCabins.length})`;
+              return `Alle populære feriebolig (${filteredCabins.length})`;
             }
           })()}
         </SectionTitle>
@@ -342,15 +342,15 @@ export default function PopularPage() {
         {error ? (
           <ErrorMessage>{error}</ErrorMessage>
         ) : isLoading ? (
-          <LoadingSpinner>Laster hytter...</LoadingSpinner>
+          <LoadingSpinner>Laster feriebolig...</LoadingSpinner>
         ) : currentCabins.length === 0 ? (
           <>
             <NoResults>
               {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
                 ? checkInDate && checkOutDate
-                  ? 'Ingen populære hytter er tilgjengelige for de valgte datoene og filtrene.'
-                  : 'Ingen populære hytter matcher dine filtre.'
-                : 'Ingen populære hytter tilgjengelig for øyeblikket.'}
+                  ? 'Ingen populære feriebolig er tilgjengelig for de valgte datoene og filtrene.'
+                  : 'Ingen populære feriebolig matcher dine filtre.'
+                : 'Ingen populære feriebolig tilgjengelig for øyeblikket.'}
             </NoResults>
             <GridWrapper $centered>
               <CreateListingCard isLoggedIn={!!user} />

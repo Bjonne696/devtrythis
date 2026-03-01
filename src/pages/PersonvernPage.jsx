@@ -33,7 +33,7 @@ export default function PersonvernPage() {
             <ListItem>E-postadresse for kommunikasjon</ListItem>
             <ListItem>Booking- og leiehistorikk</ListItem>
             <ListItem>
-              Abonnementsdata for hytteeiere (status, plan, betalingshistorikk)
+              Abonnementsdata for utleiere (status, plan, betalingshistorikk)
             </ListItem>
             <ListItem>Tekniske data som IP-adresse og nettleserinfo</ListItem>
           </List>
@@ -42,7 +42,7 @@ export default function PersonvernPage() {
           <List>
             <ListItem>For å administrere bookinger og utleie</ListItem>
             <ListItem>
-              For å behandle abonnementer og betalinger for hytteeiere
+              For å behandle abonnementer og betalinger for utleiere
             </ListItem>
             <ListItem>
               For å kommunisere med deg om dine bookinger og abonnement
@@ -63,7 +63,7 @@ export default function PersonvernPage() {
 
           <Subtitle>Betalinger og Abonnementer</Subtitle>
           <TextBlock>
-            For hytteeiere som bruker vår abonnementstjeneste:
+            For utleiere som bruker vår abonnementstjeneste:
           </TextBlock>
           <List>
             <ListItem>

@@ -10,10 +10,10 @@ export default function NyeHytterPage() {
     <PageWrapper>
       <Navigation />
       <MainContent>
-        <h1>Nye hytter</h1>
+        <h1>Nye feriebolig</h1>
         <HelpText icon="🏠" id="nye-hytter">
-          <strong>Utforsk de nyeste hyttene!</strong><br />
-          Her finner du hytter som nylig er lagt ut på Ferieplassen. Vær tidlig ute og book din favoritt.
+          <strong>Utforsk de nyeste ferieboligene!</strong><br />
+          Her finner du feriebolig som nylig er lagt ut på Ferieplassen. Vær tidlig ute og book din favoritt.
         </HelpText>
         <NewCabinsGrid />
       </MainContent>

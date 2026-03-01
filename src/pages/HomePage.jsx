@@ -115,7 +115,7 @@ export default function HomePage() {
         <SearchContainer>
           <SearchInput
             type="text"
-            placeholder="Søk etter hytter (tittel, område eller pris)..."
+            placeholder="Søk etter feriebolig (tittel, område eller pris)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -125,15 +125,15 @@ export default function HomePage() {
           <SectionTitle>
             {searchTerm
               ? `Søkeresultater for "${searchTerm}" (${filteredCabins.length})`
-              : `Alle hytter (${filteredCabins.length})`}
+              : `Alle feriebolig (${filteredCabins.length})`}
           </SectionTitle>
 
           {currentCabins.length === 0 ? (
             <>
               <NoResults>
                 {searchTerm
-                  ? "Ingen hytter matcher søket ditt."
-                  : "Ingen hytter tilgjengelig for øyeblikket."}
+                  ? "Ingen feriebolig matcher søket ditt."
+                  : "Ingen feriebolig tilgjengelig for øyeblikket."}
               </NoResults>
               <GridWrapper $centered>
                 <CreateListingCard isLoggedIn={!!user} />

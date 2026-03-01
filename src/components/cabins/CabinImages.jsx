@@ -23,7 +23,7 @@ export default function CabinImages({ imageUrls }) {
           <ThumbnailImage 
             key={idx} 
             src={url} 
-            alt={`Hyttebilde ${idx + 1}`}
+            alt={`Bilde ${idx + 1}`}
             onClick={() => openModal(url)}
           />
         ))}
@@ -33,7 +33,7 @@ export default function CabinImages({ imageUrls }) {
         <ModalBackdrop onClick={closeModal}>
           <ImageModal onClick={(e) => e.stopPropagation()}>
             <CloseButton onClick={closeModal}>&times;</CloseButton>
-            <ModalImage src={selectedImage} alt="Forstørret hyttebilde" />
+            <ModalImage src={selectedImage} alt="Forstørret bilde" />
           </ImageModal>
         </ModalBackdrop>
       )}

@@ -51,7 +51,7 @@ export default function MyCabins() {
 
       if (fetchError) {
         console.error("Feil ved henting av hytte:", fetchError.message);
-        alert("Kunne ikke hente hytteinformasjon. Vennligst prøv igjen.");
+        alert("Kunne ikke hente ferieboliginformasjon. Vennligst prøv igjen.");
         return;
       }
 
@@ -95,13 +95,13 @@ export default function MyCabins() {
 
       if (!deleteError) {
         const successMessage = cabin.subscription_id 
-          ? "Hytten og tilhørende abonnement er slettet!"
-          : "Hytten er slettet!";
+          ? "Ferieboligen og tilhørende abonnement er slettet!"
+          : "Ferieboligen er slettet!";
         alert(successMessage);
         setCabins(cabins.filter((c) => c.id !== cabinId));
       } else {
         console.error("Feil ved sletting av hytte:", deleteError.message);
-        alert("Kunne ikke slette hytten. Vennligst prøv igjen.");
+        alert("Kunne ikke slette ferieboligen. Vennligst prøv igjen.");
       }
     } catch (error) {
       console.error("Uventet feil ved sletting:", error.message);
@@ -114,7 +114,7 @@ export default function MyCabins() {
   return (
     <div>
       {cabins.length === 0 ? (
-        <p>Du har ingen hytteannonser enda.</p>
+        <p>Du har ingen ferieboligannonser enda.</p>
       ) : (
         <MyCabinsGrid>
           {cabins.map((cabin) => (
@@ -127,7 +127,7 @@ export default function MyCabins() {
                 <MyCabinLocation>{cabin.location}</MyCabinLocation>
                 <MyCabinPrice>{formatPrice(cabin.price_per_night)} / natt</MyCabinPrice>
                 <DeleteButton onClick={() => handleDelete(cabin.id)}>
-                  Slett hytte
+                  Slett feriebolig
                 </DeleteButton>
               </MyCabinInfo>
             </MyCabinCard>

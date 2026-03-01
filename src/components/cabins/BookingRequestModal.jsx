@@ -117,7 +117,7 @@ export default function BookingRequestModal({ cabinId, onClose }) {
 
     // Sjekk om bruker har nådd limit på 2 pending requests
     if (pendingCount >= 2) {
-      setError("Du har allerede 2 aktive forespørsler for denne hytta. Vennligst vent på svar før du sender flere.");
+      setError("Du har allerede 2 aktive forespørsler for denne ferieboligen. Vennligst vent på svar før du sender flere.");
       return;
     }
 
@@ -168,7 +168,7 @@ export default function BookingRequestModal({ cabinId, onClose }) {
       }
       // Sjekk om feilen er pending limit (fra database trigger)
       else if (insertError.code === 'P0001' || insertError.message?.includes('maks ha 2 aktive forespørsler')) {
-        setError("Du har allerede 2 aktive forespørsler for denne hytta. Vennligst vent på svar før du sender flere.");
+        setError("Du har allerede 2 aktive forespørsler for denne ferieboligen. Vennligst vent på svar før du sender flere.");
         setPendingCount(2); // Oppdater count for å reflektere faktisk state
       } else {
         setError("Kunne ikke sende forespørselen. Vennligst prøv igjen eller kontakt support hvis problemet fortsetter.");
@@ -198,13 +198,13 @@ export default function BookingRequestModal({ cabinId, onClose }) {
         <h2>Send forespørsel</h2>
 
         <HelpText icon="📅">
-          Fyll ut datoene du ønsker å leie hytta og skriv en kort melding til utleier.
+          Fyll ut datoene du ønsker å leie ferieboligen og skriv en kort melding til utleier.
           Utleier vil få beskjed og kan godkjenne eller avslå forespørselen din.
         </HelpText>
 
         {!loadingPendingCount && session && pendingCount > 0 && (
           <HelpText icon="⏳">
-            Du har {pendingCount} aktiv{pendingCount > 1 ? 'e' : ''} forespørsel{pendingCount > 1 ? 'er' : ''} for denne hytta (maks 2).
+            Du har {pendingCount} aktiv{pendingCount > 1 ? 'e' : ''} forespørsel{pendingCount > 1 ? 'er' : ''} for denne ferieboligen (maks 2).
           </HelpText>
         )}
 

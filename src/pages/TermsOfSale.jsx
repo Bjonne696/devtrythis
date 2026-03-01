@@ -25,7 +25,7 @@ export default function TermsOfSale() {
       <Section>
         <SectionTitle>1. Generelt</SectionTitle>
         <Paragraph>
-          Disse salgsbetingelsene gjelder for utleie av hytter gjennom Ferieplassen, 
+          Disse salgsbetingelsene gjelder for utleie av feriebolig gjennom Ferieplassen, 
           eid av Anita Berge (org.nr. 926 576 259). Ved å gjennomføre en booking 
           aksepterer du disse vilkårene.
         </Paragraph>
@@ -37,12 +37,12 @@ export default function TermsOfSale() {
         <SubTitle>2.1 Betalingsmetode</SubTitle>
         <Paragraph>
           Vi aksepterer betaling via Vipps MobilePay. All betaling skal gjøres før 
-          innsjekking på hytta.
+          innsjekking.
         </Paragraph>
 
-        <SubTitle>2.2 Abonnement for hytteeiere</SubTitle>
+        <SubTitle>2.2 Abonnement for utleiere</SubTitle>
         <Paragraph>
-          Hytteeiere som ønsker å liste sin hytte på plattformen må ha et aktivt 
+          Utleiere som ønsker å liste sin feriebolig på plattformen må ha et aktivt 
           abonnement. Vi tilbyr to abonnementsplaner:
         </Paragraph>
         <List>
@@ -56,14 +56,14 @@ export default function TermsOfSale() {
 
         <SubTitle>2.3 Leiebetaling</SubTitle>
         <Paragraph>
-          Leietaker betaler avtalt beløp direkte til hytteeier etter godkjent booking. 
+          Leietaker betaler avtalt beløp direkte til utleier etter godkjent booking. 
           Ferieplassen er kun en formidlingsplattform og håndterer ikke leiebetaling 
-          mellom leietaker og hytteeier.
+          mellom leietaker og utleier.
         </Paragraph>
 
         <SubTitle>2.4 Betalingsfrist</SubTitle>
         <Paragraph>
-          Abonnement trekkes automatisk hver måned. Ved forfall av betaling vil hytta 
+          Abonnement trekkes automatisk hver måned. Ved forfall av betaling vil ferieboligen 
           bli deaktivert fra plattformen inntil betaling er gjennomført.
         </Paragraph>
       </Section>
@@ -77,7 +77,7 @@ export default function TermsOfSale() {
           angrefrist fra kjøpsdato. Angrefristen gjelder for:
         </Paragraph>
         <List>
-          <li>Abonnement for hytteeiere (14 dager fra opprettelse)</li>
+          <li>Abonnement for utleiere (14 dager fra opprettelse)</li>
           <li>Bookingbestillinger (14 dager fra bestillingsdato, forutsatt at leieperioden ikke har startet)</li>
         </List>
 
@@ -112,15 +112,15 @@ export default function TermsOfSale() {
         <SubTitle>4.1 Kansellering av booking</SubTitle>
         <Paragraph>
           Bookinger kan kanselleres direkte gjennom plattformen eller ved å kontakte 
-          hytteeier. Refusjonsrett ved kansellering avgjøres av den enkelte hytteeier 
-          og bør avtales direkte mellom leietaker og hytteeier.
+          utleier. Refusjonsrett ved kansellering avgjøres av den enkelte utleier 
+          og bør avtales direkte mellom leietaker og utleier.
         </Paragraph>
 
         <SubTitle>4.2 Kansellering av abonnement</SubTitle>
         <Paragraph>
-          Hytteeiere kan kansellere sitt abonnement når som helst uten bindingstid. 
+          Utleiere kan kansellere sitt abonnement når som helst uten bindingstid. 
           Kanselleringen trer i kraft ved slutten av inneværende betalingsperiode. 
-          Hytta vil bli deaktivert fra plattformen når abonnementet avsluttes.
+          Ferieboligen vil bli deaktivert fra plattformen når abonnementet avsluttes.
         </Paragraph>
         <Paragraph>
           For å kansellere abonnement, logg inn på din profil og velg 
@@ -155,10 +155,10 @@ export default function TermsOfSale() {
           behandling.
         </Paragraph>
 
-        <SubTitle>5.4 Tvister mellom leietaker og hytteeier</SubTitle>
+        <SubTitle>5.4 Tvister mellom leietaker og utleier</SubTitle>
         <Paragraph>
           Ferieplassen er en formidlingsplattform. Tvister som oppstår mellom 
-          leietaker og hytteeier angående selve leieavtalen må løses direkte mellom 
+          leietaker og utleier angående selve leieavtalen må løses direkte mellom 
           partene. Vi kan bistå med formidling ved behov.
         </Paragraph>
 

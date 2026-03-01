@@ -177,9 +177,9 @@ export default function MyCabinsWithSubscription() {
   if (listings.length === 0) {
     return (
       <EmptyListings>
-        <p>Du har ingen hytteannonser enda.</p>
+        <p>Du har ingen ferieboligannonser enda.</p>
         <ListingButton $variant="view" onClick={() => navigate('/ny-hytte')}>
-          Opprett ny hytte
+          Opprett ny feriebolig
         </ListingButton>
       </EmptyListings>
     );

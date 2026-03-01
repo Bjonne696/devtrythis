@@ -230,21 +230,21 @@ export default function TilLeiePage() {
         <h1>Til leie</h1>
 
         <HelpText icon="🔍" id="til-leie">
-          <strong>Finn din perfekte hytte!</strong><br />
-          Bruk søkefeltet for å finne hytter etter sted. Kombiner med filtre for å snevre inn søket ditt.
+          <strong>Finn din perfekte feriebolig!</strong><br />
+          Bruk søkefeltet for å finne feriebolig etter sted. Kombiner med filtre for å snevre inn søket ditt.
         </HelpText>
 
         <TilLeieSearchContainer>
           <SearchInput
             type="text"
-            placeholder="Søk etter hytter (tittel eller område)..."
+            placeholder="Søk etter feriebolig (tittel eller område)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
           <FiltersContainer>
             <FilterGroup>
-              <Tooltip text="Filtrer hytter basert på pris per natt. La felt stå tomme for å se alle priser.">
+              <Tooltip text="Filtrer feriebolig basert på pris per natt. La felt stå tomme for å se alle priser.">
                 <FilterLabel>Prisområde (per natt)</FilterLabel>
               </Tooltip>
               <PriceRangeContainer>
@@ -266,7 +266,7 @@ export default function TilLeiePage() {
             </FilterGroup>
 
             <FilterGroup>
-              <Tooltip text="Velg datoer for å se kun ledige hytter. Systemet sjekker automatisk om hyttene er tilgjengelige.">
+              <Tooltip text="Velg datoer for å se kun ledige feriebolig. Systemet sjekker automatisk om ferieboligene er tilgjengelige.">
                 <FilterLabel>Oppholdsperiode</FilterLabel>
               </Tooltip>
               <DateRangeContainer>
@@ -289,7 +289,7 @@ export default function TilLeiePage() {
             </FilterGroup>
 
             <FilterGroup>
-              <Tooltip text="Velg fasiliteter som er viktige for deg. Kun hytter med disse fasilitetene vil vises.">
+              <Tooltip text="Velg fasiliteter som er viktige for deg. Kun feriebolig med disse fasilitetene vil vises.">
                 <FilterLabel>Fasiliteter</FilterLabel>
               </Tooltip>
               <FacilitiesContainer>
@@ -324,9 +324,9 @@ export default function TilLeiePage() {
               if (searchTerm) {
                 return `Søkeresultater for "${searchTerm}"${dateText} (${filteredCabins.length})`;
               } else if (hasFilters) {
-                return `Filtrerte hytter${dateText} (${filteredCabins.length})`;
+                return `Filtrerte feriebolig${dateText} (${filteredCabins.length})`;
               } else {
-                return `Alle hytter (${filteredCabins.length})`;
+                return `Alle feriebolig (${filteredCabins.length})`;
               }
             })()}
           </SectionTitle>
@@ -334,15 +334,15 @@ export default function TilLeiePage() {
           {error ? (
             <ErrorMessage>{error}</ErrorMessage>
           ) : isLoading ? (
-            <LoadingSpinner>Laster hytter...</LoadingSpinner>
+            <LoadingSpinner>Laster feriebolig...</LoadingSpinner>
           ) : currentCabins.length === 0 ? (
             <>
               <NoResults>
                 {searchTerm || minPrice || maxPrice || selectedFacilities.length > 0 || checkInDate || checkOutDate
                   ? checkInDate && checkOutDate
-                    ? 'Ingen hytter er tilgjengelige for de valgte datoene og filtrene.'
-                    : 'Ingen hytter matcher dine filtre.'
-                  : 'Ingen hytter tilgjengelig for øyeblikket.'}
+                    ? 'Ingen feriebolig er tilgjengelig for de valgte datoene og filtrene.'
+                    : 'Ingen feriebolig matcher dine filtre.'
+                  : 'Ingen feriebolig tilgjengelig for øyeblikket.'}
               </NoResults>
               <GridWrapper $centered>
                 <CreateListingCard isLoggedIn={!!user} />

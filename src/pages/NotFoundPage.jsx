@@ -34,14 +34,14 @@ export default function NotFoundPage() {
             Gå til forsiden
           </NotFoundLink>
           <NotFoundSecondaryLink to="/til-leie">
-            Se ledige hytter
+            Se ledige feriebolig
           </NotFoundSecondaryLink>
         </NotFoundActions>
         <SuggestedLinks>
           <SuggestedTitle>Kanskje du leter etter:</SuggestedTitle>
           <SuggestedGrid>
             <SuggestedLink to="/til-leie">Til leie</SuggestedLink>
-            <SuggestedLink to="/nye-hytter">Nye hytter</SuggestedLink>
+            <SuggestedLink to="/nye-hytter">Nye feriebolig</SuggestedLink>
             <SuggestedLink to="/popular">Populære</SuggestedLink>
             <SuggestedLink to="/kontakt">Kontakt oss</SuggestedLink>
             <SuggestedLink to="/om-oss">Om oss</SuggestedLink>

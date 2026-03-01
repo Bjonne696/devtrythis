@@ -76,7 +76,7 @@ function SignIn() {
 
   return (
     <SignInWrapper>
-      <Heading>Logg inn på din hyttekonto</Heading>
+      <Heading>Logg inn på din konto</Heading>
       <Form onSubmit={handleSignIn} aria-labelledby="signin-form">
         <LabelGroup>
           <Label htmlFor="email">E-postadresse</Label>

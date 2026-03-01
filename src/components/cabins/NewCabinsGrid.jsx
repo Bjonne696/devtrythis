@@ -77,7 +77,7 @@ export default function NewCabinsGrid() {
   if (cabins.length === 0) {
     return (
       <div>
-        <NoResults>Ingen nye hytter tilgjengelig for øyeblikket.</NoResults>
+        <NoResults>Ingen nye feriebolig tilgjengelig for øyeblikket.</NoResults>
         <GridWrapper $centered>
           <CreateListingCard isLoggedIn={!!user} />
         </GridWrapper>

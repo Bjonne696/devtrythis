@@ -68,7 +68,7 @@ export default function OwnerRequests() {
         ...b,
         requester_name: userMap[b.user_id]?.name || "-",
         requester_email: userMap[b.user_id]?.email || "-",
-        cabin_title: cabinMap[b.cabin_id] || "(Ukjent hytte)"
+        cabin_title: cabinMap[b.cabin_id] || "(Ukjent feriebolig)"
       }));
 
       setRequests(enriched);
@@ -132,7 +132,7 @@ export default function OwnerRequests() {
       {requests.map((req) => (
         <RequestBox key={req.id}>
           <RequestInfo>
-            <strong>{req.requester_name}</strong> ({req.requester_email}) ønsker å leie hytten <strong>"{req.cabin_title}"</strong><br />
+            <strong>{req.requester_name}</strong> ({req.requester_email}) ønsker å leie ferieboligen <strong>"{req.cabin_title}"</strong><br />
             fra <strong>{req.start_date}</strong> til <strong>{req.end_date}</strong>
           </RequestInfo>
           {req.message && <RequestMessage><em>Melding:</em> {req.message}</RequestMessage>}

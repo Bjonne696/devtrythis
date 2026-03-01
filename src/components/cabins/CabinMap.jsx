@@ -53,7 +53,7 @@ export default function CabinMap({ title, lat, lng, cabins = [] }) {
     );
 
     if (validCabins.length === 0) {
-      return <p>Ingen hytter med gyldig posisjon funnet.</p>;
+      return <p>Ingen feriebolig med gyldig posisjon funnet.</p>;
     }
 
     // Beregn senterpunkt basert på alle hyttenes posisjoner

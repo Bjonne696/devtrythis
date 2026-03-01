@@ -34,8 +34,8 @@ export default function OmOssPage() {
 
             <Paragraph>
               Gjennom årene har denne drømmen vokst og utviklet seg. Vi ønsket ikke bare å tilby
-              overnatting, men å skape opplevelser og minner som varer livet ut. Våre hytter ligger
-              strategisk plassert på noen av de vakreste stedene i Norge, og hver hytte er nøye
+              overnatting, men å skape opplevelser og minner som varer livet ut. Våre feriebolig ligger
+              strategisk plassert på noen av de vakreste stedene i Norge, og hver feriebolig er nøye
               utvalgt for å gi våre gjester den beste opplevelsen.
             </Paragraph>
 
@@ -52,13 +52,13 @@ export default function OmOssPage() {
               Hva vi tilbyr
             </SectionTitle>
             <Paragraph>
-              Våre hytter spenner fra koselige hytter for to personer til store familiehytter som
-              kan huse store grupper. Alle hyttene våre er utstyrt med moderne fasiliteter samtidig
-              som de bevarer den tradisjonelle norske hyttefølelsen.
+              Våre feriebolig spenner fra koselige feriebolig for to personer til store feriebolig for store grupper.
+              Alle ferieboligene våre er utstyrt med moderne fasiliteter samtidig
+              som de bevarer den tradisjonelle norske atmosfæren.
             </Paragraph>
 
             <Paragraph>
-              Vi er stolte av å kunne tilby våre gjester autentiske norske hytteopplevelser, og
+              Vi er stolte av å kunne tilby våre gjester autentiske norske opplevelser, og
               vi jobber kontinuerlig for å forbedre våre tjenester og sikre at hver gjest føler
               seg velkommen.
             </Paragraph>

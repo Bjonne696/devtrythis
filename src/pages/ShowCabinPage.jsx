@@ -87,15 +87,15 @@ export default function ShowCabinPage() {
       <PageWrapper>
         <Navigation />
         <MainContent>
-          <h1>Hytte ikke tilgjengelig</h1>
-          <p>Denne hytta er for øyeblikket ikke aktiv eller publisert.</p>
+          <h1>Feriebolig ikke tilgjengelig</h1>
+          <p>Denne ferieboligen er for øyeblikket ikke aktiv eller publisert.</p>
         </MainContent>
         <Footer />
       </PageWrapper>
     );
   }
 
-  if (!cabin || !owner) return <p>Laster hytteinfo...</p>;
+  if (!cabin || !owner) return <p>Laster ferieboliginfo...</p>;
 
   const avatarSrc = getPublicUrl("avatars", owner.avatar_url);
 

@@ -129,11 +129,11 @@ function SignUp() {
 
   return (
     <SignUpWrapper>
-      <Heading>Opprett hyttekonto</Heading>
+      <Heading>Opprett konto</Heading>
 
       <HelpText icon="🎯">
         <strong>Velkommen til Ferieplassen!</strong><br />
-        Opprett din konto for å leie ut din hytte eller finne drømmehytta.
+        Opprett din konto for å leie ut din feriebolig eller finne drømmeboligen.
         Alle felt merket med * er påkrevd.
       </HelpText>
 
@@ -211,7 +211,7 @@ function SignUp() {
         </FormGroup>
 
         <FormGroup>
-          <Tooltip text="Området ditt hjelper andre brukere å finne lokale hytter og gir deg relevante anbefalinger.">
+          <Tooltip text="Området ditt hjelper andre brukere å finne lokale feriebolig og gir deg relevante anbefalinger.">
             <Label htmlFor="region">Område (valgfritt)</Label>
           </Tooltip>
           <Input

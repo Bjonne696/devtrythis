@@ -330,13 +330,13 @@ export default function NewCabinForm() {
         .single();
 
       if (insertError) {
-        setSubmitMessage({ type: 'error', text: `Feil ved lagring av hytte: ${insertError.message}` });
+        setSubmitMessage({ type: 'error', text: `Feil ved lagring av feriebolig: ${insertError.message}` });
         setLoading(false);
         return;
       }
 
       if (isAdmin) {
-        setSubmitMessage({ type: 'success', text: 'Hytta er publisert! (Admin-konto – ingen betaling kreves)' });
+        setSubmitMessage({ type: 'success', text: 'Ferieboligen er publisert! (Admin-konto – ingen betaling kreves)' });
         setTimeout(() => {
           navigate('/min-profil', { replace: true, state: { justActivated: true } });
         }, 1500);
@@ -371,25 +371,25 @@ export default function NewCabinForm() {
 
   const buttonText = (() => {
     if (loading) return 'Oppretter...';
-    if (isAdmin) return 'Publiser hytten (admin)';
+    if (isAdmin) return 'Publiser ferieboligen (admin)';
     if (discountCode.trim() && validatedDiscount) {
-      return 'Opprett hytte (bruk rabattkode)';
+      return 'Opprett feriebolig (bruk rabattkode)';
     }
-    return `Opprett hytte og betal med Vipps (${plans[selectedPlan].price} NOK/mnd)`;
+    return `Opprett feriebolig og betal med Vipps (${plans[selectedPlan].price} NOK/mnd)`;
   })();
 
   return (
     <FormWrapper>
-      <h1>Opprett ny hytteannonse</h1>
+      <h1>Opprett ny ferieboligannonse</h1>
 
       {isAdmin && (
         <AdminAlert>
-          <strong>Admin-konto:</strong> Hytta vil bli automatisk publisert uten behov for abonnement.
+          <strong>Admin-konto:</strong> Ferieboligen vil bli automatisk publisert uten behov for abonnement.
         </AdminAlert>
       )}
 
       <HelpText>
-        <strong>Velkommen til hytteoppretting!</strong><br />
+        <strong>Velkommen til oppretting av ferieboligannonse!</strong><br />
         Fyll ut alle feltene under for å lage en attraktiv annonse:
         <ul>
           <li>Skriv en beskrivende tittel og detaljert beskrivelse</li>
@@ -401,14 +401,14 @@ export default function NewCabinForm() {
 
       <form onSubmit={handleSubmit}>
         <FormField>
-          <Tooltip text="Skriv en kort, beskrivende tittel som fanger oppmerksomheten. Eksempel: 'Koselig familiehytte ved sjøen'">
+          <Tooltip text="Skriv en kort, beskrivende tittel som fanger oppmerksomheten. Eksempel: 'Koselig feriebolig ved sjøen'">
             <Label>Tittel *</Label>
           </Tooltip>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => handleFieldBlur('title')}
-            placeholder="Eksempel: Koselig familiehytte ved sjøen"
+            placeholder="Eksempel: Koselig feriebolig ved sjøen"
             $hasError={touched.title && errors.title}
             required
           />
@@ -435,7 +435,7 @@ export default function NewCabinForm() {
         </FormField>
 
         <FormField>
-          <Tooltip text="Sett en konkurransedyktig pris. Se på lignende hytter i området for å finne riktig prisnivå.">
+          <Tooltip text="Sett en konkurransedyktig pris. Se på lignende feriebolig i området for å finne riktig prisnivå.">
             <Label>Pris per natt (kroner) *</Label>
           </Tooltip>
           <Input

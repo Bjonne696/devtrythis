@@ -77,7 +77,7 @@ export default function CabinGrid() {
   if (isLoading) {
     return (
       <div>
-        <p>Laster hytter...</p>
+        <p>Laster feriebolig...</p>
       </div>
     );
   }

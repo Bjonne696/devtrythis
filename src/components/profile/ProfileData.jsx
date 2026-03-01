@@ -158,7 +158,7 @@ export default function ProfileData() {
         </LeftSide>
         <RightSide>
           {isOwner && <AvatarUploader onUpload={fetchProfile} />}
-          <ActionButton onClick={() => navigate("/ny-hytte")}>Ny hytte</ActionButton>
+          <ActionButton onClick={() => navigate("/ny-hytte")}>Ny feriebolig</ActionButton>
         </RightSide>
       </TopSection>
 
@@ -166,7 +166,7 @@ export default function ProfileData() {
         <Box>
           <h3>Review</h3>
           {incomingReviews.length === 0 ? (
-            <p>Ingen vurderinger på dine hytter ennå.</p>
+            <p>Ingen vurderinger på dine feriebolig ennå.</p>
           ) : (
             <ReviewListContainer>
               {incomingReviews
@@ -208,7 +208,7 @@ export default function ProfileData() {
           ) : upcomingRentals.length > 0 ? (
             upcomingRentals.map((rental) => (
               <StyledCard key={rental.id}>
-                <h4>{rental.cabins?.title || "Hytte uten navn"}</h4>
+                <h4>{rental.cabins?.title || "Feriebolig uten navn"}</h4>
                 <p>
                   {new Date(rental.start_date).toLocaleDateString()} –{" "}
                   {new Date(rental.end_date).toLocaleDateString()}
@@ -221,7 +221,7 @@ export default function ProfileData() {
                 {rental.cabins?.image_urls?.[0] && (
                   <CabinImage
                     src={rental.cabins.image_urls[0]}
-                    alt="Hyttebilde"
+                    alt="Bilde av ferieboligen"
                   />
                 )}
 
@@ -239,7 +239,7 @@ export default function ProfileData() {
                 <ViewCabinButton
                   onClick={() => navigate(`/hytte/${rental.cabins.id}`)}
                 >
-                  Se hytteside
+                  Se ferieboligside
                 </ViewCabinButton>
               </StyledCard>
             ))
@@ -255,7 +255,7 @@ export default function ProfileData() {
           {pastBookings.length > 0 ? (
             pastBookings.map((booking) => (
               <StyledCard key={booking.id}>
-                <h4>{booking.cabins?.title || "Hytte uten navn"}</h4>
+                <h4>{booking.cabins?.title || "Feriebolig uten navn"}</h4>
                 <p>
                   {new Date(booking.start_date).toLocaleDateString()} –{" "}
                   {new Date(booking.end_date).toLocaleDateString()}
@@ -265,14 +265,14 @@ export default function ProfileData() {
                 {booking.cabins?.image_urls?.[0] && (
                   <CabinImage
                     src={booking.cabins.image_urls[0]}
-                    alt="Hyttebilde"
+                    alt="Bilde av ferieboligen"
                   />
                 )}
 
                 {reviews.includes(booking.cabins.id) ? (
                   <>
                     <ReviewStatusText>
-                      Du har allerede vurdert denne hytta.
+                      Du har allerede vurdert denne ferieboligen.
                     </ReviewStatusText>
                     <DeleteReviewButton
                       onClick={() => handleDeleteReview(booking.cabins.id)}
