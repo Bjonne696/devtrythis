@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navigation from '../components/nav/Navigation';
 import Footer from '../components/nav/Footer';
 import styled from 'styled-components';
 import { colors, typography } from '../styles/common';
+import { useAuth } from '../contexts/AuthContext';
+import supabase from '../lib/supabaseClient';
 
 const CallbackWrapper = styled.div`
   min-height: 100vh;
@@ -55,58 +57,107 @@ const Spinner = styled.div`
   }
 `;
 
+const ManualButton = styled.button`
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background-color: ${colors.primary};
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: ${typography.fontFamily};
+
+  &:hover {
+    background-color: ${colors.primaryHover};
+  }
+`;
+
+const POLL_INTERVAL_MS = 1000;
+const POLL_MAX_SECONDS = 20;
+
 export default function VippsCallbackPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [phase, setPhase] = useState('processing');
+  const { user } = useAuth();
 
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const [phase, setPhase] = useState('polling');
+  const pollCount = useRef(0);
+  const intervalRef = useRef(null);
+
+  const params = new URLSearchParams(location.search);
+  const hasError =
+    params.get('error') ||
+    params.get('error_description') ||
+    params.get('status') === 'error';
 
   useEffect(() => {
-    // Vi "behandler" kort for UX, men redirecter raskt.
-    // Webhooken er source of truth uansett – min-profil viser status der.
-    const hasError =
-      params.get('error') ||
-      params.get('error_description') ||
-      params.get('status') === 'error';
-
     if (hasError) {
-      // Hvis Vipps sender feil i querystring, send bruker til min-profil men med hint
       setPhase('error');
-      const t = setTimeout(() => {
-        navigate('/min-profil', { replace: true, state: { vippsCallback: 'error' } });
-      }, 1200);
-      return () => clearTimeout(t);
+      return;
     }
 
-    const t = setTimeout(() => {
-      setPhase('redirecting');
-      navigate('/min-profil', { replace: true, state: { vippsCallback: 'success' } });
-    }, 800);
+    if (!user?.id) {
+      setPhase('timeout');
+      return;
+    }
 
-    return () => clearTimeout(t);
-  }, [navigate, params]);
+    const poll = async () => {
+      pollCount.current += 1;
+
+      try {
+        const { data } = await supabase
+          .from('subscriptions')
+          .select('status')
+          .eq('owner_id', user.id)
+          .eq('status', 'active')
+          .limit(1);
+
+        if (data && data.length > 0) {
+          clearInterval(intervalRef.current);
+          navigate('/min-profil', { replace: true, state: { vippsCallback: 'success' } });
+          return;
+        }
+      } catch {
+      }
+
+      if (pollCount.current >= POLL_MAX_SECONDS) {
+        clearInterval(intervalRef.current);
+        setPhase('timeout');
+      }
+    };
+
+    intervalRef.current = setInterval(poll, POLL_INTERVAL_MS);
+
+    return () => clearInterval(intervalRef.current);
+  }, [user?.id, hasError, navigate]);
 
   return (
     <CallbackWrapper>
       <Navigation />
       <CallbackContent>
-        {phase === 'processing' && (
+        {phase === 'polling' && (
           <>
             <CallbackIcon>✅</CallbackIcon>
-            <CallbackTitle>Takk! Vi behandler abonnementet ditt</CallbackTitle>
+            <CallbackTitle>Takk! Vi venter på bekreftelse fra Vipps</CallbackTitle>
             <CallbackMessage>
-              Du blir sendt til profilen din straks. Der kan du se status på abonnementet.
+              Vi sjekker abonnementsstatus automatisk. Du sendes til profilen din så snart betalingen er bekreftet.
             </CallbackMessage>
             <Spinner />
           </>
         )}
 
-        {phase === 'redirecting' && (
+        {phase === 'timeout' && (
           <>
-            <CallbackIcon>🏠</CallbackIcon>
-            <CallbackTitle>Sender deg til profilen…</CallbackTitle>
-            <Spinner />
+            <CallbackIcon>⏳</CallbackIcon>
+            <CallbackTitle>Betalingen behandles fortsatt</CallbackTitle>
+            <CallbackMessage>
+              Vi kunne ikke bekrefte abonnementet innen forventet tid. Dette er normalt – Vipps kan bruke litt ekstra tid.
+              Gå til profilen din for å se oppdatert status.
+            </CallbackMessage>
+            <ManualButton onClick={() => navigate('/min-profil', { replace: true, state: { vippsCallback: 'success' } })}>
+              Gå til Min profil
+            </ManualButton>
           </>
         )}
 
@@ -115,9 +166,11 @@ export default function VippsCallbackPage() {
             <CallbackIcon>⚠️</CallbackIcon>
             <CallbackTitle>Noe gikk galt hos Vipps</CallbackTitle>
             <CallbackMessage>
-              Vi sender deg til profilen din, så du kan prøve igjen.
+              Betalingen ble ikke fullført. Du kan prøve igjen fra profilen din.
             </CallbackMessage>
-            <Spinner />
+            <ManualButton onClick={() => navigate('/min-profil', { replace: true })}>
+              Gå til Min profil
+            </ManualButton>
           </>
         )}
       </CallbackContent>
