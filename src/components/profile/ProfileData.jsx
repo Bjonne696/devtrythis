@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -30,72 +30,19 @@ import {
   ReviewStatusText,
   DeleteReviewButton
 } from "../../styles/profile/profileStyles";
-import { MainWrapper, Heading, ProfileSection, SectionHeading, SectionContent, PollingNotice, PollingButton } from "../../styles/pages/minProfilPageStyles";
-
-const POLL_INTERVAL_MS = 1000;
-const POLL_MAX = 20;
+import { MainWrapper, Heading, ProfileSection, SectionHeading, SectionContent } from "../../styles/pages/minProfilPageStyles";
 
 export default function ProfileData() {
   const { profile, user } = useAuth();
   const location = useLocation();
   const [refreshKey, setRefreshKey] = useState(0);
-  const [pollingPhase, setPollingPhase] = useState(null);
-  const pollCount = useRef(0);
-  const intervalRef = useRef(null);
-
-  const startPolling = () => {
-    if (intervalRef.current) return;
-    pollCount.current = 0;
-    setPollingPhase('polling');
-
-    intervalRef.current = setInterval(async () => {
-      pollCount.current += 1;
-      try {
-        const { data } = await supabase
-          .from('subscriptions')
-          .select('status')
-          .eq('owner_id', user.id)
-          .eq('status', 'active')
-          .limit(1);
-
-        if (data && data.length > 0) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-          setPollingPhase(null);
-          setRefreshKey((k) => k + 1);
-          return;
-        }
-      } catch {
-      }
-
-      if (pollCount.current >= POLL_MAX) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        setPollingPhase('timeout');
-      }
-    }, POLL_INTERVAL_MS);
-  };
-
-  const handleManualRefresh = () => {
-    setPollingPhase(null);
-    setRefreshKey((k) => k + 1);
-  };
 
   useEffect(() => {
-    if (location.state?.vippsCallback === 'success') {
-      setRefreshKey((k) => k + 1);
-      startPolling();
-    } else if (location.state?.justActivated) {
+    if (location.state?.vippsCallback || location.state?.justActivated) {
       setRefreshKey((k) => k + 1);
     }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
   }, [location.state]);
-  
+
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [incomingReviews, setIncomingReviews] = useState([]);
@@ -126,7 +73,7 @@ export default function ProfileData() {
 
   const fetchPastBookings = async () => {
     const today = new Date().toISOString().split('T')[0];
-    
+
     const { data, error } = await supabase
       .from("booking_requests")
       .select(`id, start_date, end_date, cabins (id, title, location, image_urls, owner_id)`)
@@ -241,20 +188,6 @@ export default function ProfileData() {
 
       <ProfileSection>
         <SectionHeading>Mine annonser og abonnement</SectionHeading>
-
-        {pollingPhase === 'polling' && (
-          <PollingNotice>
-            <span>Venter på bekreftelse fra Vipps… Henter status automatisk.</span>
-          </PollingNotice>
-        )}
-
-        {pollingPhase === 'timeout' && (
-          <PollingNotice>
-            <span>Det tok lengre tid enn ventet. Sjekk gjerne igjen om litt.</span>
-            <PollingButton onClick={handleManualRefresh}>Oppdater</PollingButton>
-          </PollingNotice>
-        )}
-
         <SectionContent>
           <MyCabinsWithSubscription key={`listings-${refreshKey}`} />
         </SectionContent>
@@ -303,7 +236,7 @@ export default function ProfileData() {
                   </OwnerInfoText>
                 )}
 
-                <ViewCabinButton 
+                <ViewCabinButton
                   onClick={() => navigate(`/hytte/${rental.cabins.id}`)}
                 >
                   Se hytteside

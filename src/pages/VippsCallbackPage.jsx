@@ -110,10 +110,10 @@ export default function VippsCallbackPage() {
           .from('subscriptions')
           .select('status')
           .eq('owner_id', user.id)
-          .eq('status', 'active')
+          .order('created_at', { ascending: false })
           .limit(1);
 
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && data[0].status !== 'pending') {
           clearInterval(intervalRef.current);
           navigate('/min-profil', { replace: true, state: { vippsCallback: 'success' } });
           return;
