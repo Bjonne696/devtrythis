@@ -31,9 +31,14 @@ import {
 
 const statusLabels = {
   active: 'Aktiv',
-  pending: 'Ventende',
-  past_due: 'Forsinket',
+  pending: 'Venter på Vipps…',
+  past_due: 'Betaling forfalt',
   canceled: 'Kansellert',
+};
+
+const statusHints = {
+  pending: 'Venter på bekreftelse fra Vipps. Ingen handling er nødvendig.',
+  past_due: 'Betaling forfalt – reaktiver abonnementet for å gjenopprette synlighet.',
 };
 
 export default function MyCabinsWithSubscription() {
@@ -64,7 +69,7 @@ export default function MyCabinsWithSubscription() {
 
       const { data: subscriptions, error: subsError } = await supabase
         .from("subscriptions")
-        .select("id, cabin_id, status, plan_type, price_nok, current_period_end, discount_code, vipps_agreement_id")
+        .select("id, cabin_id, status, plan_type, price_nok, current_period_end, discount_code, provider_agreement_id")
         .eq("owner_id", profile.id)
         .order("created_at", { ascending: false });
 
@@ -255,6 +260,12 @@ export default function MyCabinsWithSubscription() {
                       </SubscriptionDetail>
                     )}
                   </SubscriptionInfo>
+                )}
+
+                {subStatus && statusHints[subStatus] && (
+                  <ActionMessage $type={subStatus === 'past_due' ? 'error' : 'success'}>
+                    {statusHints[subStatus]}
+                  </ActionMessage>
                 )}
 
                 <ButtonGroup>

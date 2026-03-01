@@ -150,6 +150,36 @@ export const SectionContent = styled.div`
   }
 `;
 
+export const PollingNotice = styled.div`
+  background: #fff8e1;
+  border-left: 4px solid #f59e0b;
+  border-radius: ${borderRadius.base};
+  padding: ${spacing.md} ${spacing.lg};
+  margin-bottom: ${spacing.lg};
+  color: #92400e;
+  font-size: ${typography.fontSizes.sm};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${spacing.md};
+  flex-wrap: wrap;
+`;
+
+export const PollingButton = styled.button`
+  padding: ${spacing.sm} ${spacing.lg};
+  background-color: ${colors.primary};
+  color: ${colors.white};
+  border: none;
+  border-radius: ${borderRadius.base};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: ${colors.primaryHover};
+  }
+`;
+
 export const DeleteButton = styled.button`
   background-color: #dc3545;
   color: white;
