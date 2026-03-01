@@ -25,55 +25,60 @@ export default function OmOssPage() {
 
           <Section>
             <SectionTitle>
-              En drøm som blir virkelighet
+              En drøm som blir virkelighet!
             </SectionTitle>
             <Paragraph>
-              Ferieplassen har vært en drøm i over 20 år. Det hele startet med en visjon om å skape
-              et sted hvor familier og venner kunne komme sammen, slappe av og nyte Norges fantastiske natur.
+              Ferieplassen har vært en drøm i over 20 år.
+              Det hele startet med en visjon om å skape et sted hvor familier og
+              venner kunne komme sammen, slappe av, og nyte Norges fantastiske natur.
             </Paragraph>
 
             <Paragraph>
-              Gjennom årene har denne drømmen vokst og utviklet seg. Vi ønsket ikke bare å tilby
-              overnatting, men å skape opplevelser og minner som varer livet ut. Våre feriebolig ligger
-              strategisk plassert på noen av de vakreste stedene i Norge, og hver feriebolig er nøye
-              utvalgt for å gi våre gjester den beste opplevelsen.
+              Gjennom årene har denne drømmen vokst og utviklet seg.
+              Vi ønsket ikke bare å tilby overnatting, men å skape opplevelser og
+              minner som varer livet ut, og våre boliger ligger strategisk plassert på
+              noen av de vakreste stedene i Norge.
             </Paragraph>
 
             <SectionTitle>
               Vår visjon
             </SectionTitle>
             <Paragraph>
-              Vi tror på at de beste øyeblikkene i livet skjer når vi kobler oss fra hverdagens stress
-              og kobler oss til naturen og de vi er glad i. Ferieplassen skal være ditt andre hjem
-              - et sted hvor du kan lade batteriene og skape uforglemmelige øyeblikk.
+              Vi tror på at de beste øyeblikkene i livet skjer når vi kobler oss fra
+              hverdagens stress og kobler oss til naturen og de vi er glad i.
+              Ferieplassen skal være ditt andre hjem, et sted hvor du kan lade
+              batteriene og skape uforglemmelige øyeblikk.
             </Paragraph>
 
             <SectionTitle>
               Hva vi tilbyr
             </SectionTitle>
             <Paragraph>
-              Våre feriebolig spenner fra koselige feriebolig for to personer til store feriebolig for store grupper.
-              Alle ferieboligene våre er utstyrt med moderne fasiliteter samtidig
-              som de bevarer den tradisjonelle norske atmosfæren.
+              Våre boliger spenner fra både små og store hytter, til campingvogner og
+              leiligheter.
+              Alle boligene våre er utstyrt med moderne fasiliteter samtidig som de
+              bevarer den tradisjonelle norske feriefølelsen.
             </Paragraph>
 
             <Paragraph>
-              Vi er stolte av å kunne tilby våre gjester autentiske norske opplevelser, og
-              vi jobber kontinuerlig for å forbedre våre tjenester og sikre at hver gjest føler
-              seg velkommen.
+              Vi er stolte av å kunne tilby våre gjester autentiske norske
+              opplevelser, og vi jobber kontinuerlig for å forbedre våre tjenester og
+              sikre at hver gjest føler seg velkommen.
             </Paragraph>
 
             <SectionTitle>
               Fremtiden
             </SectionTitle>
             <Paragraph>
-              Etter 20 år med planlegging og drømming, ser vi frem til mange flere år med å
-              tilby uforglemmelige opplevelser. Vi fortsetter å utvide vårt tilbud og finne
-              nye, fantastiske steder hvor våre gjester kan oppleve det beste Norge har å tilby.
+              Etter 20 år med planlegging og drømming ser vi frem til mange flere år
+              med å tilby uforglemmelige opplevelser.
+              Vi fortsetter å utvide våre tilbud og finne nye, fantastiske steder hvor
+              våre gjester kan oppleve det beste Norge har å tilby!
             </Paragraph>
 
             <ItalicParagraph>
-              Takk for at du velger Ferieplassen. Vi ser frem til å være en del av dine minner.
+              Takk for at du velger Ferieplassen, vi ser frem til å være en del av
+              dine minner!
             </ItalicParagraph>
           </Section>
         </OmOssContainer>
