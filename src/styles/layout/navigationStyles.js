@@ -43,8 +43,27 @@ export const LogoSection = styled.div`
 export const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
+  gap: ${spacing.sm};
   text-decoration: none;
   color: inherit;
+`;
+
+export const BrandName = styled.span`
+  font-family: ${typography.fontFamilyHeading};
+  font-size: ${typography.fontSizes.xl};
+  font-weight: ${typography.fontWeights.semibold};
+  color: ${colors.primary};
+  white-space: nowrap;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+
+  ${media.md} {
+    font-size: ${typography.fontSizes.base};
+  }
+
+  ${media.sm} {
+    font-size: ${typography.fontSizes.sm};
+  }
 `;
 
 export const CompactLogo = styled.img`

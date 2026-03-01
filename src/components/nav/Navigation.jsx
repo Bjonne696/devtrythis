@@ -9,6 +9,7 @@ import {
   LogoSection,
   LogoLink,
   CompactLogo,
+  BrandName,
   NavSection,
   NavList,
   NavItem,
@@ -46,6 +47,7 @@ export default function Navigation() {
         <LogoSection>
           <LogoLink to="/" onClick={closeMenu}>
             <CompactLogo src="/logo.png" alt="Ferieplassen" />
+            <BrandName>Ferieplassen</BrandName>
           </LogoLink>
         </LogoSection>
 
