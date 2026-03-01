@@ -164,9 +164,9 @@ export default function ProfileData() {
 
       <MiddleSection>
         <Box>
-          <h3>Review</h3>
+          <h3>Reviews</h3>
           {incomingReviews.length === 0 ? (
-            <p>Ingen vurderinger på dine feriebolig ennå.</p>
+            <p>Ingen reviews er tilgjengelig</p>
           ) : (
             <ReviewListContainer>
               {incomingReviews
