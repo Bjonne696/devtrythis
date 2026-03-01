@@ -38,12 +38,17 @@ export const LogoSection = styled.div`
   display: flex;
   align-items: center;
   flex-shrink: 0;
+
+  ${media.md} {
+    flex: 1;
+    justify-content: center;
+  }
 `;
 
 export const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
-  gap: ${spacing.md};
+  gap: 1.8rem;
   text-decoration: none;
   color: inherit;
 `;
@@ -58,11 +63,11 @@ export const BrandName = styled.span`
   letter-spacing: 0.01em;
 
   ${media.md} {
-    font-size: ${typography.fontSizes.base};
+    font-size: ${typography.fontSizes.lg};
   }
 
   ${media.sm} {
-    font-size: ${typography.fontSizes.sm};
+    font-size: ${typography.fontSizes.base};
   }
 `;
 
