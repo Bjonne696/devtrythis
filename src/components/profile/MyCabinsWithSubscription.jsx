@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
 import { formatPrice } from "../../utils/formatters";
 import { cancelSubscription, createSubscription } from "../../hooks/useSubscription";
+import VippsRedirectModal from "../common/VippsRedirectModal";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import {
@@ -49,6 +50,7 @@ export default function MyCabinsWithSubscription() {
   const [actionLoading, setActionLoading] = useState(null);
   const [actionMessage, setActionMessage] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
+  const [vippsRedirect, setVippsRedirect] = useState(null);
 
   const fetchListings = async () => {
     if (!profile?.id) return;
@@ -136,7 +138,7 @@ export default function MyCabinsWithSubscription() {
         return;
       }
       if (res?.redirectUrl) {
-        window.location.href = res.redirectUrl;
+        setVippsRedirect({ cabinId: cabin.id, url: res.redirectUrl });
         return;
       }
       await fetchListings();
@@ -157,7 +159,7 @@ export default function MyCabinsWithSubscription() {
         return;
       }
       if (res?.redirectUrl) {
-        window.location.href = res.redirectUrl;
+        setVippsRedirect({ cabinId: cabin.id, url: res.redirectUrl });
         return;
       }
       await fetchListings();
@@ -312,6 +314,13 @@ export default function MyCabinsWithSubscription() {
           );
         })}
       </ListingsGrid>
+
+      {vippsRedirect && (
+        <VippsRedirectModal
+          url={vippsRedirect.url}
+          onClose={() => setVippsRedirect(null)}
+        />
+      )}
     </>
   );
 }

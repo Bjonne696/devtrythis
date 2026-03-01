@@ -120,6 +120,25 @@ export const Warning = styled.p`
   text-align: center;
 `;
 
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #4b3832;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(75, 56, 50, 0.1);
+  }
+`;
+
 export const FormLabel = styled.label`
   display: block;
   margin: 1rem 0 0.5rem 0;

@@ -8,6 +8,7 @@ import "leaflet/dist/leaflet.css";
 import Tooltip from "../ui/Tooltip";
 import HelpText from "../ui/HelpText";
 import { createSubscription, validateDiscountCode } from "../../hooks/useSubscription";
+import VippsRedirectModal from "../common/VippsRedirectModal";
 import {
   FormWrapper,
   FormField,
@@ -97,6 +98,7 @@ export default function NewCabinForm() {
   const [files, setFiles] = useState([]);
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [vippsRedirectUrl, setVippsRedirectUrl] = useState(null);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
@@ -351,7 +353,7 @@ export default function NewCabinForm() {
       }
 
       if (subResult?.redirectUrl) {
-        window.location.href = subResult.redirectUrl;
+        setVippsRedirectUrl(subResult.redirectUrl);
         return;
       }
 
@@ -615,10 +617,17 @@ export default function NewCabinForm() {
           <SubmitError>{errors.submit}</SubmitError>
         )}
 
-        <SubmitButton type="submit" disabled={loading || validatingCode}>
+        <SubmitButton type="submit" disabled={loading || validatingCode || !!vippsRedirectUrl}>
           {buttonText}
         </SubmitButton>
       </form>
+
+      {vippsRedirectUrl && (
+        <VippsRedirectModal
+          url={vippsRedirectUrl}
+          onClose={() => { setVippsRedirectUrl(null); setLoading(false); }}
+        />
+      )}
     </FormWrapper>
   );
 }
