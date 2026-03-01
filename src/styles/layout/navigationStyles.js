@@ -43,7 +43,7 @@ export const LogoSection = styled.div`
 export const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
-  gap: ${spacing.sm};
+  gap: ${spacing.md};
   text-decoration: none;
   color: inherit;
 `;
