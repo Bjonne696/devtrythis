@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import supabase from "../../lib/supabaseClient";
 import { formatPrice } from "../../utils/formatters";
-import { cancelSubscription, createSubscription, deleteSubscription } from "../../hooks/useSubscription";
+import { cancelSubscription, createSubscription } from "../../hooks/useSubscription";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import {
@@ -163,35 +163,6 @@ export default function MyCabinsWithSubscription() {
     }
   };
 
-  const handleDelete = async (cabin) => {
-    setConfirmAction({
-      title: 'Slett hytte',
-      message: 'Slette hytten og tilhørende abonnement? Denne handlingen kan ikke angres.',
-      onConfirm: async () => {
-        setConfirmAction(null);
-        setActionLoading(cabin.id);
-        try {
-          await deleteSubscription(cabin.id);
-          showMessage('success', 'Hytte og abonnement slettet.');
-          await fetchListings();
-        } catch (e) {
-          const { error: delError } = await supabase
-            .from("cabins")
-            .delete()
-            .eq("id", cabin.id);
-          if (delError) {
-            showMessage('error', `Feil ved sletting: ${delError.message}`);
-          } else {
-            showMessage('success', 'Hytte slettet.');
-            await fetchListings();
-          }
-        } finally {
-          setActionLoading(null);
-        }
-      }
-    });
-  };
-
   if (loading) {
     return <LoadingText>Laster annonser...</LoadingText>;
   }
@@ -324,13 +295,6 @@ export default function MyCabinsWithSubscription() {
                     </ListingButton>
                   )}
 
-                  <ListingButton
-                    $variant="danger"
-                    onClick={() => handleDelete(listing)}
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? 'Sletter...' : 'Slett'}
-                  </ListingButton>
                 </ButtonGroup>
               </ListingBody>
             </ListingCard>
