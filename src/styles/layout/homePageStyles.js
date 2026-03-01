@@ -22,15 +22,15 @@ export const MainContent = styled(BaseMainContent)`
     width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-size: ${typography.fontSizes['3xl']};
+    font-size: ${typography.fontSizes['4xl']};
 
     ${media.md} {
-      font-size: ${typography.fontSizes['2xl']};
+      font-size: ${typography.fontSizes['3xl']};
       margin-top: ${spacing.xl};
     }
 
     ${media.sm} {
-      font-size: ${typography.fontSizes.xl};
+      font-size: ${typography.fontSizes['2xl']};
       margin-top: ${spacing.lg};
     }
   }
