@@ -85,7 +85,7 @@ export default function PopularCabinsGrid() {
               <CabinTitle>{cabin.title}</CabinTitle>
               <CabinLocation>{cabin.location}</CabinLocation>
               <CabinPrice>{formatPrice(cabin.price_per_night)} / natt</CabinPrice>
-              {cabin.avgRating > 0 && <StarRating score={cabin.avgRating} />}
+              <StarRating score={cabin.avgRating} />
             </CabinInfo>
           </CabinCard>
         ))}

@@ -9,7 +9,9 @@ import {
 } from '../../styles/ui/starRatingStyles';
 
 export default function StarRating({ score }) {
-  if (score === 0) return null;
+  if (!score || score === 0) {
+    return <RatingText>Ingen reviews tilgjengelig</RatingText>;
+  }
 
   const decimal = score % 1;
   const fullStars = Math.floor(score);
