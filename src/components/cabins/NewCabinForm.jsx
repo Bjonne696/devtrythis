@@ -3,7 +3,7 @@ import supabase from "../../lib/supabaseClient";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Tooltip from "../ui/Tooltip";
 import HelpText from "../ui/HelpText";
@@ -24,7 +24,10 @@ import {
   FileInfo,
   MapWrapper,
   SubmitError,
-  CheckboxLabel
+  CheckboxLabel,
+  AddressRow,
+  GeoSearchButton,
+  GeoSearchError
 } from "../../styles/cabins/newCabinFormStyles";
 import {
   SubscriptionSection,
@@ -74,6 +77,14 @@ const plans = {
   },
 };
 
+function MapController({ lat, lng }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng], 13);
+  }, [lat, lng, map]);
+  return null;
+}
+
 export default function NewCabinForm() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -95,6 +106,9 @@ export default function NewCabinForm() {
   const [validatingCode, setValidatingCode] = useState(false);
   const [discountError, setDiscountError] = useState(null);
   const [submitMessage, setSubmitMessage] = useState(null);
+
+  const [geocodeLoading, setGeocodeLoading] = useState(false);
+  const [geocodeError, setGeocodeError] = useState(null);
 
   const isAdmin = profile?.role === 'admin';
 
@@ -170,6 +184,41 @@ export default function NewCabinForm() {
         postalCode: data.address.postcode || "",
         city: data.address.city || data.address.town || data.address.village || "",
       });
+    }
+  };
+
+  const handleForwardGeocode = async () => {
+    const query = [locationInfo.address, locationInfo.postalCode, locationInfo.city]
+      .filter(Boolean)
+      .join(' ');
+
+    if (!query.trim()) {
+      setGeocodeError('Skriv inn en adresse for å søke.');
+      return;
+    }
+
+    setGeocodeLoading(true);
+    setGeocodeError(null);
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'Hytteplattformen/1.0 (din@email.no)' },
+      });
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        const { lat, lon, display_name } = data[0];
+        setLatitude(parseFloat(lat));
+        setLongitude(parseFloat(lon));
+        setLocationInfo(prev => ({ ...prev, address: display_name }));
+      } else {
+        setGeocodeError('Ingen treff. Prøv med mer detaljert adresse, postnummer eller by.');
+      }
+    } catch {
+      setGeocodeError('Feil ved adressesøk. Sjekk nettforbindelsen og prøv igjen.');
+    } finally {
+      setGeocodeLoading(false);
     }
   };
 
@@ -442,15 +491,54 @@ export default function NewCabinForm() {
           )}
         </FormField>
 
+        <FormField>
+          <Label>Søk etter adresse</Label>
+          <AddressRow>
+            <input
+              type="text"
+              placeholder="Adresse (f.eks. Storgata 1)"
+              value={locationInfo.address}
+              onChange={(e) =>
+                setLocationInfo((prev) => ({ ...prev, address: e.target.value }))
+              }
+            />
+            <input
+              type="text"
+              placeholder="Postnummer"
+              value={locationInfo.postalCode}
+              onChange={(e) =>
+                setLocationInfo((prev) => ({ ...prev, postalCode: e.target.value }))
+              }
+            />
+            <input
+              type="text"
+              placeholder="By / sted"
+              value={locationInfo.city}
+              onChange={(e) =>
+                setLocationInfo((prev) => ({ ...prev, city: e.target.value }))
+              }
+            />
+            <GeoSearchButton
+              type="button"
+              onClick={handleForwardGeocode}
+              disabled={geocodeLoading}
+            >
+              {geocodeLoading ? 'Søker...' : 'Finn på kart'}
+            </GeoSearchButton>
+          </AddressRow>
+          {geocodeError && <GeoSearchError>{geocodeError}</GeoSearchError>}
+        </FormField>
+
         {latitude && longitude && (
           <FormField>
-            <Label>Plasser markør på kartet</Label>
+            <Label>Plasser markør nøyaktig på kartet</Label>
             <MapContainer
               center={[latitude, longitude]}
               zoom={13}
               style={{ height: "300px", width: "100%" }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <MapController lat={latitude} lng={longitude} />
               <DraggableMarker
                 position={{ lat: latitude, lng: longitude }}
                 setPosition={(pos) => {
@@ -460,13 +548,6 @@ export default function NewCabinForm() {
                 }}
               />
             </MapContainer>
-            {locationInfo.address && (
-              <MapWrapper>
-                <strong>Adresse funnet:</strong><br />
-                {locationInfo.address}<br />
-                {locationInfo.postalCode} {locationInfo.city}
-              </MapWrapper>
-            )}
           </FormField>
         )}
 

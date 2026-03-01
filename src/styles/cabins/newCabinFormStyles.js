@@ -258,3 +258,44 @@ export const SubmitError = styled.p`
   margin: 1rem 0;
   text-align: center;
 `;
+
+export const AddressRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.25rem;
+
+  input {
+    flex: 1;
+    min-width: 130px;
+  }
+`;
+
+export const GeoSearchButton = styled.button`
+  padding: 0.75rem 1.25rem;
+  background-color: #4b3832;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #5a4139;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const GeoSearchError = styled.p`
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin: 0.4rem 0 0 0;
+`;
